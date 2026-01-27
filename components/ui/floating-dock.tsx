@@ -1,6 +1,13 @@
 "use client";
 
+/**
+ * Note: Use position fixed according to your needs
+ * Desktop navbar is better positioned at the bottom
+ * Mobile navbar is better positioned at bottom right.
+ **/
+
 import { cn } from "@/lib/utils";
+import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import {
   AnimatePresence,
   MotionValue,
@@ -9,7 +16,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import Link from "next/link";
+
 import { useRef, useState } from "react";
 
 export const FloatingDock = ({
@@ -43,7 +50,7 @@ const FloatingDockMobile = ({
         {open && (
           <motion.div
             layoutId="nav"
-            className="absolute bottom-full mb-2 inset-x-0 flex flex-col gap-2"
+            className="absolute inset-x-0 bottom-full mb-2 flex flex-col gap-2"
           >
             {items.map((item, idx) => (
               <motion.div
@@ -62,15 +69,13 @@ const FloatingDockMobile = ({
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
               >
-                <Link
+                <a
                   href={item.href}
                   key={item.title}
-                  className="px-4 py-2 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-white transition-colors duration-300 group"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900"
                 >
-                  <span className="text-sm font-medium uppercase tracking-wide text-neutral-400 group-hover:text-neutral-900 transition-colors duration-300">
-                    {item.title}
-                  </span>
-                </Link>
+                  <div className="h-4 w-4">{item.icon}</div>
+                </a>
               </motion.div>
             ))}
           </motion.div>
@@ -78,22 +83,9 @@ const FloatingDockMobile = ({
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="h-10 w-10 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-neutral-700 transition-colors duration-300"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-800"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-5 h-5 text-neutral-400"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-          />
-        </svg>
+        <IconLayoutNavbarCollapse className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
       </button>
     </div>
   );
@@ -106,14 +98,14 @@ const FloatingDockDesktop = ({
   items: { title: string; icon: React.ReactNode; href: string }[];
   className?: string;
 }) => {
-  const mouseX = useMotionValue(Infinity);
+  let mouseX = useMotionValue(Infinity);
   return (
     <motion.div
-      onMouseMove={(e) => mouseX.set(e.clientX)}
+      onMouseMove={(e: React.MouseEvent) => mouseX.set(e.clientX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden md:flex h-14 gap-3 items-center rounded-full bg-neutral-900 px-3",
-        className
+        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex dark:bg-neutral-900",
+        className,
       )}
     >
       {items.map((item) => (
@@ -125,59 +117,85 @@ const FloatingDockDesktop = ({
 
 function IconContainer({
   mouseX,
-  href,
   title,
+  icon,
+  href,
 }: {
   mouseX: MotionValue;
   title: string;
-  icon?: React.ReactNode;
+  icon: React.ReactNode;
   href: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [hovered, setHovered] = useState(false);
+  let ref = useRef<HTMLDivElement>(null);
 
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+  let distance = useTransform(mouseX, (val: number) => {
+    let bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+
     return val - bounds.x - bounds.width / 2;
   });
 
-  const scaleSync = useTransform(distance, [-100, 0, 100], [1, 1.1, 1]);
-  const ySync = useTransform(distance, [-100, 0, 100], [0, -2, 0]);
+  let widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+  let heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
 
-  const scale = useSpring(scaleSync, {
+  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
+  let heightTransformIcon = useTransform(
+    distance,
+    [-150, 0, 150],
+    [20, 40, 20],
+  );
+
+  let width = useSpring(widthTransform, {
     mass: 0.1,
-    stiffness: 200,
-    damping: 15,
+    stiffness: 150,
+    damping: 12,
+  });
+  let height = useSpring(heightTransform, {
+    mass: 0.1,
+    stiffness: 150,
+    damping: 12,
   });
 
-  const y = useSpring(ySync, {
+  let widthIcon = useSpring(widthTransformIcon, {
     mass: 0.1,
-    stiffness: 200,
-    damping: 15,
+    stiffness: 150,
+    damping: 12,
   });
+  let heightIcon = useSpring(heightTransformIcon, {
+    mass: 0.1,
+    stiffness: 150,
+    damping: 12,
+  });
+
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <Link href={href}>
+    <a href={href}>
       <motion.div
         ref={ref}
-        style={{ scale, y }}
+        style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative px-5 py-2 rounded-full bg-neutral-800 flex items-center justify-center origin-bottom overflow-hidden"
+        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800"
       >
-        <span className={cn(
-          "relative z-10 transition-colors duration-300 text-sm font-medium uppercase tracking-wide",
-          hovered ? "text-neutral-900" : "text-neutral-400"
-        )}>
-          {title}
-        </span>
+        <AnimatePresence>
+          {hovered && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: 2, x: "-50%" }}
+              className="absolute -top-8 left-1/2 w-fit rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs whitespace-pre text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white"
+            >
+              {title}
+            </motion.div>
+          )}
+        </AnimatePresence>
         <motion.div
-          className="absolute inset-0 bg-white rounded-full"
-          initial={{ scale: 0 }}
-          animate={{ scale: hovered ? 1 : 0 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-        />
+          style={{ width: widthIcon, height: heightIcon }}
+          className="flex items-center justify-center"
+        >
+          {icon}
+        </motion.div>
       </motion.div>
-    </Link>
+    </a>
   );
 }
