@@ -24,7 +24,7 @@ export const FloatingDock = ({
   desktopClassName,
   mobileClassName,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: { title: string; icon: React.ReactNode; href: string; isActive?: boolean }[];
   desktopClassName?: string;
   mobileClassName?: string;
 }) => {
@@ -40,7 +40,7 @@ const FloatingDockMobile = ({
   items,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: { title: string; icon: React.ReactNode; href: string; isActive?: boolean }[];
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
@@ -72,9 +72,9 @@ const FloatingDockMobile = ({
                 <a
                   href={item.href}
                   key={item.title}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900"
+                  className="flex h-6 items-center justify-center rounded-full bg-gray-50 px-5 dark:bg-neutral-900"
                 >
-                  <div className="h-4 w-4">{item.icon}</div>
+                  <div>{item.icon}</div>
                 </a>
               </motion.div>
             ))}
@@ -95,16 +95,17 @@ const FloatingDockDesktop = ({
   items,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: { title: string; icon: React.ReactNode; href: string; isActive?: boolean }[];
   className?: string;
 }) => {
-  let mouseX = useMotionValue(Infinity);
+  const mouseX = useMotionValue(Infinity);
+
   return (
     <motion.div
       onMouseMove={(e: React.MouseEvent) => mouseX.set(e.clientX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex dark:bg-neutral-900",
+        "mx-auto hidden h-auto items-center gap-1 rounded-full bg-gray-50 px-2 py-1.5 md:flex dark:bg-neutral-900",
         className,
       )}
     >
@@ -120,78 +121,43 @@ function IconContainer({
   title,
   icon,
   href,
+  isActive,
 }: {
-  mouseX: MotionValue;
+  mouseX: MotionValue<number>;
   title: string;
   icon: React.ReactNode;
   href: string;
+  isActive?: boolean;
 }) {
-  let ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
-  let distance = useTransform(mouseX, (val: number) => {
-    let bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-
+  const distance = useTransform(mouseX, (val: number) => {
+    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
     return val - bounds.x - bounds.width / 2;
   });
 
-  let widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+  const heightSync = useTransform(distance, [-150, 0, 150], [26, 38, 26]);
+  const paddingSync = useTransform(distance, [-150, 0, 150], [12, 24, 12]);
+  const scaleSync = useTransform(distance, [-150, 0, 150], [1, 1.3, 1]);
 
-  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
-  let heightTransformIcon = useTransform(
-    distance,
-    [-150, 0, 150],
-    [20, 40, 20],
-  );
-
-  let width = useSpring(widthTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-  let height = useSpring(heightTransform, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-
-  let widthIcon = useSpring(widthTransformIcon, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-  let heightIcon = useSpring(heightTransformIcon, {
-    mass: 0.1,
-    stiffness: 150,
-    damping: 12,
-  });
-
-  const [hovered, setHovered] = useState(false);
+  const springConfig = { mass: 0.15, stiffness: 120, damping: 14 };
+  const height = useSpring(heightSync, springConfig);
+  const paddingX = useSpring(paddingSync, springConfig);
+  const scale = useSpring(scaleSync, springConfig);
 
   return (
-    <a href={href}>
+    <a href={href} className="group">
       <motion.div
         ref={ref}
-        style={{ width, height }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800"
+        style={{ height, paddingLeft: paddingX, paddingRight: paddingX }}
+        className={cn(
+          "relative flex items-center justify-center rounded-full bg-neutral-800 transition-all duration-500 ease-out hover:bg-white",
+          isActive && "ring-[0.75px] ring-white"
+        )}
       >
-        <AnimatePresence>
-          {hovered && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, x: "-50%" }}
-              animate={{ opacity: 1, y: 0, x: "-50%" }}
-              exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-8 left-1/2 w-fit rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs whitespace-pre text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white"
-            >
-              {title}
-            </motion.div>
-          )}
-        </AnimatePresence>
         <motion.div
-          style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center"
+          style={{ scale }}
+          className="relative flex items-center justify-center text-white/90 group-hover:text-neutral-900 transition-colors duration-500 ease-out"
         >
           {icon}
         </motion.div>
