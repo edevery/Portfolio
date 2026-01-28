@@ -80,7 +80,7 @@ const FloatingDockMobile = ({
                   onClick={() => onNavigate?.(item.href)}
                   className={cn(
                     "flex h-8 items-center justify-center rounded-full px-7 transition-colors duration-300",
-                    item.isActive ? "bg-white text-neutral-900" : "bg-neutral-800 text-white/90"
+                    item.isActive ? "bg-white text-[#171717]" : "bg-neutral-800 text-white/90"
                   )}
                 >
                   <div>{item.icon}</div>
@@ -110,20 +110,31 @@ const FloatingDockDesktop = ({
   onNavigate?: (href: string) => void;
 }) => {
   const mouseX = useMotionValue(Infinity);
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
 
   return (
     <>
       <GooeyFilter />
       <motion.div
         onMouseMove={(e: React.MouseEvent) => mouseX.set(e.clientX)}
-        onMouseLeave={() => mouseX.set(Infinity)}
+        onMouseLeave={() => {
+          mouseX.set(Infinity);
+          setHoveredHref(null);
+        }}
         className={cn(
           "mx-auto hidden h-auto items-center gap-1.5 rounded-full bg-gray-50 px-3 py-2 md:flex dark:bg-neutral-900",
           className,
         )}
       >
         {items.map((item) => (
-          <IconContainer mouseX={mouseX} key={item.title} {...item} onNavigate={onNavigate} />
+          <IconContainer
+            mouseX={mouseX}
+            key={item.title}
+            {...item}
+            onNavigate={onNavigate}
+            onHover={setHoveredHref}
+            siblingHovered={hoveredHref !== null && hoveredHref !== item.href}
+          />
         ))}
       </motion.div>
     </>
@@ -154,6 +165,8 @@ function IconContainer({
   href,
   isActive,
   onNavigate,
+  onHover,
+  siblingHovered,
 }: {
   mouseX: MotionValue<number>;
   title: string;
@@ -162,10 +175,15 @@ function IconContainer({
   isActive?: boolean;
   isPending?: boolean;
   onNavigate?: (href: string) => void;
+  onHover?: (href: string | null) => void;
+  siblingHovered?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [entryX, setEntryX] = useState(0); // 0-100, where mouse entered
+
+  // Show active styling only if this is the active page AND no sibling is hovered
+  const showActiveStyle = isActive && !siblingHovered;
 
   const distance = useTransform(mouseX, (val: number) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
@@ -182,19 +200,19 @@ function IconContainer({
   const scale = useSpring(scaleSync, springConfig);
 
   const handleMouseEnter = (e: React.MouseEvent) => {
-    if (isActive) return;
     const bounds = ref.current?.getBoundingClientRect();
     if (bounds) {
-      // Calculate where mouse entered as percentage (0-100)
       const relativeX = e.clientX - bounds.x;
       const percentage = Math.max(0, Math.min(100, (relativeX / bounds.width) * 100));
       setEntryX(percentage);
     }
     setIsHovered(true);
+    onHover?.(href);
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
+    onHover?.(null);
   };
 
   return (
@@ -202,42 +220,32 @@ function IconContainer({
       <motion.div
         ref={ref}
         style={{ height, paddingLeft: paddingX, paddingRight: paddingX }}
-        className={cn(
-          "relative flex items-center justify-center rounded-full overflow-hidden",
-          isActive ? "bg-white" : "bg-neutral-800"
-        )}
+        className="relative flex items-center justify-center rounded-full overflow-hidden bg-neutral-800"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Gooey fill that expands from mouse entry point */}
-        {!isActive && (
-          <motion.div
-            className="absolute inset-0 bg-white rounded-full"
-            style={{ filter: "url(#gooey-nav)" }}
-            initial={false}
-            animate={{
-              clipPath: isHovered
-                ? `circle(150% at ${entryX}% 50%)`
-                : `circle(0% at ${entryX}% 50%)`,
-            }}
-            transition={{
-              duration: 0.5,
-              ease: [0.32, 0.72, 0, 1], // Custom ease for organic feel
-            }}
-          />
-        )}
+        <motion.div
+          className="absolute inset-0 bg-white rounded-full"
+          style={{ filter: "url(#gooey-nav)" }}
+          initial={false}
+          animate={{
+            clipPath: isHovered || showActiveStyle
+              ? `circle(150% at ${entryX}% 50%)`
+              : `circle(0% at ${entryX}% 50%)`,
+          }}
+          transition={{
+            duration: 0.5,
+            ease: [0.32, 0.72, 0, 1],
+          }}
+        />
         <motion.div
           style={{ scale }}
-          className={cn(
-            "relative z-10 flex items-center justify-center",
-            isActive
-              ? "text-neutral-900"
-              : "text-white/90"
-          )}
+          className="relative z-10 flex items-center justify-center text-white/90"
         >
           <motion.span
             animate={{
-              color: isHovered && !isActive ? "#171717" : isActive ? "#171717" : "rgba(255,255,255,0.9)",
+              color: isHovered || showActiveStyle ? "#171717" : "rgba(255,255,255,0.9)",
             }}
             transition={{ duration: 0.3, delay: isHovered ? 0.1 : 0 }}
           >

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useState, useEffect } from "react";
+import { FC, ReactNode } from "react";
 import { FloatingDock } from "./floating-dock";
 
 /**
@@ -66,15 +66,6 @@ const HomepageLayout: FC<HomepageLayoutProps> = ({
   children,
   showNav = true,
 }) => {
-  const [viewportWidth, setViewportWidth] = useState(0);
-
-  useEffect(() => {
-    const updateWidth = () => setViewportWidth(window.innerWidth);
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
   return (
     <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden">
       {/*
@@ -102,10 +93,6 @@ const HomepageLayout: FC<HomepageLayoutProps> = ({
         </div>
       )}
 
-      {/* DEBUG: Remove this */}
-      <div className="fixed top-4 left-4 bg-white/90 text-black px-3 py-2 rounded font-mono text-sm z-50">
-        {viewportWidth}px
-      </div>
     </div>
   );
 };
