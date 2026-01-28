@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, FC } from "react";
 import * as THREE from "three";
+import { SHIMMER_CONFIG, getShimmerPosition } from "@/lib/shimmer-config";
 
 const vertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -115,6 +116,16 @@ const EmilySdfCanvas: FC<EmilySdfCanvasProps> = ({
     let w = 1,
       h = 1;
 
+    // Shimmer animation state
+    let shimmerPhase: "waiting" | "fading" | "shimmering" | "complete" =
+      "waiting";
+    let shimmerStartTime = 0;
+    let loadTime = 0;
+
+    // Start hidden for fade-in
+    mount.style.opacity = "0";
+    mount.style.transition = `opacity ${SHIMMER_CONFIG.FADE_DURATION_MS}ms ease-out`;
+
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 1);
 
@@ -153,12 +164,23 @@ const EmilySdfCanvas: FC<EmilySdfCanvasProps> = ({
 
     const onPointerMove = (e: PointerEvent | MouseEvent) => {
       if (!mount) return;
+      if (shimmerPhase !== "complete") shimmerPhase = "complete";
       const rect = mount.getBoundingClientRect();
       vMouse.set(e.clientX - rect.left, e.clientY - rect.top);
     };
 
+    const onTouchMove = (e: TouchEvent) => {
+      if (!mount || e.touches.length === 0) return;
+      if (shimmerPhase !== "complete") shimmerPhase = "complete";
+      const touch = e.touches[0];
+      const rect = mount.getBoundingClientRect();
+      vMouse.set(touch.clientX - rect.left, touch.clientY - rect.top);
+    };
+
     document.addEventListener("mousemove", onPointerMove);
     document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("touchmove", onTouchMove, { passive: true });
+    document.addEventListener("touchstart", onTouchMove, { passive: true });
 
     const resize = () => {
       if (!mountRef.current) return;
@@ -182,8 +204,33 @@ const EmilySdfCanvas: FC<EmilySdfCanvasProps> = ({
 
     const update = () => {
       const time = performance.now() * 0.001;
+      const now = performance.now();
       const dt = time - lastTime;
       lastTime = time;
+
+      // Initialize load time on first frame
+      if (loadTime === 0) {
+        loadTime = now;
+        shimmerStartTime = now + SHIMMER_CONFIG.DELAY_MS;
+        const startPos = getShimmerPosition(0, w, h);
+        vMouse.set(startPos.x, startPos.y);
+        vMouseDamp.set(startPos.x, startPos.y);
+      }
+
+      // Handle shimmer phases
+      if (shimmerPhase === "waiting") {
+        mount.style.opacity = "1";
+        shimmerPhase = "fading";
+      } else if (shimmerPhase === "fading") {
+        if (now >= shimmerStartTime) shimmerPhase = "shimmering";
+        const shimmerPos = getShimmerPosition(0, w, h);
+        vMouse.set(shimmerPos.x, shimmerPos.y);
+      } else if (shimmerPhase === "shimmering") {
+        const elapsed = now - shimmerStartTime;
+        const shimmerPos = getShimmerPosition(elapsed, w, h);
+        vMouse.set(shimmerPos.x, shimmerPos.y);
+        if (shimmerPos.complete) shimmerPhase = "complete";
+      }
 
       // Smooth mouse following
       vMouseDamp.x = THREE.MathUtils.damp(vMouseDamp.x, vMouse.x, 8, dt);
@@ -202,6 +249,8 @@ const EmilySdfCanvas: FC<EmilySdfCanvasProps> = ({
       ro.disconnect();
       document.removeEventListener("mousemove", onPointerMove);
       document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchstart", onTouchMove);
       mount.removeChild(renderer.domElement);
       renderer.dispose();
       sdfTexture.dispose();
