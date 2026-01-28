@@ -115,6 +115,7 @@ const FloatingDockDesktop = ({
         className,
       )}
       onMouseLeave={() => setHoveredHref(null)}
+      data-cursor="nav"
     >
       {items.map((item) => (
         <Link

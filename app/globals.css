@@ -28,6 +28,13 @@ body {
   min-height: 100vh;
 }
 
+/* Hide default cursor on desktop when custom cursor is active */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
 @keyframes shiny-text {
   0%,
   90%,

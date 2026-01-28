@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navigation/navbar";
 import { DateDisplay } from "@/components/ui/date-display";
 import { TitleDisplay } from "@/components/ui/title-display";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
+import { CustomCursor } from "@/components/ui/custom-cursor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +56,7 @@ export default function RootLayout({
         <DateDisplay />
         {children}
         <Navbar />
+        <CustomCursor />
       </body>
     </html>
   );
