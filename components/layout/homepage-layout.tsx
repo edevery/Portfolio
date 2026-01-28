@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { FloatingDock } from "./floating-dock";
+import { FloatingDock } from "@/components/navigation/floating-dock";
 
 /**
  * HomepageLayout - Responsive wrapper for homepage canvas components

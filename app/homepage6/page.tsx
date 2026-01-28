@@ -1,5 +1,5 @@
-import HomepageLayout from "@/components/ui/homepage-layout";
-import EmilyMsdfCanvasV3 from "@/components/ui/emily-msdf-canvas-v3";
+import HomepageLayout from "@/components/layout/homepage-layout";
+import EmilyMsdfCanvasV3 from "@/components/canvas/emily-msdf-canvas-v3";
 
 export default function Homepage6() {
   return (

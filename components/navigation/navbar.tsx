@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
 import { FloatingDock } from "./floating-dock";
 
 const navLinks = [
@@ -14,12 +13,6 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const [pendingHref, setPendingHref] = useState<string | null>(null);
-
-  // Clear pending state when navigation completes
-  useEffect(() => {
-    setPendingHref(null);
-  }, [pathname]);
 
   const links = navLinks.map((link) => ({
     ...link,
@@ -28,14 +21,12 @@ export function Navbar() {
         {link.title}
       </span>
     ),
-    // Show as active if it's the current path OR if we're navigating to it
-    isActive: pathname === link.href || pendingHref === link.href,
-    isPending: pendingHref === link.href,
+    isActive: pathname === link.href,
   }));
 
   return (
     <div className="fixed bottom-8 left-0 right-0 flex justify-center z-50">
-      <FloatingDock items={links} onNavigate={setPendingHref} />
+      <FloatingDock items={links} />
     </div>
   );
 }
