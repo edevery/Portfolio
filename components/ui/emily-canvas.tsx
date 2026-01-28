@@ -169,11 +169,11 @@ const EmilyCanvas: FC<EmilyCanvasProps> = ({
       });
     };
 
-    let rtText = createRenderTarget();
-    let rtBlur1 = createRenderTarget(0.5);
-    let rtBlur2 = createRenderTarget(0.25);
-    let rtBlur3 = createRenderTarget(0.125);
-    let rtTemp = createRenderTarget(0.5);
+    const rtText = createRenderTarget();
+    const rtBlur1 = createRenderTarget(0.5);
+    const rtBlur2 = createRenderTarget(0.25);
+    const rtBlur3 = createRenderTarget(0.125);
+    const rtTemp = createRenderTarget(0.5);
 
     // Offscreen canvas for text
     const offscreenCanvas = document.createElement("canvas");

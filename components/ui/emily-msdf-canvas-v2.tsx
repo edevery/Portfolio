@@ -23,64 +23,50 @@ uniform float u_circleEdge;
 uniform float u_borderSize;
 uniform float u_time;
 
-// MSDF: take median of RGB channels to get the signed distance
 float median(float r, float g, float b) {
     return max(min(r, g), min(max(r, g), b));
 }
 
-// Stroke with anti-aliasing and variable edge softness
-float strokeAA(float x, float size, float w, float edge) {
-    float afwidth = length(vec2(dFdx(x), dFdy(x))) * 0.70710678;
-    float d = smoothstep(size - edge - afwidth, size + edge + afwidth, x + w * 0.5)
-            - smoothstep(size - edge - afwidth, size + edge + afwidth, x - w * 0.5);
-    return clamp(d, 0.0, 1.0);
-}
-
 void main() {
-    // Mouse position in UV space
     vec2 mouseUV = u_mouse / (u_resolution / u_pixelRatio);
     mouseUV.y = 1.0 - mouseUV.y;
 
-    // Aspect ratio correction for circular mouse influence
     vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
     float dist = length((vUv - mouseUV) * aspect);
 
-    // Mouse influence with LARGE falloff range (like original's circleEdge=0.5)
-    // This creates gradual effect over significant distance
+    // Moderate influence range
     float mouseInfluence = 1.0 - smoothstep(u_circleSize - u_circleEdge, u_circleSize + u_circleEdge, dist);
 
-    // Direction towards mouse
+    // Subtle curve boost
+    mouseInfluence = pow(mouseInfluence, 0.8);
+
     vec2 toMouse = mouseUV - vUv;
 
-    // MULTI-SAMPLE TRAIL: Sample at multiple points towards the mouse
-    // This creates the "drawn towards" smear effect without gray circles
     float result = 0.0;
     float totalWeight = 0.0;
 
-    const int SAMPLES = 24; // More samples = smoother
-    float maxPull = 0.35;
+    const int SAMPLES = 20;
+    float maxPull = 0.4; // Moderate pull
 
     for (int i = 0; i < SAMPLES; i++) {
         float t = float(i) / float(SAMPLES - 1);
 
-        // Smooth easing for more natural distribution
-        float tEased = t * t * (3.0 - 2.0 * t); // smoothstep easing
+        // Cubic easing - smooth acceleration
+        float tEased = t * t * (3.0 - 2.0 * t);
 
-        // Pull strength increases along the trail
         float pullStrength = mouseInfluence * maxPull * tEased;
         vec2 sampleUV = vUv + toMouse * pullStrength;
 
-        // Sample MSDF at this position
         vec3 msdfSample = texture2D(u_msdfTexture, sampleUV).rgb;
         float sdfSample = median(msdfSample.r, msdfSample.g, msdfSample.b);
         float sdf = (0.5 - sdfSample) * 2.0;
 
-        // MUCH softer edges - base softness higher, increases along trail
-        float edgeSoft = 0.08 + tEased * mouseInfluence * 0.25;
+        // Moderate softness with gradual increase
+        float edgeSoft = 0.06 + tEased * mouseInfluence * 0.2;
         float filled = 1.0 - smoothstep(-edgeSoft, edgeSoft, sdf);
 
-        // Smooth gaussian-like weight falloff
-        float weight = exp(-t * t * 2.0) * (0.3 + mouseInfluence * 0.7);
+        // Smooth inverse falloff
+        float weight = 1.0 / (1.0 + t * 2.0) * (0.4 + mouseInfluence * 0.6);
 
         result += filled * weight;
         totalWeight += weight;
@@ -88,35 +74,33 @@ void main() {
 
     result /= totalWeight;
 
-    // Boost intensity
-    float stroke = clamp(result * 1.4, 0.0, 1.0);
+    // Balanced intensity
+    float stroke = clamp(result * 1.35, 0.0, 1.0);
 
-    // Subtle animated gradient
-    float gradientSpeed = 0.15;
-    float gradientScale = 1.5;
+    // Animated gradient - slightly faster, more contrast
+    float gradientSpeed = 0.25;
+    float gradientScale = 2.0;
     float wave1 = sin((vUv.x + vUv.y * 0.5) * gradientScale + u_time * gradientSpeed) * 0.5 + 0.5;
     float wave2 = sin((vUv.x * 0.7 - vUv.y * 0.3) * gradientScale * 1.3 + u_time * gradientSpeed * 0.7) * 0.5 + 0.5;
     float combinedWave = mix(wave1, wave2, 0.5);
-    float brightness = 0.88 + combinedWave * 0.12;
+    float brightness = 0.82 + combinedWave * 0.18;
 
     vec3 color = vec3(brightness);
-    float alpha = stroke;
-
-    gl_FragColor = vec4(color, alpha);
+    gl_FragColor = vec4(color, stroke);
 }
 `;
 
-interface EmilyMsdfCanvasProps {
+interface EmilyMsdfCanvasV2Props {
   className?: string;
   circleSize?: number;
   circleEdge?: number;
   borderSize?: number;
 }
 
-const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
+const EmilyMsdfCanvasV2: FC<EmilyMsdfCanvasV2Props> = ({
   className = "",
-  circleSize = 0.3,
-  circleEdge = 0.5,
+  circleSize = 0.35,
+  circleEdge = 0.55,
   borderSize = 0.45,
 }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -145,7 +129,6 @@ const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
-    // Load the MSDF texture
     const textureLoader = new THREE.TextureLoader();
     const msdfTexture = textureLoader.load("/Assets/emily-msdf.png");
     msdfTexture.minFilter = THREE.LinearFilter;
@@ -205,8 +188,9 @@ const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
       const dt = time - lastTime;
       lastTime = time;
 
-      vMouseDamp.x = THREE.MathUtils.damp(vMouseDamp.x, vMouse.x, 8, dt);
-      vMouseDamp.y = THREE.MathUtils.damp(vMouseDamp.y, vMouse.y, 8, dt);
+      // Slightly smoother mouse following than homepage3
+      vMouseDamp.x = THREE.MathUtils.damp(vMouseDamp.x, vMouse.x, 6, dt);
+      vMouseDamp.y = THREE.MathUtils.damp(vMouseDamp.y, vMouse.y, 6, dt);
 
       material.uniforms.u_time.value = time;
 
@@ -230,4 +214,4 @@ const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
   return <div ref={mountRef} className={`w-full h-full ${className}`} />;
 };
 
-export default EmilyMsdfCanvas;
+export default EmilyMsdfCanvasV2;

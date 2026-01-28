@@ -11,6 +11,11 @@ void main() {
 }
 `;
 
+// IRIDESCENT COLOR SYSTEM
+// Inspired by: mother of pearl, soap bubbles, beetle shells
+// Colors shift based on position, mouse proximity, and time
+// Creating a living, breathing palette
+
 const fragmentShader = /* glsl */ `
 varying vec2 vUv;
 
@@ -23,100 +28,157 @@ uniform float u_circleEdge;
 uniform float u_borderSize;
 uniform float u_time;
 
-// MSDF: take median of RGB channels to get the signed distance
 float median(float r, float g, float b) {
     return max(min(r, g), min(max(r, g), b));
 }
 
-// Stroke with anti-aliasing and variable edge softness
-float strokeAA(float x, float size, float w, float edge) {
-    float afwidth = length(vec2(dFdx(x), dFdy(x))) * 0.70710678;
-    float d = smoothstep(size - edge - afwidth, size + edge + afwidth, x + w * 0.5)
-            - smoothstep(size - edge - afwidth, size + edge + afwidth, x - w * 0.5);
-    return clamp(d, 0.0, 1.0);
+// HSL to RGB conversion for natural color mixing
+vec3 hsl2rgb(vec3 hsl) {
+    float h = hsl.x;
+    float s = hsl.y;
+    float l = hsl.z;
+
+    float c = (1.0 - abs(2.0 * l - 1.0)) * s;
+    float x = c * (1.0 - abs(mod(h * 6.0, 2.0) - 1.0));
+    float m = l - c * 0.5;
+
+    vec3 rgb;
+    if (h < 1.0/6.0) rgb = vec3(c, x, 0.0);
+    else if (h < 2.0/6.0) rgb = vec3(x, c, 0.0);
+    else if (h < 3.0/6.0) rgb = vec3(0.0, c, x);
+    else if (h < 4.0/6.0) rgb = vec3(0.0, x, c);
+    else if (h < 5.0/6.0) rgb = vec3(x, 0.0, c);
+    else rgb = vec3(c, 0.0, x);
+
+    return rgb + m;
 }
 
 void main() {
-    // Mouse position in UV space
     vec2 mouseUV = u_mouse / (u_resolution / u_pixelRatio);
     mouseUV.y = 1.0 - mouseUV.y;
 
-    // Aspect ratio correction for circular mouse influence
     vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
     float dist = length((vUv - mouseUV) * aspect);
 
-    // Mouse influence with LARGE falloff range (like original's circleEdge=0.5)
-    // This creates gradual effect over significant distance
     float mouseInfluence = 1.0 - smoothstep(u_circleSize - u_circleEdge, u_circleSize + u_circleEdge, dist);
+    mouseInfluence = pow(mouseInfluence, 0.8);
 
-    // Direction towards mouse
     vec2 toMouse = mouseUV - vUv;
 
-    // MULTI-SAMPLE TRAIL: Sample at multiple points towards the mouse
-    // This creates the "drawn towards" smear effect without gray circles
     float result = 0.0;
     float totalWeight = 0.0;
+    float colorShift = 0.0; // Track how far along the trail we are for color
 
-    const int SAMPLES = 24; // More samples = smoother
-    float maxPull = 0.35;
+    const int SAMPLES = 16;
+    float maxPull = 0.33;
 
     for (int i = 0; i < SAMPLES; i++) {
         float t = float(i) / float(SAMPLES - 1);
+        float tEased = t * t * (3.0 - 2.0 * t);
 
-        // Smooth easing for more natural distribution
-        float tEased = t * t * (3.0 - 2.0 * t); // smoothstep easing
-
-        // Pull strength increases along the trail
         float pullStrength = mouseInfluence * maxPull * tEased;
         vec2 sampleUV = vUv + toMouse * pullStrength;
 
-        // Sample MSDF at this position
         vec3 msdfSample = texture2D(u_msdfTexture, sampleUV).rgb;
         float sdfSample = median(msdfSample.r, msdfSample.g, msdfSample.b);
         float sdf = (0.5 - sdfSample) * 2.0;
 
-        // MUCH softer edges - base softness higher, increases along trail
-        float edgeSoft = 0.08 + tEased * mouseInfluence * 0.25;
+        float edgeSoft = 0.03 + tEased * mouseInfluence * 0.08;
         float filled = 1.0 - smoothstep(-edgeSoft, edgeSoft, sdf);
 
-        // Smooth gaussian-like weight falloff
-        float weight = exp(-t * t * 2.0) * (0.3 + mouseInfluence * 0.7);
+        float weight = 1.0 / (1.0 + t * 2.0) * (0.4 + mouseInfluence * 0.6);
 
         result += filled * weight;
+        colorShift += filled * weight * t; // Accumulate trail position for color
         totalWeight += weight;
     }
 
     result /= totalWeight;
+    colorShift /= totalWeight;
 
-    // Boost intensity
-    float stroke = clamp(result * 1.4, 0.0, 1.0);
+    float stroke = clamp(result * 1.35, 0.0, 1.0);
 
-    // Subtle animated gradient
-    float gradientSpeed = 0.15;
-    float gradientScale = 1.5;
-    float wave1 = sin((vUv.x + vUv.y * 0.5) * gradientScale + u_time * gradientSpeed) * 0.5 + 0.5;
-    float wave2 = sin((vUv.x * 0.7 - vUv.y * 0.3) * gradientScale * 1.3 + u_time * gradientSpeed * 0.7) * 0.5 + 0.5;
-    float combinedWave = mix(wave1, wave2, 0.5);
-    float brightness = 0.88 + combinedWave * 0.12;
+    // === PANTONE-GRADE BLUE PALETTE SYSTEM ===
+    // Base: #85c3ed (HSL: 204°, 72%, 73%)
+    // Philosophy: Sophisticated monochromatic harmony
+    // Tints, shades, and tones within the azure family
 
-    vec3 color = vec3(brightness);
-    float alpha = stroke;
+    // Base hue: 204° = 0.567 in 0-1 range
+    // Allowed range: 195°-215° (0.542 - 0.597) - stays in blue family
+    float baseHue = 0.567;
 
-    gl_FragColor = vec4(color, alpha);
+    // 1. SPATIAL DEPTH: Subtle hue shift across canvas
+    //    Slightly more cyan (cooler) top-left, slightly more azure (warmer) bottom-right
+    float spatialHue = baseHue + (vUv.x * 0.3 + vUv.y * 0.2 - 0.25) * 0.025;
+
+    // 2. TIME BREATHING: Micro hue oscillation - barely perceptible
+    float timeShift = sin(u_time * 0.25) * 0.012;
+
+    // 3. MOUSE ENERGY: Proximity intensifies toward pure azure
+    //    Subtle shift toward slightly deeper blue (more presence)
+    float mouseHueShift = mouseInfluence * 0.015;
+
+    // 4. TRAIL DEPTH: Further along trail = slightly deeper tone
+    float trailHueShift = colorShift * mouseInfluence * 0.02;
+
+    // Final hue - constrained to blue family
+    float finalHue = clamp(spatialHue + timeShift + mouseHueShift + trailHueShift, 0.54, 0.60);
+
+    // 5. SATURATION SYSTEM
+    //    Base: 72% (the original color's saturation)
+    //    Rest state: slightly desaturated (sophisticated)
+    //    Active state: full saturation (vibrant)
+    float baseSat = 0.72;
+    float restSat = 0.55;  // Muted at rest - more refined
+    float activeSat = 0.78; // Vibrant when engaged
+    float saturation = mix(restSat, activeSat, mouseInfluence);
+
+    // Spatial saturation variation - edges slightly more muted
+    float edgeFade = smoothstep(0.0, 0.3, min(min(vUv.x, 1.0-vUv.x), min(vUv.y, 1.0-vUv.y)));
+    saturation *= 0.85 + edgeFade * 0.15;
+
+    // 6. LIGHTNESS SYSTEM - This is where the tints/shades live
+    //    Base: 73% (original)
+    //    Range: 45% (deep shade) to 82% (bright tint)
+    float baseLightness = 0.73;
+
+    // Spatial lightness: subtle diagonal gradient
+    float spatialLight = 0.68 + (vUv.x * 0.5 + vUv.y * 0.5) * 0.12;
+
+    // Breathing lightness
+    float breathe = sin(u_time * 0.4 + vUv.x * 2.0) * 0.04;
+
+    // Mouse proximity brightens (tint shift)
+    float mouseBrighten = mouseInfluence * 0.12;
+
+    // Trail darkens slightly toward the end (shade shift)
+    float trailDarken = colorShift * mouseInfluence * -0.08;
+
+    float lightness = clamp(spatialLight + breathe + mouseBrighten + trailDarken, 0.45, 0.85);
+
+    // Convert to RGB
+    vec3 color = hsl2rgb(vec3(finalHue, saturation, lightness));
+
+    // 7. HIGHLIGHT: Crisp white accent at interaction point
+    //    Like light on water - keeps it fresh
+    float highlight = pow(mouseInfluence, 4.0) * 0.25;
+    color = mix(color, vec3(0.95, 0.97, 1.0), highlight); // Slightly cool white
+
+    gl_FragColor = vec4(color, stroke);
 }
 `;
 
-interface EmilyMsdfCanvasProps {
+interface EmilyMsdfCanvasV5Props {
   className?: string;
   circleSize?: number;
   circleEdge?: number;
   borderSize?: number;
 }
 
-const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
+const EmilyMsdfCanvasV5: FC<EmilyMsdfCanvasV5Props> = ({
   className = "",
-  circleSize = 0.3,
-  circleEdge = 0.5,
+  circleSize = 0.25,
+  circleEdge = 0.3,
   borderSize = 0.45,
 }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -145,7 +207,6 @@ const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
-    // Load the MSDF texture
     const textureLoader = new THREE.TextureLoader();
     const msdfTexture = textureLoader.load("/Assets/emily-msdf.png");
     msdfTexture.minFilter = THREE.LinearFilter;
@@ -205,8 +266,8 @@ const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
       const dt = time - lastTime;
       lastTime = time;
 
-      vMouseDamp.x = THREE.MathUtils.damp(vMouseDamp.x, vMouse.x, 8, dt);
-      vMouseDamp.y = THREE.MathUtils.damp(vMouseDamp.y, vMouse.y, 8, dt);
+      vMouseDamp.x = THREE.MathUtils.damp(vMouseDamp.x, vMouse.x, 6, dt);
+      vMouseDamp.y = THREE.MathUtils.damp(vMouseDamp.y, vMouse.y, 6, dt);
 
       material.uniforms.u_time.value = time;
 
@@ -230,4 +291,4 @@ const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
   return <div ref={mountRef} className={`w-full h-full ${className}`} />;
 };
 
-export default EmilyMsdfCanvas;
+export default EmilyMsdfCanvasV5;

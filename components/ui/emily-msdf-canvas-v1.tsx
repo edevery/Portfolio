@@ -57,17 +57,14 @@ void main() {
     float result = 0.0;
     float totalWeight = 0.0;
 
-    const int SAMPLES = 24; // More samples = smoother
-    float maxPull = 0.35;
+    const int SAMPLES = 12;
+    float maxPull = 0.35; // Maximum pull distance
 
     for (int i = 0; i < SAMPLES; i++) {
         float t = float(i) / float(SAMPLES - 1);
 
-        // Smooth easing for more natural distribution
-        float tEased = t * t * (3.0 - 2.0 * t); // smoothstep easing
-
         // Pull strength increases along the trail
-        float pullStrength = mouseInfluence * maxPull * tEased;
+        float pullStrength = mouseInfluence * maxPull * t;
         vec2 sampleUV = vUv + toMouse * pullStrength;
 
         // Sample MSDF at this position
@@ -75,12 +72,13 @@ void main() {
         float sdfSample = median(msdfSample.r, msdfSample.g, msdfSample.b);
         float sdf = (0.5 - sdfSample) * 2.0;
 
-        // MUCH softer edges - base softness higher, increases along trail
-        float edgeSoft = 0.08 + tEased * mouseInfluence * 0.25;
+        // Soft edge that increases with distance along trail
+        float edgeSoft = 0.02 + t * mouseInfluence * 0.15;
         float filled = 1.0 - smoothstep(-edgeSoft, edgeSoft, sdf);
 
-        // Smooth gaussian-like weight falloff
-        float weight = exp(-t * t * 2.0) * (0.3 + mouseInfluence * 0.7);
+        // Weight: samples closer to original position have more weight
+        // But also fade based on how far along the trail
+        float weight = (1.0 - t * 0.6) * (0.3 + mouseInfluence * 0.7);
 
         result += filled * weight;
         totalWeight += weight;
@@ -89,7 +87,7 @@ void main() {
     result /= totalWeight;
 
     // Boost intensity
-    float stroke = clamp(result * 1.4, 0.0, 1.0);
+    float stroke = clamp(result * 1.3, 0.0, 1.0);
 
     // Subtle animated gradient
     float gradientSpeed = 0.15;
@@ -106,14 +104,14 @@ void main() {
 }
 `;
 
-interface EmilyMsdfCanvasProps {
+interface EmilyMsdfCanvasV1Props {
   className?: string;
   circleSize?: number;
   circleEdge?: number;
   borderSize?: number;
 }
 
-const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
+const EmilyMsdfCanvasV1: FC<EmilyMsdfCanvasV1Props> = ({
   className = "",
   circleSize = 0.3,
   circleEdge = 0.5,
@@ -230,4 +228,4 @@ const EmilyMsdfCanvas: FC<EmilyMsdfCanvasProps> = ({
   return <div ref={mountRef} className={`w-full h-full ${className}`} />;
 };
 
-export default EmilyMsdfCanvas;
+export default EmilyMsdfCanvasV1;
