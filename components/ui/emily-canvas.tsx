@@ -118,16 +118,12 @@ void main() {
 
 interface EmilyCanvasProps {
   className?: string;
-  width?: number;
-  height?: number;
   circleSize?: number;
   circleEdge?: number;
 }
 
 const EmilyCanvas: FC<EmilyCanvasProps> = ({
   className = "",
-  width = 1600,
-  height = 900,
   circleSize = 0.5,
   circleEdge = 0.6,
 }) => {
@@ -384,13 +380,7 @@ const EmilyCanvas: FC<EmilyCanvasProps> = ({
     };
   }, [circleSize, circleEdge]);
 
-  return (
-    <div
-      ref={mountRef}
-      className={`w-full h-full ${className}`}
-      style={{ width, height }}
-    />
-  );
+  return <div ref={mountRef} className={`w-full h-full ${className}`} />;
 };
 
 export default EmilyCanvas;
