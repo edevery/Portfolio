@@ -106,10 +106,10 @@ void main() {
     float wave1 = sin((vUv.x + vUv.y * 0.5) * gradientScale + u_time * gradientSpeed) * 0.5 + 0.5;
     float wave2 = sin((vUv.x * 0.7 - vUv.y * 0.3) * gradientScale * 1.3 + u_time * gradientSpeed * 0.7) * 0.5 + 0.5;
     float combinedWave = mix(wave1, wave2, 0.5);
-    
+
     // Map to subtle grey range (0.85 to 1.0 for very subtle effect)
     float brightness = 0.88 + combinedWave * 0.12;
-    
+
     vec3 gradientColor = vec3(brightness);
 
     gl_FragColor = vec4(gradientColor, finalColor.a);
@@ -128,7 +128,7 @@ const EmilyCanvas: FC<EmilyCanvasProps> = ({
   className = "",
   width = 1600,
   height = 900,
-  circleSize = 0.35,
+  circleSize = 0.5,
   circleEdge = 0.6,
 }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);

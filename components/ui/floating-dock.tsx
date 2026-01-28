@@ -7,6 +7,7 @@
  **/
 
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import {
   AnimatePresence,
@@ -69,13 +70,16 @@ const FloatingDockMobile = ({
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
               >
-                <a
+                <Link
                   href={item.href}
                   key={item.title}
-                  className="flex h-6 items-center justify-center rounded-full bg-gray-50 px-5 dark:bg-neutral-900"
+                  className={cn(
+                    "flex h-6 items-center justify-center rounded-full px-5 transition-colors duration-300",
+                    item.isActive ? "bg-white text-neutral-900" : "bg-neutral-800 text-white/90"
+                  )}
                 >
                   <div>{item.icon}</div>
-                </a>
+                </Link>
               </motion.div>
             ))}
           </motion.div>
@@ -118,7 +122,6 @@ const FloatingDockDesktop = ({
 
 function IconContainer({
   mouseX,
-  title,
   icon,
   href,
   isActive,
@@ -146,22 +149,25 @@ function IconContainer({
   const scale = useSpring(scaleSync, springConfig);
 
   return (
-    <a href={href} className="group">
+    <Link href={href} className="group">
       <motion.div
         ref={ref}
         style={{ height, paddingLeft: paddingX, paddingRight: paddingX }}
         className={cn(
-          "relative flex items-center justify-center rounded-full bg-neutral-800 transition-all duration-500 ease-out hover:bg-white",
-          isActive && "ring-[0.75px] ring-white"
+          "relative flex items-center justify-center rounded-full transition-all duration-300",
+          isActive ? "bg-white" : "bg-neutral-800 hover:ring-1 hover:ring-white"
         )}
       >
         <motion.div
           style={{ scale }}
-          className="relative flex items-center justify-center text-white/90 group-hover:text-neutral-900 transition-colors duration-500 ease-out"
+          className={cn(
+            "flex items-center justify-center transition-colors duration-300",
+            isActive ? "text-neutral-900" : "text-white/90"
+          )}
         >
           {icon}
         </motion.div>
       </motion.div>
-    </a>
+    </Link>
   );
 }
