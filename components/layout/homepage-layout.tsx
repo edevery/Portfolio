@@ -1,71 +1,19 @@
 "use client";
 
 import { FC, ReactNode } from "react";
-import { FloatingDock } from "@/components/navigation/floating-dock";
 
 /**
  * HomepageLayout - Responsive wrapper for homepage canvas components
  *
  * Text sizing: 80% of viewport width at all sizes
+ * Note: Navigation is handled by the root layout's Navbar component
  */
-
-const navLinks = [
-  {
-    title: "Home",
-    icon: (
-      <span className="text-[10px] font-medium group-hover:font-extrabold transition-all duration-700 ease-out font-[family-name:var(--font-inter)] tracking-wider">
-        Home
-      </span>
-    ),
-    href: "/",
-  },
-  {
-    title: "Work",
-    icon: (
-      <span className="text-[10px] font-medium group-hover:font-extrabold transition-all duration-700 ease-out font-[family-name:var(--font-inter)] tracking-wider">
-        Work
-      </span>
-    ),
-    href: "/work",
-  },
-  {
-    title: "Archive",
-    icon: (
-      <span className="text-[10px] font-medium group-hover:font-extrabold transition-all duration-700 ease-out font-[family-name:var(--font-inter)] tracking-wider">
-        Archive
-      </span>
-    ),
-    href: "/archive",
-  },
-  {
-    title: "Play",
-    icon: (
-      <span className="text-[10px] font-medium group-hover:font-extrabold transition-all duration-700 ease-out font-[family-name:var(--font-inter)] tracking-wider">
-        Play
-      </span>
-    ),
-    href: "/play",
-  },
-  {
-    title: "About",
-    icon: (
-      <span className="text-[10px] font-medium group-hover:font-extrabold transition-all duration-700 ease-out font-[family-name:var(--font-inter)] tracking-wider">
-        About
-      </span>
-    ),
-    href: "/about",
-  },
-];
 
 interface HomepageLayoutProps {
   children: ReactNode;
-  showNav?: boolean;
 }
 
-const HomepageLayout: FC<HomepageLayoutProps> = ({
-  children,
-  showNav = true,
-}) => {
+const HomepageLayout: FC<HomepageLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden">
       {/*
@@ -86,13 +34,6 @@ const HomepageLayout: FC<HomepageLayoutProps> = ({
       >
         {children}
       </div>
-
-      {showNav && (
-        <div className="fixed bottom-8 left-0 right-0 flex justify-center z-10">
-          <FloatingDock items={navLinks} />
-        </div>
-      )}
-
     </div>
   );
 };

@@ -9,16 +9,8 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
-import {
-  AnimatePresence,
-  MotionValue,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-
-import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 export const FloatingDock = ({
   items,
@@ -79,8 +71,8 @@ const FloatingDockMobile = ({
                   key={item.title}
                   onClick={() => onNavigate?.(item.href)}
                   className={cn(
-                    "flex h-8 items-center justify-center rounded-full px-7 transition-colors duration-300",
-                    item.isActive ? "bg-white text-[#171717]" : "bg-neutral-800 text-white/90"
+                    "flex h-12 items-center justify-center rounded-full px-10 transition-colors duration-300 backdrop-blur-xl border border-white/20",
+                    item.isActive ? "bg-white/90 text-[#171717]" : "bg-white/10 text-white/90"
                   )}
                 >
                   <div>{item.icon}</div>
@@ -92,9 +84,9 @@ const FloatingDockMobile = ({
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-800"
+        className="flex h-[84px] w-[84px] items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20"
       >
-        <IconLayoutNavbarCollapse className="h-7 w-7 text-neutral-500 dark:text-neutral-400" />
+        <IconLayoutNavbarCollapse className="h-10 w-10 text-white/70" />
       </button>
     </div>
   );
@@ -109,150 +101,51 @@ const FloatingDockDesktop = ({
   className?: string;
   onNavigate?: (href: string) => void;
 }) => {
-  const mouseX = useMotionValue(Infinity);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
 
+  // Determine which item should have the pill (hovered takes priority, then active)
+  const activeHref = items.find((item) => item.isActive)?.href;
+  const highlightedHref = hoveredHref ?? activeHref;
+
   return (
-    <>
-      <GooeyFilter />
-      <motion.div
-        onMouseMove={(e: React.MouseEvent) => mouseX.set(e.clientX)}
-        onMouseLeave={() => {
-          mouseX.set(Infinity);
-          setHoveredHref(null);
-        }}
-        className={cn(
-          "mx-auto hidden h-auto items-center gap-1.5 rounded-full bg-gray-50 px-3 py-2 md:flex dark:bg-neutral-900",
-          className,
-        )}
-      >
-        {items.map((item) => (
-          <IconContainer
-            mouseX={mouseX}
-            key={item.title}
-            {...item}
-            onNavigate={onNavigate}
-            onHover={setHoveredHref}
-            siblingHovered={hoveredHref !== null && hoveredHref !== item.href}
-          />
-        ))}
-      </motion.div>
-    </>
+    <div
+      className={cn(
+        "mx-auto hidden h-auto items-center rounded-full p-1.5 md:flex",
+        "bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg shadow-black/5",
+        className,
+      )}
+      onMouseLeave={() => setHoveredHref(null)}
+    >
+      {items.map((item) => (
+        <Link
+          key={item.title}
+          href={item.href}
+          onClick={() => onNavigate?.(item.href)}
+          onMouseEnter={() => setHoveredHref(item.href)}
+          className="relative flex h-12 items-center justify-center px-7"
+        >
+          {/* Sliding pill background */}
+          {highlightedHref === item.href && (
+            <motion.div
+              layoutId="nav-pill"
+              className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-full"
+              transition={{
+                type: "spring",
+                stiffness: 400,
+                damping: 30,
+              }}
+            />
+          )}
+          <span
+            className={cn(
+              "relative z-10 text-[14px] transition-all duration-200 font-[family-name:var(--font-inter)] tracking-wider",
+              highlightedHref === item.href ? "text-neutral-900 font-semibold" : "text-white/90 font-medium"
+            )}
+          >
+            {item.title}
+          </span>
+        </Link>
+      ))}
+    </div>
   );
 };
-
-// SVG filter for gooey effect - renders once, used by all icons
-const GooeyFilter = () => (
-  <svg className="absolute w-0 h-0" aria-hidden="true">
-    <defs>
-      <filter id="gooey-nav">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-        <feColorMatrix
-          in="blur"
-          mode="matrix"
-          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10"
-          result="goo"
-        />
-        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-      </filter>
-    </defs>
-  </svg>
-);
-
-function IconContainer({
-  mouseX,
-  icon,
-  href,
-  isActive,
-  onNavigate,
-  onHover,
-  siblingHovered,
-}: {
-  mouseX: MotionValue<number>;
-  title: string;
-  icon: React.ReactNode;
-  href: string;
-  isActive?: boolean;
-  isPending?: boolean;
-  onNavigate?: (href: string) => void;
-  onHover?: (href: string | null) => void;
-  siblingHovered?: boolean;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [entryX, setEntryX] = useState(0); // 0-100, where mouse entered
-
-  // Show active styling only if this is the active page AND no sibling is hovered
-  const showActiveStyle = isActive && !siblingHovered;
-
-  const distance = useTransform(mouseX, (val: number) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  const heightSync = useTransform(distance, [-210, 0, 210], [36, 53, 36]);
-  const paddingSync = useTransform(distance, [-210, 0, 210], [17, 34, 17]);
-  const scaleSync = useTransform(distance, [-210, 0, 210], [1, 1.3, 1]);
-
-  const springConfig = { mass: 0.15, stiffness: 120, damping: 14 };
-  const height = useSpring(heightSync, springConfig);
-  const paddingX = useSpring(paddingSync, springConfig);
-  const scale = useSpring(scaleSync, springConfig);
-
-  const handleMouseEnter = (e: React.MouseEvent) => {
-    const bounds = ref.current?.getBoundingClientRect();
-    if (bounds) {
-      const relativeX = e.clientX - bounds.x;
-      const percentage = Math.max(0, Math.min(100, (relativeX / bounds.width) * 100));
-      setEntryX(percentage);
-    }
-    setIsHovered(true);
-    onHover?.(href);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    onHover?.(null);
-  };
-
-  return (
-    <Link href={href} className="group" onClick={() => onNavigate?.(href)}>
-      <motion.div
-        ref={ref}
-        style={{ height, paddingLeft: paddingX, paddingRight: paddingX }}
-        className="relative flex items-center justify-center rounded-full overflow-hidden bg-neutral-800"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Gooey fill that expands from mouse entry point */}
-        <motion.div
-          className="absolute inset-0 bg-white rounded-full"
-          style={{ filter: "url(#gooey-nav)" }}
-          initial={false}
-          animate={{
-            clipPath: isHovered || showActiveStyle
-              ? `circle(150% at ${entryX}% 50%)`
-              : `circle(0% at ${entryX}% 50%)`,
-          }}
-          transition={{
-            duration: 0.5,
-            ease: [0.32, 0.72, 0, 1],
-          }}
-        />
-        <motion.div
-          style={{ scale }}
-          className="relative z-10 flex items-center justify-center text-white/90"
-        >
-          <motion.span
-            animate={{
-              color: isHovered || showActiveStyle ? "#171717" : "rgba(255,255,255,0.9)",
-            }}
-            transition={{ duration: 0.3, delay: isHovered ? 0.1 : 0 }}
-          >
-            {icon}
-          </motion.span>
-        </motion.div>
-      </motion.div>
-    </Link>
-  );
-}

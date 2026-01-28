@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navigation/navbar";
+import { DateDisplay } from "@/components/ui/date-display";
+import { TitleDisplay } from "@/components/ui/title-display";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +48,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
+        <span className="fixed top-6 left-6 text-xs font-medium font-[family-name:var(--font-inter)] z-50">
+          <AnimatedShinyText className="text-white/60">Made in NYC</AnimatedShinyText>
+        </span>
+        <TitleDisplay />
+        <DateDisplay />
         {children}
         <Navbar />
       </body>
