@@ -1,4 +1,5 @@
 import { FloatingDock } from "@/components/ui/floating-dock";
+import EmilyCanvas from "@/components/ui/emily-canvas";
 
 export default function Home() {
   const links = [
@@ -31,7 +32,8 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <EmilyCanvas width={1600} height={900} />
       <div className="fixed bottom-8 left-0 right-0 flex justify-center">
         <FloatingDock items={links} />
       </div>
