@@ -12,6 +12,7 @@ import {
   Line,
 } from "@react-three/drei";
 import { easing } from "maath";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
 // Archive items organized by category
 type ArchiveCategory = "identity" | "graphic" | "illustration" | "layout" | "art direction";
@@ -83,7 +84,7 @@ const FEATURED_ASPECT = 9 / 16; // 0.5625 - portrait for featured card
 
 // Size multipliers
 const CAROUSEL_SIZE = 0.7; // smaller cards in carousel
-const FEATURED_SIZE = 5.5; // larger featured card for hero presence
+const FEATURED_SIZE = 6.5; // larger featured card for hero presence
 
 export function ArchiveSection() {
   const [keyboardIndex, setKeyboardIndex] = useState<number | null>(null);
@@ -140,7 +141,7 @@ export function ArchiveSection() {
         <Suspense fallback={null}>
           <ScrollControls pages={4} infinite>
             <Scene
-              position={[0, 1.5, 0]}
+              position={[0, 0.5, 0]}
               keyboardIndex={keyboardIndex}
               setKeyboardIndex={setKeyboardIndex}
               onExpand={handleExpand}
@@ -175,6 +176,41 @@ export function ArchiveSection() {
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Controls legend - bottom right corner */}
+      {!expandedItem && (
+        <div className="fixed bottom-4 right-4 flex flex-col items-end gap-1 text-white/50 text-[10px] font-mono group">
+          <div className="flex items-center gap-1.5">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">navigate</span>
+            <div className="flex gap-0.5">
+              <span className="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 text-sm leading-none">
+                <AnimatedShinyText shimmerWidth={40}>←</AnimatedShinyText>
+              </span>
+              <span className="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 text-sm leading-none">
+                <AnimatedShinyText shimmerWidth={40}>→</AnimatedShinyText>
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">expand</span>
+            <span className="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 text-sm leading-none">
+              <AnimatedShinyText shimmerWidth={40}>↵</AnimatedShinyText>
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">close</span>
+            <span className="px-1.5 py-0.5 rounded border border-white/15 bg-white/5">
+              <AnimatedShinyText shimmerWidth={50}>esc</AnimatedShinyText>
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity">browse</span>
+            <span className="px-1.5 py-0.5 rounded border border-white/15 bg-white/5">
+              <AnimatedShinyText shimmerWidth={60}>scroll</AnimatedShinyText>
+            </span>
           </div>
         </div>
       )}
