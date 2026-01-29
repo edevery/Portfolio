@@ -14,71 +14,71 @@ import {
 import { easing } from "maath";
 
 // Archive items organized by category
-type ArchiveCategory = "identity" | "product" | "experiential" | "graphic";
+type ArchiveCategory = "identity" | "graphic" | "illustration" | "layout" | "art direction";
 
 interface ArchiveItem {
   id: string;
   title: string;
-  category: ArchiveCategory;
+  categories: ArchiveCategory[];
   image: string;
 }
 
 // Archive-specific items (older/additional projects not in main work section)
 const archiveItems: ArchiveItem[] = [
-  // Adidas Poster & Box (6 images) - experiential
-  { id: "a1", title: "Adidas\nPoster & Box", category: "experiential", image: "/archive/project-Adidas Poster & Box-1.png" },
-  { id: "a2", title: "Adidas\nPoster & Box", category: "experiential", image: "/archive/project-Adidas Poster & Box-2.png" },
-  { id: "a3", title: "Adidas\nPoster & Box", category: "experiential", image: "/archive/project-Adidas Poster & Box-3.png" },
-  { id: "a4", title: "Adidas\nPoster & Box", category: "experiential", image: "/archive/project-Adidas Poster & Box-4.png" },
-  { id: "a5", title: "Adidas\nPoster & Box", category: "experiential", image: "/archive/project-Adidas Poster & Box-5.png" },
-  { id: "a6", title: "Adidas\nPoster & Box", category: "experiential", image: "/archive/project-Adidas Poster & Box-6.png" },
+  // Adidas Poster & Box (6 images) - graphic
+  { id: "a1", title: "Adidas\nPoster & Box", categories: ["graphic"], image: "/archive/project-Adidas Poster & Box-1.png" },
+  { id: "a2", title: "Adidas\nPoster & Box", categories: ["graphic"], image: "/archive/project-Adidas Poster & Box-2.png" },
+  { id: "a3", title: "Adidas\nPoster & Box", categories: ["graphic"], image: "/archive/project-Adidas Poster & Box-3.png" },
+  { id: "a4", title: "Adidas\nPoster & Box", categories: ["graphic"], image: "/archive/project-Adidas Poster & Box-4.png" },
+  { id: "a5", title: "Adidas\nPoster & Box", categories: ["graphic"], image: "/archive/project-Adidas Poster & Box-5.png" },
+  { id: "a6", title: "Adidas\nPoster & Box", categories: ["graphic"], image: "/archive/project-Adidas Poster & Box-6.png" },
   // Annie Chun's Noodles (3 images) - graphic
-  { id: "a7", title: "Annie Chun's\nNoodles", category: "graphic", image: "/archive/project-Annie Chun's Noodles-1.png" },
-  { id: "a8", title: "Annie Chun's\nNoodles", category: "graphic", image: "/archive/project-Annie Chun's Noodles-2.png" },
-  { id: "a9", title: "Annie Chun's\nNoodles", category: "graphic", image: "/archive/project-Annie Chun's Noodles-3.png" },
-  // Eharmony: Sexual Harmony (8 images) - product
-  { id: "a10", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-1.png" },
-  { id: "a11", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-2.png" },
-  { id: "a12", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-3.png" },
-  { id: "a13", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-4.png" },
-  { id: "a14", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-5.png" },
-  { id: "a15", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-6.png" },
-  { id: "a16", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-7.png" },
-  { id: "a17", title: "Eharmony:\nSexual Harmony", category: "product", image: "/archive/project-Eharmony: Sexual Harmony-8.png" },
-  // Grime Magazine (6 images) - graphic
-  { id: "a18", title: "Grime Magazine", category: "graphic", image: "/archive/project-Grime Magazine-1.png" },
-  { id: "a19", title: "Grime Magazine", category: "graphic", image: "/archive/project-Grime Magazine-2.png" },
-  { id: "a20", title: "Grime Magazine", category: "graphic", image: "/archive/project-Grime Magazine-3.png" },
-  { id: "a21", title: "Grime Magazine", category: "graphic", image: "/archive/project-Grime Magazine-4.png" },
-  { id: "a22", title: "Grime Magazine", category: "graphic", image: "/archive/project-Grime Magazine-5.png" },
-  { id: "a23", title: "Grime Magazine", category: "graphic", image: "/archive/project-Grime Magazine-6.png" },
-  // Jack Johnson Album Cover (2 images) - graphic
-  { id: "a24", title: "Jack Johnson\nAlbum Cover", category: "graphic", image: "/archive/project-Jack Johnson Album Cover-1.png" },
-  { id: "a25", title: "Jack Johnson\nAlbum Cover", category: "graphic", image: "/archive/project-Jack Johnson Album Cover-2.png" },
+  { id: "a7", title: "Annie Chun's\nNoodles", categories: ["graphic"], image: "/archive/project-Annie Chun's Noodles-1.png" },
+  { id: "a8", title: "Annie Chun's\nNoodles", categories: ["graphic"], image: "/archive/project-Annie Chun's Noodles-2.png" },
+  { id: "a9", title: "Annie Chun's\nNoodles", categories: ["graphic"], image: "/archive/project-Annie Chun's Noodles-3.png" },
+  // Eharmony: Sexual Harmony (8 images) - illustration, graphic
+  { id: "a10", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-1.png" },
+  { id: "a11", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-2.png" },
+  { id: "a12", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-3.png" },
+  { id: "a13", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-4.png" },
+  { id: "a14", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-5.png" },
+  { id: "a15", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-6.png" },
+  { id: "a16", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-7.png" },
+  { id: "a17", title: "Eharmony:\nSexual Harmony", categories: ["illustration", "graphic"], image: "/archive/project-Eharmony: Sexual Harmony-8.png" },
+  // Grime Magazine (6 images) - layout
+  { id: "a18", title: "Grime\nMagazine", categories: ["layout"], image: "/archive/project-Grime Magazine-1.png" },
+  { id: "a19", title: "Grime\nMagazine", categories: ["layout"], image: "/archive/project-Grime Magazine-2.png" },
+  { id: "a20", title: "Grime\nMagazine", categories: ["layout"], image: "/archive/project-Grime Magazine-3.png" },
+  { id: "a21", title: "Grime\nMagazine", categories: ["layout"], image: "/archive/project-Grime Magazine-4.png" },
+  { id: "a22", title: "Grime\nMagazine", categories: ["layout"], image: "/archive/project-Grime Magazine-5.png" },
+  { id: "a23", title: "Grime\nMagazine", categories: ["layout"], image: "/archive/project-Grime Magazine-6.png" },
+  // Jack Johnson Album Cover (2 images) - illustration, graphic
+  { id: "a24", title: "Jack Johnson\nAlbum Cover", categories: ["illustration", "graphic"], image: "/archive/project-Jack Johnson Album Cover-1.png" },
+  { id: "a25", title: "Jack Johnson\nAlbum Cover", categories: ["illustration", "graphic"], image: "/archive/project-Jack Johnson Album Cover-2.png" },
   // Lidl Christmas (5 images) - graphic
-  { id: "a26", title: "Lidl\nChristmas", category: "graphic", image: "/archive/project-Lidl Christmas-1.png" },
-  { id: "a27", title: "Lidl\nChristmas", category: "graphic", image: "/archive/project-Lidl Christmas-2.png" },
-  { id: "a28", title: "Lidl\nChristmas", category: "graphic", image: "/archive/project-Lidl Christmas-3.png" },
-  { id: "a29", title: "Lidl\nChristmas", category: "graphic", image: "/archive/project-Lidl Christmas-4.png" },
-  { id: "a30", title: "Lidl\nChristmas", category: "graphic", image: "/archive/project-Lidl Christmas-5.png" },
+  { id: "a26", title: "Lidl\nChristmas", categories: ["graphic"], image: "/archive/project-Lidl Christmas-1.png" },
+  { id: "a27", title: "Lidl\nChristmas", categories: ["graphic"], image: "/archive/project-Lidl Christmas-2.png" },
+  { id: "a28", title: "Lidl\nChristmas", categories: ["graphic"], image: "/archive/project-Lidl Christmas-3.png" },
+  { id: "a29", title: "Lidl\nChristmas", categories: ["graphic"], image: "/archive/project-Lidl Christmas-4.png" },
+  { id: "a30", title: "Lidl\nChristmas", categories: ["graphic"], image: "/archive/project-Lidl Christmas-5.png" },
   // Motel 6 Concept (3 images) - identity
-  { id: "a31", title: "Motel 6\nConcept", category: "identity", image: "/archive/project-Motel 6 Concept-1.png" },
-  { id: "a32", title: "Motel 6\nConcept", category: "identity", image: "/archive/project-Motel 6 Concept-2.png" },
-  { id: "a33", title: "Motel 6\nConcept", category: "identity", image: "/archive/project-Motel 6 Concept-3.png" },
-  // She Who Returns (1 image) - identity
-  { id: "a34", title: "She Who\nReturns", category: "identity", image: "/archive/project-She Who Returns-1.png" },
+  { id: "a31", title: "Motel 6\nConcept", categories: ["identity"], image: "/archive/project-Motel 6 Concept-1.png" },
+  { id: "a32", title: "Motel 6\nConcept", categories: ["identity"], image: "/archive/project-Motel 6 Concept-2.png" },
+  { id: "a33", title: "Motel 6\nConcept", categories: ["identity"], image: "/archive/project-Motel 6 Concept-3.png" },
+  // She Who Returns (1 image) - identity, graphic
+  { id: "a34", title: "She Who\nReturns", categories: ["identity", "graphic"], image: "/archive/project-She Who Returns-1.png" },
   // Spanx Shapewear (3 images) - graphic
-  { id: "a35", title: "Spanx\nShapewear", category: "graphic", image: "/archive/project-Spanx Shapewear-1.png" },
-  { id: "a36", title: "Spanx\nShapewear", category: "graphic", image: "/archive/project-Spanx Shapewear-2.png" },
-  { id: "a37", title: "Spanx\nShapewear", category: "graphic", image: "/archive/project-Spanx Shapewear-3.png" },
-  // Spanx White Pants (3 images) - graphic
-  { id: "a38", title: "Spanx\nWhite Pants", category: "graphic", image: "/archive/project-Spanx White Pants-1.png" },
-  { id: "a39", title: "Spanx\nWhite Pants", category: "graphic", image: "/archive/project-Spanx White Pants-2.png" },
-  { id: "a40", title: "Spanx\nWhite Pants", category: "graphic", image: "/archive/project-Spanx White Pants-3.png" },
+  { id: "a35", title: "Spanx\nShapewear", categories: ["graphic"], image: "/archive/project-Spanx Shapewear-1.png" },
+  { id: "a36", title: "Spanx\nShapewear", categories: ["graphic"], image: "/archive/project-Spanx Shapewear-2.png" },
+  { id: "a37", title: "Spanx\nShapewear", categories: ["graphic"], image: "/archive/project-Spanx Shapewear-3.png" },
+  // Spanx White Pants (3 images) - art direction
+  { id: "a38", title: "Spanx\nWhite Pants", categories: ["art direction"], image: "/archive/project-Spanx White Pants-1.png" },
+  { id: "a39", title: "Spanx\nWhite Pants", categories: ["art direction"], image: "/archive/project-Spanx White Pants-2.png" },
+  { id: "a40", title: "Spanx\nWhite Pants", categories: ["art direction"], image: "/archive/project-Spanx White Pants-3.png" },
 ];
 
 // Aspect ratios
-const CAROUSEL_ASPECT = 16 / 9; // 1.778 - landscape for carousel cards
+const CAROUSEL_ASPECT = 4 / 3; // 1.333 - slightly landscape for carousel cards
 const FEATURED_ASPECT = 9 / 16; // 0.5625 - portrait for featured card
 
 // Size multipliers
@@ -106,7 +106,7 @@ function Scene({
 }) {
   const ref = useRef<THREE.Group>(null);
   const scroll = useScroll();
-  const [hovered, setHovered] = useState<{ category: ArchiveCategory; index: number; item: ArchiveItem } | null>(null);
+  const [hovered, setHovered] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
 
   useFrame((state, delta) => {
     if (!ref.current) return;
@@ -121,8 +121,8 @@ function Scene({
     state.camera.lookAt(0, 0, 0);
   });
 
-  const handlePointerOver = useCallback((category: ArchiveCategory, index: number, item: ArchiveItem) => {
-    setHovered({ category, index, item });
+  const handlePointerOver = useCallback((categories: ArchiveCategory[], index: number, item: ArchiveItem) => {
+    setHovered({ categories, index, item });
   }, []);
 
   const handlePointerOut = useCallback(() => {
@@ -149,7 +149,7 @@ function Cards({
 }: {
   items: ArchiveItem[];
   radius?: number;
-  onPointerOver: (category: ArchiveCategory, index: number, item: ArchiveItem) => void;
+  onPointerOver: (categories: ArchiveCategory[], index: number, item: ArchiveItem) => void;
   onPointerOut: () => void;
 }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -166,7 +166,7 @@ function Cards({
             onPointerOver={(e: ThreeEvent<PointerEvent>) => {
               e.stopPropagation();
               setHoveredIndex(i);
-              onPointerOver(item.category, i, item);
+              onPointerOver(item.categories, i, item);
             }}
             onPointerOut={() => {
               setHoveredIndex(null);
@@ -227,7 +227,7 @@ function ActiveCard({
   hovered,
   ...props
 }: {
-  hovered: { category: ArchiveCategory; index: number; item: ArchiveItem } | null;
+  hovered: { categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null;
 }) {
   const ref = useRef<THREE.Group>(null);
 
@@ -274,9 +274,9 @@ function ActiveCard({
             >
               {hovered.item.title}
             </Text>
-            {/* Category tag - below the title with pill outline */}
-            <CategoryPill
-              category={hovered.category}
+            {/* Category tags - below the title with pill outlines */}
+            <CategoryPills
+              categories={hovered.categories}
               position={[FEATURED_SIZE * FEATURED_ASPECT / 2 + 0.6, 1.5 + FEATURED_SIZE / 2 - 2.1, 0]}
             />
           </>
@@ -317,39 +317,59 @@ function createPillPoints(width: number, height: number, segments = 16): [number
   return points;
 }
 
-function CategoryPill({
-  category,
+function CategoryPills({
+  categories,
   position,
 }: {
-  category: ArchiveCategory;
+  categories: ArchiveCategory[];
   position: [number, number, number];
 }) {
-  const text = category.toUpperCase();
-  const pillWidth = text.length * 0.11 + 0.4; // Dynamic width based on text length
   const pillHeight = 0.32;
-  const pillPoints = createPillPoints(pillWidth, pillHeight);
+  const gap = 0.15;
+
+  // Calculate widths for each pill
+  const pillData = categories.map((cat) => {
+    const text = cat.toUpperCase();
+    const width = text.length * 0.11 + 0.4;
+    return { text, width };
+  });
+
+  // Calculate x positions for each pill
+  let currentX = 0;
+  const pillsWithPositions = pillData.map((pill) => {
+    const x = currentX;
+    currentX += pill.width + gap;
+    return { ...pill, x };
+  });
 
   return (
     <group position={position}>
-      {/* Pill outline */}
-      <Line
-        points={pillPoints}
-        color="white"
-        lineWidth={1}
-        position={[pillWidth / 2, 0, 0]}
-      />
-      {/* Category text */}
-      <Text
-        position={[pillWidth / 2, 0, 0]}
-        fontSize={0.16}
-        fontWeight={500}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-        letterSpacing={0.05}
-      >
-        {text}
-      </Text>
+      {pillsWithPositions.map((pill, i) => {
+        const pillPoints = createPillPoints(pill.width, pillHeight);
+        return (
+          <group key={i} position={[pill.x, 0, 0]}>
+            {/* Pill outline */}
+            <Line
+              points={pillPoints}
+              color="white"
+              lineWidth={1}
+              position={[pill.width / 2, 0, 0]}
+            />
+            {/* Category text */}
+            <Text
+              position={[pill.width / 2, 0, 0]}
+              fontSize={0.16}
+              fontWeight={500}
+              color="white"
+              anchorX="center"
+              anchorY="middle"
+              letterSpacing={0.05}
+            >
+              {pill.text}
+            </Text>
+          </group>
+        );
+      })}
     </group>
   );
 }
