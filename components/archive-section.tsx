@@ -87,9 +87,26 @@ const FEATURED_SIZE = 5.5; // larger featured card for hero presence
 
 export function ArchiveSection() {
   const [keyboardIndex, setKeyboardIndex] = useState<number | null>(null);
+  const [expandedItem, setExpandedItem] = useState<ArchiveItem | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Close expanded view on Escape
+      if (e.key === "Escape" && expandedItem) {
+        setExpandedItem(null);
+        return;
+      }
+
+      // Don't handle other keys when expanded
+      if (expandedItem) return;
+
+      // Open expanded view on Enter when a card is selected
+      if (e.key === "Enter" && keyboardIndex !== null) {
+        e.preventDefault();
+        setExpandedItem(archiveItems[keyboardIndex]);
+        return;
+      }
+
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         setKeyboardIndex((prev) => {
@@ -107,6 +124,14 @@ export function ArchiveSection() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [expandedItem, keyboardIndex]);
+
+  const handleExpand = useCallback((item: ArchiveItem) => {
+    setExpandedItem(item);
+  }, []);
+
+  const handleCloseExpanded = useCallback(() => {
+    setExpandedItem(null);
   }, []);
 
   return (
@@ -118,10 +143,41 @@ export function ArchiveSection() {
               position={[0, 1.5, 0]}
               keyboardIndex={keyboardIndex}
               setKeyboardIndex={setKeyboardIndex}
+              onExpand={handleExpand}
             />
           </ScrollControls>
         </Suspense>
       </Canvas>
+
+      {/* Expanded view overlay */}
+      {expandedItem && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 cursor-pointer"
+          onClick={handleCloseExpanded}
+        >
+          <div
+            className="relative max-h-[calc(100vh-4rem)] flex items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={expandedItem.image}
+              alt={expandedItem.title}
+              className="max-h-[calc(100vh-4rem)] w-auto object-contain rounded-2xl"
+            />
+            {/* Close button with liquid glass effect - positioned on image corner */}
+            <button
+              onClick={handleCloseExpanded}
+              className="absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all shadow-lg"
+              aria-label="Close expanded view"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -129,11 +185,13 @@ export function ArchiveSection() {
 function Scene({
   keyboardIndex,
   setKeyboardIndex,
+  onExpand,
   ...props
 }: {
   position?: [number, number, number];
   keyboardIndex: number | null;
   setKeyboardIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  onExpand: (item: ArchiveItem) => void;
 }) {
   const ref = useRef<THREE.Group>(null);
   const scroll = useScroll();
@@ -177,7 +235,7 @@ function Scene({
         keyboardIndex={keyboardIndex}
         isHovering={hovered !== null}
       />
-      <ActiveCard hovered={activeSelection} />
+      <ActiveCard hovered={activeSelection} onExpand={onExpand} />
     </group>
   );
 }
@@ -275,9 +333,11 @@ function Card({
 
 function ActiveCard({
   hovered,
+  onExpand,
   ...props
 }: {
   hovered: { categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null;
+  onExpand: (item: ArchiveItem) => void;
 }) {
   const ref = useRef<THREE.Group>(null);
 
@@ -297,6 +357,12 @@ function ActiveCard({
     const targetOpacity = hovered !== null ? 1 : 0;
     ref.current.visible = targetOpacity > 0.01 || hovered !== null;
   });
+
+  const handleExpandClick = useCallback(() => {
+    if (hovered) {
+      onExpand(hovered.item);
+    }
+  }, [hovered, onExpand]);
 
   return (
     <Billboard {...props}>
@@ -329,6 +395,60 @@ function ActiveCard({
               categories={hovered.categories}
               position={[FEATURED_SIZE * FEATURED_ASPECT / 2 + 0.6, 1.5 + FEATURED_SIZE / 2 - 2.1, 0]}
             />
+            {/* Expand button - diagonal arrow at bottom right of featured card with liquid glass effect */}
+            <group
+              position={[FEATURED_SIZE * FEATURED_ASPECT / 2 - 0.35, 1.5 - FEATURED_SIZE / 2 + 0.35, 0.1]}
+              onClick={handleExpandClick}
+              onPointerOver={() => { document.body.style.cursor = 'pointer'; }}
+              onPointerOut={() => { document.body.style.cursor = 'auto'; }}
+            >
+              {/* Drop shadow behind button */}
+              <mesh position={[0, 0, -0.01]}>
+                <circleGeometry args={[0.22, 32]} />
+                <meshBasicMaterial color="#000000" transparent opacity={0.5} />
+              </mesh>
+              {/* Button background circle - liquid glass effect */}
+              <mesh>
+                <circleGeometry args={[0.22, 32]} />
+                <meshBasicMaterial color="#ffffff" transparent opacity={0.15} />
+              </mesh>
+              {/* Button border ring */}
+              <Line
+                points={Array.from({ length: 33 }, (_, i) => {
+                  const angle = (i / 32) * Math.PI * 2;
+                  return [Math.cos(angle) * 0.22, Math.sin(angle) * 0.22, 0.01] as [number, number, number];
+                })}
+                color="#ffffff"
+                lineWidth={1}
+                transparent
+                opacity={0.3}
+              />
+              {/* Diagonal arrow using lines - white for glass effect */}
+              <Line
+                points={[
+                  [-0.07, -0.07, 0.02],
+                  [0.07, 0.07, 0.02],
+                ]}
+                color="white"
+                lineWidth={2}
+              />
+              <Line
+                points={[
+                  [0.07, 0.07, 0.02],
+                  [-0.01, 0.07, 0.02],
+                ]}
+                color="white"
+                lineWidth={2}
+              />
+              <Line
+                points={[
+                  [0.07, 0.07, 0.02],
+                  [0.07, -0.01, 0.02],
+                ]}
+                color="white"
+                lineWidth={2}
+              />
+            </group>
           </>
         )}
       </group>
