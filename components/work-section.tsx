@@ -45,7 +45,7 @@ const workItems: WorkItem[] = [
     description: "AI-Powered Relationship Companion designed to keep the flame alive.",
     categories: ["product", "identity", "generative"],
     image: "/Thumbnails/Vesta.png",
-    accentColor: "#e11d48",
+    accentColor: "#fe9f28",
     className: "md:col-span-2",
   },
   {
@@ -54,7 +54,7 @@ const workItems: WorkItem[] = [
     description: "A flexible brand system designed to evolve with business.",
     categories: ["identity", "art direction", "graphic"],
     image: "/Thumbnails/ComcastBusiness.png",
-    accentColor: "#2563eb",
+    accentColor: "#7eecb4",
     className: "md:col-span-1",
   },
   // Row 2: Link + Instacart + BMW Championship
@@ -82,7 +82,7 @@ const workItems: WorkItem[] = [
     description: "Experiential design built around ultimate performance.",
     categories: ["art direction", "experiential", "identity"],
     image: "/Thumbnails/BMWChampionship.png",
-    accentColor: "#1d4ed8",
+    accentColor: "#1a1a1a",
     className: "md:col-span-1",
   },
   // Row 3: BMW + Zaxbys
