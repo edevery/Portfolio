@@ -1,7 +1,7 @@
 "use client";
 
 import * as THREE from "three";
-import { Suspense, useLayoutEffect, useRef, useState, useCallback } from "react";
+import { Suspense, useLayoutEffect, useRef, useState, useCallback, useEffect } from "react";
 import { Canvas, useFrame, ThreeEvent } from "@react-three/fiber";
 import {
   Image,
@@ -86,12 +86,39 @@ const CAROUSEL_SIZE = 0.7; // smaller cards in carousel
 const FEATURED_SIZE = 5.5; // larger featured card for hero presence
 
 export function ArchiveSection() {
+  const [keyboardIndex, setKeyboardIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setKeyboardIndex((prev) => {
+          const current = prev ?? 0;
+          return (current - 1 + archiveItems.length) % archiveItems.length;
+        });
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setKeyboardIndex((prev) => {
+          const current = prev ?? -1;
+          return (current + 1) % archiveItems.length;
+        });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
-    <div className="w-full h-screen bg-black">
+    <div className="w-full h-screen bg-black" tabIndex={0}>
       <Canvas dpr={[1, 1.5]} gl={{ alpha: false }} onCreated={({ gl }) => gl.setClearColor('#000000')}>
         <Suspense fallback={null}>
           <ScrollControls pages={4} infinite>
-            <Scene position={[0, 1.5, 0]} />
+            <Scene
+              position={[0, 1.5, 0]}
+              keyboardIndex={keyboardIndex}
+              setKeyboardIndex={setKeyboardIndex}
+            />
           </ScrollControls>
         </Suspense>
       </Canvas>
@@ -100,13 +127,24 @@ export function ArchiveSection() {
 }
 
 function Scene({
+  keyboardIndex,
+  setKeyboardIndex,
   ...props
 }: {
   position?: [number, number, number];
+  keyboardIndex: number | null;
+  setKeyboardIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }) {
   const ref = useRef<THREE.Group>(null);
   const scroll = useScroll();
   const [hovered, setHovered] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
+
+  // Determine what to show in the featured card (hover takes priority over keyboard)
+  const activeSelection = hovered ?? (keyboardIndex !== null ? {
+    categories: archiveItems[keyboardIndex].categories,
+    index: keyboardIndex,
+    item: archiveItems[keyboardIndex],
+  } : null);
 
   useFrame((state, delta) => {
     if (!ref.current) return;
@@ -123,7 +161,8 @@ function Scene({
 
   const handlePointerOver = useCallback((categories: ArchiveCategory[], index: number, item: ArchiveItem) => {
     setHovered({ categories, index, item });
-  }, []);
+    setKeyboardIndex(index); // Update keyboard index to match hover position
+  }, [setKeyboardIndex]);
 
   const handlePointerOut = useCallback(() => {
     setHovered(null);
@@ -135,8 +174,10 @@ function Scene({
         items={archiveItems}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
+        keyboardIndex={keyboardIndex}
+        isHovering={hovered !== null}
       />
-      <ActiveCard hovered={hovered} />
+      <ActiveCard hovered={activeSelection} />
     </group>
   );
 }
@@ -146,11 +187,15 @@ function Cards({
   radius = 5.25,
   onPointerOver,
   onPointerOut,
+  keyboardIndex,
+  isHovering,
 }: {
   items: ArchiveItem[];
   radius?: number;
   onPointerOver: (categories: ArchiveCategory[], index: number, item: ArchiveItem) => void;
   onPointerOut: () => void;
+  keyboardIndex: number | null;
+  isHovering: boolean;
 }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const amount = items.length;
@@ -160,6 +205,7 @@ function Cards({
       {items.map((item, i) => {
         // Distribute evenly around full circle
         const angle = (i / amount) * Math.PI * 2;
+        const isKeyboardSelected = !isHovering && keyboardIndex === i;
         return (
           <Card
             key={item.id}
@@ -174,8 +220,9 @@ function Cards({
             }}
             position={[Math.sin(angle) * radius, 0, Math.cos(angle) * radius]}
             rotation={[0, Math.PI / 2 + angle, 0]}
-            active={hoveredIndex !== null}
+            active={hoveredIndex !== null || keyboardIndex !== null}
             hovered={hoveredIndex === i}
+            keyboardSelected={isKeyboardSelected}
             url={item.image}
           />
         );
@@ -188,22 +235,25 @@ function Card({
   url,
   active,
   hovered,
+  keyboardSelected,
   ...props
 }: {
   url: string;
   active: boolean;
   hovered: boolean;
+  keyboardSelected: boolean;
   position: [number, number, number];
   rotation: [number, number, number];
   onPointerOver: (e: ThreeEvent<PointerEvent>) => void;
   onPointerOut: () => void;
 }) {
   const ref = useRef<THREE.Group>(null);
+  const isHighlighted = hovered || keyboardSelected;
 
   useFrame((_, delta) => {
     if (!ref.current) return;
-    const f = hovered ? 1.4 : active ? 1.25 : 1;
-    easing.damp3(ref.current.position, [0, hovered ? 0.25 : 0, 0], 0.1, delta);
+    const f = isHighlighted ? 1.4 : active ? 1.25 : 1;
+    easing.damp3(ref.current.position, [0, isHighlighted ? 0.25 : 0, 0], 0.1, delta);
     easing.damp3(ref.current.scale, [CAROUSEL_ASPECT * CAROUSEL_SIZE * f, CAROUSEL_SIZE * f, 1], 0.15, delta);
   });
 
