@@ -98,7 +98,34 @@ export function ArchiveSection() {
         return;
       }
 
-      // Don't handle other keys when expanded
+      // Arrow navigation - works in both normal and expanded mode
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setKeyboardIndex((prev) => {
+          const current = prev ?? 0;
+          const newIndex = (current - 1 + archiveItems.length) % archiveItems.length;
+          // If expanded, update the expanded item too
+          if (expandedItem) {
+            setExpandedItem(archiveItems[newIndex]);
+          }
+          return newIndex;
+        });
+        return;
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setKeyboardIndex((prev) => {
+          const current = prev ?? -1;
+          const newIndex = (current + 1) % archiveItems.length;
+          // If expanded, update the expanded item too
+          if (expandedItem) {
+            setExpandedItem(archiveItems[newIndex]);
+          }
+          return newIndex;
+        });
+        return;
+      }
+
+      // Don't handle Enter when expanded
       if (expandedItem) return;
 
       // Open expanded view on Enter when a card is selected
@@ -106,20 +133,6 @@ export function ArchiveSection() {
         e.preventDefault();
         setExpandedItem(archiveItems[keyboardIndex]);
         return;
-      }
-
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        setKeyboardIndex((prev) => {
-          const current = prev ?? 0;
-          return (current - 1 + archiveItems.length) % archiveItems.length;
-        });
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        setKeyboardIndex((prev) => {
-          const current = prev ?? -1;
-          return (current + 1) % archiveItems.length;
-        });
       }
     };
 
