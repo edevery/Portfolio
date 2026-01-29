@@ -36,7 +36,7 @@ export function CustomCursor() {
   const velocityX = useMotionValue(0);
   const velocityY = useMotionValue(0);
 
-  const lastPos = useRef({ x: 0, y: 0, time: Date.now() });
+  const lastPos = useRef<{ x: number; y: number; time: number } | null>(null);
 
   // Premium spring configs
   // Main cursor - responsive but with subtle weight
@@ -55,6 +55,12 @@ export function CustomCursor() {
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       const now = Date.now();
+
+      // Initialize lastPos on first move
+      if (!lastPos.current) {
+        lastPos.current = { x: e.clientX, y: e.clientY, time: now };
+      }
+
       const dt = Math.max(1, now - lastPos.current.time);
 
       // Calculate velocity for rotation effect

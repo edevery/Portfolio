@@ -1,5 +1,15 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import HomepageLayout from "@/components/layout/homepage-layout";
-import EmilyMsdfCanvasV5 from "@/components/canvas/emily-msdf-canvas-v5";
+
+const EmilyMsdfCanvasV5 = dynamic(
+  () => import("@/components/canvas/emily-msdf-canvas-v5"),
+  {
+    ssr: false,
+    loading: () => <div className="w-full h-full bg-black" />
+  }
+);
 
 export default function Home() {
   return (

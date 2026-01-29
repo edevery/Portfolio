@@ -1,5 +1,12 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import HomepageLayout from "@/components/layout/homepage-layout";
-import EmilyMsdfCanvasV4 from "@/components/canvas/emily-msdf-canvas-v4";
+
+const EmilyMsdfCanvasV4 = dynamic(
+  () => import("@/components/canvas/emily-msdf-canvas-v4"),
+  { ssr: false }
+);
 
 export default function Homepage7() {
   return (
