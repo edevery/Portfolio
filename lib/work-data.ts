@@ -28,6 +28,8 @@ export interface WorkItem {
     poster?: string; // For video thumbnails
   };
   accentColor: string;
+  logo?: string; // Path to logo image for case study page
+  logoClassName?: string; // Custom class for logo sizing
   role: string;
   context: string;
   sections: ProjectSection[];
@@ -58,6 +60,7 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/Vesta.png",
     },
     accentColor: "#fe9f28",
+    logo: "/Work/Vesta/Vesta/VestaLogoGradient.png",
     role: "Founder & Designer",
     context: "A personal project built end-to-end over 6 months, outside my full-time agency role.",
     sections: [
@@ -102,13 +105,13 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/ComcastBusiness.png",
     },
     accentColor: "#7eecb4",
+    logo: "/Work/Comcast Business/ComcastBusinessLogo.png",
     role: "Art Director",
     context: "Brand system overhaul for Comcast's B2B division.",
     sections: [
-      { id: "role", label: "Role", content: "Art Director leading visual identity and brand system development." },
-      { id: "background", label: "Background", content: "Project background coming soon." },
-      { id: "insight", label: "Insight", content: "Project insight coming soon." },
-      { id: "solution", label: "Solution", content: "Project solution coming soon." },
+      { id: "role", label: "Role", content: "Led three brand workshops with the Comcast Business brand team. Evolved the visual identity, developed new brand guidelines, and worked with partner agencies to roll out the new brand system across digital, social, print, OOH, and TV. Designed custom end cards and a scalable tagging toolkit." },
+      { id: "background", label: "Background", content: "Comcast Business was a new entrant in a crowded market. The challenge was to build credibility without blending in entirely. The system needed to flex across global touchpoints while remaining cohesive." },
+      { id: "solution", label: "Solution", content: "A system that adapts, grows, and evolves—bringing to life Comcast Business's purpose of keeping companies ready for what's next, with a human touch." },
     ],
     className: "md:col-span-1",
   },
@@ -124,13 +127,15 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/LinkLogistics.png",
     },
     accentColor: "#f97316",
+    logo: "/Work/LinkLogistics/LinkLogisticsLogo.png",
     role: "Brand Designer",
     context: "Comprehensive identity system for a Fortune 500 logistics company.",
     sections: [
-      { id: "role", label: "Role", content: "Brand Designer leading identity system development." },
-      { id: "background", label: "Background", content: "Project background coming soon." },
-      { id: "insight", label: "Insight", content: "Project insight coming soon." },
-      { id: "solution", label: "Solution", content: "Project solution coming soon." },
+      { id: "role", label: "Role", content: "Designed the visual identity and scalable brand system.\n\nDeveloped brand and digital guidelines, a modular mapping system, and a motion toolkit used across digital platforms, property visualizations, signage, keynote events, and app design." },
+      { id: "background", label: "Background", content: "Link Logistics is the largest logistics real estate owner in the U.S.\n\nAs e-commerce accelerated, demand for warehouse space began to outpace supply, pushing the category toward increased competition and differentiation. Despite this shift, most logistics real estate brands remained purely functional and visually interchangeable." },
+      { id: "insight", label: "Insight", content: "Every business owner imagines their warehouse as a space to grow, but Link is the first landlord to think that way. Rather than selling square footage, Link positions itself as an active partner in its tenants' growth." },
+      { id: "solution", label: "Solution", content: "Inspired by architectural blueprints and Link's mission to provide adaptable space, I translated the idea of Space to Grow into a flexible visual system built around the container—one of the most recognizable elements of the supply chain. By varying the container's orientation and scale, the system forms a modular grid that functions like a blueprint: expandable, buildable, and customizable. The modularity of this system is a graphic display of the flexibility Link offers." },
+      { id: "results", label: "Results", content: "39M sq ft in leases and renewals\n92% employee retention\n3.2% social growth" },
     ],
     className: "md:col-span-1",
   },
@@ -146,13 +151,15 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/Instacart.png",
     },
     accentColor: "#16a34a",
+    logo: "/Work/Instacart/InstacartLogo.png",
+    logoClassName: "h-12 md:h-20 lg:h-24",
     role: "Art Director",
     context: "Launch campaign for Instacart's refreshed brand positioning.",
     sections: [
-      { id: "role", label: "Role", content: "Art Director for brand campaign." },
-      { id: "background", label: "Background", content: "Project background coming soon." },
-      { id: "insight", label: "Insight", content: "Project insight coming soon." },
-      { id: "solution", label: "Solution", content: "Project solution coming soon." },
+      { id: "role", label: "Role", content: "Campaign identity and visual system.\nArt direction for photoshoot.\nDesign across digital and out-of-home." },
+      { id: "background", label: "Background", content: "Instacart's debut brand campaign launched toward the end of the pandemic, as meal delivery services surged and convenience became the dominant narrative.\n\nAt the same time, caregivers were carrying more responsibility than ever, balancing work, family, and the emotional labor of making mealtime happen." },
+      { id: "insight", label: "Insight", content: "You can't deliver homemade.\n\nWhat people wanted wasn't just convenience, but connection. Home-cooked meals carry care and culture, yet the work of making them often falls on already-stretched caregivers.\n\nInstacart becomes the unseen ingredient that helps homemade happen." },
+      { id: "solution", label: "Solution", content: "How Homemade Is Made positioned Instacart as a partner in the making process, not a replacement for it.\n\nThe campaign celebrated the effort behind home-cooked meals while pairing emotional storytelling with real utility. Each execution highlighted the ingredients and steps behind meaningful dishes and integrated QR codes that led directly to cartable recipes, placing everything needed to make the meal into the user's Instacart cart.\n\nAcross digital and out-of-home, the system reinforced Instacart's role in quietly removing friction so people could focus on sharing care through food." },
     ],
     className: "md:col-span-1",
   },
@@ -168,6 +175,7 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/BMWChampionship.png",
     },
     accentColor: "#1a1a1a",
+    logo: "/Work/BMW/BMWLogo.png",
     role: "Experience Designer",
     context: "On-site experiential design for BMW's flagship golf sponsorship.",
     sections: [
@@ -190,6 +198,7 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/BMW.png",
     },
     accentColor: "#0ea5e9",
+    logo: "/Work/BMW/BMWLogo.png",
     role: "Lead Designer",
     context: "Event identity merging BMW's motorsport heritage with tennis culture.",
     sections: [
@@ -212,6 +221,7 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/Zaxbys.jpg",
     },
     accentColor: "#ea580c",
+    logo: "/Work/Zaxby's/ZaxbysLogo.png",
     role: "Art Director",
     context: "Brand guidelines and asset system for a fast-casual restaurant chain.",
     sections: [
@@ -234,6 +244,7 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/MeritSystems.png",
     },
     accentColor: "#7c3aed",
+    logo: "/Work/MeritSystems/MeritIcon.png",
     role: "Brand Designer",
     context: "Identity design for a Web3 economics platform.",
     sections: [
@@ -256,6 +267,7 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/ItAllStartsHere.png",
     },
     accentColor: "#dc2626",
+    logo: "/Work/ItAllStartsHere/ItAllStartsHereLogo.png",
     role: "Creative Director",
     context: "Multi-touchpoint campaign for SF Travel celebrating the city's innovation legacy.",
     sections: [

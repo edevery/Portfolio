@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import type { WorkItem } from "@/lib/work-data";
-import { VestaLogo } from "./vesta-logo";
 
 interface CaseStudyInfoProps {
   item: WorkItem;
@@ -26,8 +26,31 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           transition={{ duration: 0.6 }}
           className="mb-16 md:mb-24 flex justify-center"
         >
-          {item.slug === "vesta" ? (
-            <VestaLogo className="h-8 md:h-12 lg:h-16 w-auto" />
+          {item.logo ? (
+            <motion.div
+              className={`${item.logoClassName || "h-8 md:h-12 lg:h-16"} w-auto relative`}
+              initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              transition={{
+                duration: 1.2,
+                ease: [0.4, 0, 0.2, 1],
+                delay: 0.2,
+              }}
+              whileHover={{
+                scale: 1.02,
+                filter: `drop-shadow(0 0 20px ${item.accentColor}66)`,
+                transition: { duration: 0.3 },
+              }}
+              style={{ aspectRatio: "3 / 1" }}
+            >
+              <Image
+                src={item.logo}
+                alt={item.title}
+                fill
+                className="object-contain"
+                priority
+              />
+            </motion.div>
           ) : (
             <h1
               className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white text-center"
@@ -131,7 +154,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
                 <p
-                  className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl"
+                  className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl whitespace-pre-line"
                   style={{ fontFamily: "var(--font-inter)" }}
                 >
                   {activeContent?.content}
