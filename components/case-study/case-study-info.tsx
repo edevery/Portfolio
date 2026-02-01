@@ -153,36 +153,55 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
-                <p
-                  className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl whitespace-pre-line"
-                  style={{ fontFamily: "var(--font-inter)" }}
-                >
-                  {activeContent?.content}
-                </p>
-                {activeContent?.link && (
-                  <a
-                    href={activeContent.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-white/10 hover:bg-[#ff9e29] rounded-full text-white font-medium transition-colors duration-200"
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  >
-                    Try Vesta
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                  </a>
-                )}
+                {(() => {
+                  const content = activeContent?.content || "";
+                  const paragraphs = content.split("\n\n");
+                  const firstParagraph = paragraphs[0];
+                  const restParagraphs = paragraphs.slice(1).join("\n\n");
+
+                  return (
+                    <>
+                      <p
+                        className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl whitespace-pre-line"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {firstParagraph}
+                      </p>
+                      {activeContent?.link && (
+                        <a
+                          href={activeContent.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 mt-6 mb-6 px-6 py-3 bg-white/10 hover:bg-[#16588E] rounded-full text-white font-medium transition-colors duration-200"
+                          style={{ fontFamily: "var(--font-inter)" }}
+                        >
+                          {activeContent.linkLabel || "Learn More"}
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
+                          </svg>
+                        </a>
+                      )}
+                      {restParagraphs && (
+                        <p
+                          className="text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl whitespace-pre-line"
+                          style={{ fontFamily: "var(--font-inter)" }}
+                        >
+                          {restParagraphs}
+                        </p>
+                      )}
+                    </>
+                  );
+                })()}
               </motion.div>
             </AnimatePresence>
           </div>

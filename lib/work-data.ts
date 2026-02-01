@@ -13,6 +13,7 @@ export interface ProjectSection {
   label: string;
   content: string;
   link?: string;
+  linkLabel?: string;
 }
 
 export interface WorkItem {
@@ -176,13 +177,14 @@ export const workItems: WorkItem[] = [
     },
     accentColor: "#1a1a1a",
     logo: "/Work/BMW/BMWLogo.png",
-    role: "Experience Designer",
-    context: "On-site experiential design for BMW's flagship golf sponsorship.",
+    role: "Visual Identity & Experience Designer",
+    context: "2024 BMW Championship at Castle Pines Golf Course.",
     sections: [
-      { id: "role", label: "Role", content: "Experience Designer for on-site activations." },
-      { id: "background", label: "Background", content: "Project background coming soon." },
-      { id: "insight", label: "Insight", content: "Project insight coming soon." },
-      { id: "solution", label: "Solution", content: "Project solution coming soon." },
+      { id: "role", label: "Role", content: "Developed the BMW Championship visual identity and designed the event ecosystem, including course signage, invitations, vehicle displays, and on-site activations." },
+      { id: "background", label: "Background", content: "Fifty of the world's best golfers compete in the BMW Championship, but only one earns the title. In 2024, the tournament returned to Castle Pines Golf Course, a course defined by elevation, precision, and unforgiving terrain.\n\nBMW and championship golf share a belief: excellence is decided in the details." },
+      { id: "insight", label: "Insight", content: "At the highest level, greatness is quiet and precise.\n\n\nEvery lie shapes the shot.\nEvery approach shapes the round.\nEvery round shapes the champion.\n\nThe Ultimate Driving Machine reflects the same philosophy—performance defined by restraint, control, and craft." },
+      { id: "solution", label: "Solution", content: "I developed the tournament identity around a single idea: there can only be one ultimate.\n\n\nThe visual system draws from tight crops of the BMW Championship trophy, whose sculptural silhouette echoes fine German craftsmanship. Sleek gradients, disciplined composition, and controlled contrast express competitive tension with elegance.\n\nThe identity scaled across signage, invitations, vehicle integrations, and fan-facing activations. Originally developed for the 2024 BMW Championship at Castle Pines, the work was embraced for its premium feel and alignment with BMW's brand \"blue thread,\" and was subsequently evolved across BMW's 2025 golf sponsorships, including Caves Valley and Ryder Cup." },
+      { id: "impact", label: "Impact", content: "Named the best tournament of the PGA TOUR 2024.\n\nThe work reinforced BMW's position as a brand where precision, performance, and distinction meet on the course and beyond.", link: "https://www.pgatour.com/article/news/company/2024/12/12/bmw-championship-named-pga-tour-tournament-of-the-year-for-record-sixth-time", linkLabel: "Article" },
     ],
     className: "md:col-span-1",
   },
