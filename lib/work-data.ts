@@ -57,11 +57,13 @@ export const workItems: WorkItem[] = [
     categories: ["product", "identity", "generative"],
     image: "/Thumbnails/Vesta.png",
     heroMedia: {
-      type: "image",
-      src: "/Thumbnails/Vesta.png",
+      type: "video",
+      src: "/Work/Vesta/Vesta/VestaVideo1920x1080.mp4",
+      poster: "/Thumbnails/Vesta.png",
     },
     accentColor: "#fe9f28",
-    logo: "/Work/Vesta/Vesta/VestaLogoGradient.png",
+    logo: "/Work/Vesta/Vesta/Vesta_Favicon.png",
+    logoClassName: "h-24 md:h-32 lg:h-40 !aspect-square",
     role: "Founder & Designer",
     context: "A personal project built end-to-end over 6 months, outside my full-time agency role.",
     sections: [

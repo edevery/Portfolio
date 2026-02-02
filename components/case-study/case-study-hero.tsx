@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { WorkItem } from "@/lib/work-data";
+import { VestaLogoAnimated } from "./vesta-logo-animated";
 
 interface CaseStudyHeroProps {
   item: WorkItem;
@@ -60,6 +61,13 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+        {/* Vesta animated logo overlay */}
+        {item.slug === "vesta" && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <VestaLogoAnimated className="w-[60%] max-w-[500px] drop-shadow-2xl" />
+          </div>
+        )}
       </motion.div>
     </div>
   );
