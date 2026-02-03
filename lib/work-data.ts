@@ -104,11 +104,12 @@ export const workItems: WorkItem[] = [
     categories: ["identity", "art direction", "graphic"],
     image: "/Thumbnails/ComcastBusiness.png",
     heroMedia: {
-      type: "image",
-      src: "/Thumbnails/ComcastBusiness.png",
+      type: "video",
+      src: "/Work/Comcast%20Business/BrandVideo.mp4",
+      poster: "/Thumbnails/ComcastBusiness.png",
     },
     accentColor: "#7eecb4",
-    logo: "/Work/Comcast Business/ComcastBusinessLogo.png",
+    logo: "/Work/Comcast%20Business/ComcastBusinessLogoBlue.png",
     role: "Art Director",
     context: "Brand system overhaul for Comcast's B2B division.",
     sections: [

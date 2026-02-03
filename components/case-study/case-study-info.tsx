@@ -803,8 +803,20 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
   const [activeContent, setActiveContent] = useState<"description" | string>("description");
   const [hasRevealed, setHasRevealed] = useState(false);
   const [revealProgress, setRevealProgress] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
   const logoRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  // Toggle mute for all videos
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    videoRefs.current.forEach((video) => {
+      if (video) {
+        video.muted = !isMuted;
+      }
+    });
+  };
 
   const isDescription = activeContent === "description";
   const activeSection = isDescription ? null : item.sections.find((s) => s.id === activeContent);
@@ -925,8 +937,8 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 key="description"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto"
               >
                 {/* Logo - appears after description is revealed */}
@@ -1055,10 +1067,10 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               /* Sections View with Nav - shifted up for visual center */
               <motion.div
                 key="sections"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-8 pb-24 md:pb-32 border-t border-white/10"
               >
                 <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-24 lg:gap-32">
@@ -1105,66 +1117,60 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                   </div>
 
                   {/* Right: Section Content */}
-                  <div className="relative min-h-[200px]">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeContent}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                      >
-                        {(() => {
-                          const content = activeSection?.content || "";
-                          const paragraphs = content.split("\n\n");
-                          const firstParagraph = paragraphs[0];
-                          const restParagraphs = paragraphs.slice(1).join("\n\n");
+                  <div className="relative">
+                    {item.sections.map((section) => {
+                      const content = section.content || "";
+                      const paragraphs = content.split("\n\n");
+                      const firstParagraph = paragraphs[0];
+                      const restParagraphs = paragraphs.slice(1).join("\n\n");
+                      const isActive = activeContent === section.id;
 
-                          return (
-                            <>
-                              <p
-                                className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
-                                style={{ fontFamily: "var(--font-inter)" }}
+                      return (
+                        <div
+                          key={section.id}
+                          className={`transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"}`}
+                        >
+                          <p
+                            className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          >
+                            {firstParagraph}
+                          </p>
+                          {section.link && (
+                            <a
+                              href={section.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 mt-6 mb-6 px-6 py-3 bg-white/10 hover:bg-[#16588E] rounded-full text-white font-medium transition-colors duration-200"
+                              style={{ fontFamily: "var(--font-inter)" }}
+                            >
+                              {section.linkLabel || "Learn More"}
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                               >
-                                {firstParagraph}
-                              </p>
-                              {activeSection?.link && (
-                                <a
-                                  href={activeSection.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 mt-6 mb-6 px-6 py-3 bg-white/10 hover:bg-[#16588E] rounded-full text-white font-medium transition-colors duration-200"
-                                  style={{ fontFamily: "var(--font-inter)" }}
-                                >
-                                  {activeSection.linkLabel || "Learn More"}
-                                  <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                    />
-                                  </svg>
-                                </a>
-                              )}
-                              {restParagraphs && (
-                                <p
-                                  className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
-                                  style={{ fontFamily: "var(--font-inter)" }}
-                                >
-                                  {restParagraphs}
-                                </p>
-                              )}
-                            </>
-                          );
-                        })()}
-                      </motion.div>
-                    </AnimatePresence>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                />
+                              </svg>
+                            </a>
+                          )}
+                          {restParagraphs && (
+                            <p
+                              className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
+                              style={{ fontFamily: "var(--font-inter)" }}
+                            >
+                              {restParagraphs}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </motion.div>
@@ -1186,6 +1192,197 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               draggable={false}
             />
           </ContainerScroll>
+        </div>
+      )}
+
+      {/* Comcast Business Billboard Video with Container Scroll Animation */}
+      {item.slug === "comcast-business" && (
+        <div className="px-6 md:px-12">
+          <ContainerScroll>
+            <video
+              src="/Work/Comcast%20Business/BillboardMotion.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto rounded-2xl"
+            />
+          </ContainerScroll>
+
+          {/* Comcast Business Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Comcast%20Business/CB_Poster.png"
+                alt="Comcast Business Poster"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Comcast%20Business/PoweringPossibilitiesPoster.png"
+                alt="Powering Possibilities Poster"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl md:col-span-2"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <video
+                src="/Work/Comcast%20Business/CBSystemAnimation_Layout.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-auto"
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <img
+                src="/Work/Comcast%20Business/BusinessCards.png"
+                alt="Comcast Business Cards"
+                className="w-full h-auto"
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <video
+                src="/Work/Comcast%20Business/Speed_EndCard.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-auto"
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <video
+                src="/Work/Comcast%20Business/TaggingSequence.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-auto"
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Comcast%20Business/OOH-PGA.png"
+                alt="Out of Home PGA"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl md:col-span-2"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <video
+                ref={(el) => { videoRefs.current[0] = el; }}
+                src="/Work/Comcast%20Business/MarchPromo.mp4"
+                autoPlay
+                muted={isMuted}
+                loop
+                playsInline
+                className="w-full h-auto"
+              />
+              {/* Sound Toggle Button */}
+              <motion.button
+                onClick={toggleMute}
+                className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.3 }}
+                viewport={{ once: true }}
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+              >
+                {isMuted ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <line x1="23" y1="9" x2="17" y2="15" />
+                    <line x1="17" y1="9" x2="23" y2="15" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  </svg>
+                )}
+              </motion.button>
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl md:col-span-2"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <video
+                src="/Work/Comcast%20Business/DigitalBoard.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-auto"
+              />
+            </motion.div>
+          </div>
+
+          {/* Tapered Divider Line */}
+          <div
+            className="w-full max-w-3xl mx-auto h-px mt-20 md:mt-28"
+            style={{
+              background: "linear-gradient(to right, transparent, rgba(255,255,255,0.3) 20%, rgba(255,255,255,0.3) 80%, transparent)",
+            }}
+          />
         </div>
       )}
 

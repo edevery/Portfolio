@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useRef } from "react";
 import type { WorkItem } from "@/lib/work-data";
 import { VestaLogoAnimated } from "./vesta-logo-animated";
 
@@ -8,7 +9,54 @@ interface CaseStudyHeroProps {
   item: WorkItem;
 }
 
+function SoundIcon({ muted }: { muted: boolean }) {
+  if (muted) {
+    return (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+        <line x1="23" y1="9" x2="17" y2="15" />
+        <line x1="17" y1="9" x2="23" y2="15" />
+      </svg>
+    );
+  }
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+    </svg>
+  );
+}
+
 export function CaseStudyHero({ item }: CaseStudyHeroProps) {
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
+
   return (
     <div className="relative h-screen w-full bg-black">
       {/* Hero container - animates inset from edges */}
@@ -35,15 +83,29 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
         }}
       >
         {item.heroMedia.type === "video" ? (
-          <video
-            src={item.heroMedia.src}
-            poster={item.heroMedia.poster}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={item.heroMedia.src}
+              poster={item.heroMedia.poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* Sound toggle button - glass/sleek style */}
+            <motion.button
+              onClick={toggleMute}
+              className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1, duration: 0.3 }}
+              aria-label={isMuted ? "Unmute video" : "Mute video"}
+            >
+              <SoundIcon muted={isMuted} />
+            </motion.button>
+          </>
         ) : (
           <motion.img
             src={item.heroMedia.src}
