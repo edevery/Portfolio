@@ -1,8 +1,8 @@
 "use client";
 
+import { ReactNode, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { ReactNode, useState, useCallback, useEffect } from "react";
+import { usePageTransition } from "@/components/page-transition";
 
 interface TransitionLinkProps {
   href: string;
@@ -12,32 +12,20 @@ interface TransitionLinkProps {
 
 export function TransitionLink({ href, children, className }: TransitionLinkProps) {
   const router = useRouter();
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const transition = usePageTransition();
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      setIsTransitioning(true);
-
-      // Navigate after the exit animation
-      setTimeout(() => {
+      // Use transition if available, otherwise fall back to regular navigation
+      if (transition?.navigateTo) {
+        transition.navigateTo(href);
+      } else {
         router.push(href);
-      }, 400);
-    },
-    [href, router]
-  );
-
-  // Subtle scale-down on current page
-  useEffect(() => {
-    if (isTransitioning) {
-      const main = document.querySelector("body > div") as HTMLElement;
-      if (main) {
-        main.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0, 1), opacity 0.4s cubic-bezier(0.4, 0, 0, 1)";
-        main.style.transform = "scale(0.97)";
-        main.style.opacity = "0";
       }
-    }
-  }, [isTransitioning]);
+    },
+    [href, transition, router]
+  );
 
   return (
     <a href={href} onClick={handleClick} className={className}>

@@ -1773,14 +1773,6 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               />
             </motion.div>
           </div>
-
-          {/* Tapered Divider Line */}
-          <div
-            className="w-full max-w-3xl mx-auto h-px mt-20 md:mt-28"
-            style={{
-              background: "linear-gradient(to right, transparent, rgba(255,255,255,0.3) 20%, rgba(255,255,255,0.3) 80%, transparent)",
-            }}
-          />
         </div>
       )}
 

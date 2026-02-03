@@ -79,20 +79,26 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
         transition={{
           duration: 0.8,
           ease: [0.4, 0, 0, 1],
-          delay: 0.3,
+          delay: 0.4,
         }}
       >
         {item.heroMedia.type === "video" ? (
           <>
-            <video
+            <motion.video
               ref={videoRef}
               src={item.heroMedia.src}
-              poster={item.heroMedia.poster}
               autoPlay
               muted
               loop
               playsInline
               className="absolute inset-0 w-full h-full object-cover"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                duration: 0.4,
+                ease: [0.4, 0, 0.2, 1],
+                delay: 0.2,
+              }}
             />
             {/* Sound toggle button - glass/sleek style */}
             <motion.button
@@ -111,12 +117,12 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
             src={item.heroMedia.src}
             alt={item.title}
             className="absolute inset-0 w-full h-full object-cover"
-            initial={{ scale: 1.05 }}
-            animate={{ scale: 1 }}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{
-              duration: 1.2,
+              duration: 0.6,
               ease: [0.4, 0, 0, 1],
-              delay: 0.3,
+              delay: 0.2,
             }}
           />
         )}
