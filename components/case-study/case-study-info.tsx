@@ -7,7 +7,6 @@ import Image from "next/image";
 import { workItems, type WorkItem } from "@/lib/work-data";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
-import Link from "next/link";
 import { TransitionLink } from "@/components/case-study/transition-link";
 
 interface CaseStudyInfoProps {
@@ -420,6 +419,297 @@ function ExploreMoreWork({ currentItem }: { currentItem: WorkItem }) {
   );
 }
 
+// Instacart Color Palette Component
+function InstacartColorPalette() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const colors = [
+    // Top row
+    { name: "Blueberry Pie", hex: "#5D7087" },
+    { name: "Tomato Bisque", hex: "#D47665" },
+    { name: "Pumpkin Pie", hex: "#E2A262" },
+    { name: "Whipped Cream", hex: "#FAEFDE" },
+    { name: "Strawberry Ice Cream", hex: "#C79598" },
+    { name: "Lemon Cake", hex: "#E6D06E" },
+    { name: "Crispy Kale", hex: "#00573D" },
+    { name: "Key Lime Pie", hex: "#7CB369" },
+    // Bottom row
+    { name: "Blackberry Cobbler", hex: "#4A5568" },
+    { name: "Beef Bolognese", hex: "#9E5A50" },
+    { name: "Candied Yam", hex: "#A66626" },
+    { name: "Vanilla Bean", hex: "#F7E6CD" },
+    { name: "Glazed Ham", hex: "#AA5D62" },
+    { name: "Short Ribs", hex: "#8B5D42" },
+    { name: "Roasted Broccoli", hex: "#2D5A3D" },
+    { name: "Pickled Jalapeno", hex: "#709449" },
+  ];
+
+  // Determine if text should be light or dark based on background
+  const isLightColor = (hex: string) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5;
+  };
+
+  return (
+    <div className="relative z-20 bg-black px-6 md:px-12 lg:px-24 py-32 md:py-48">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          viewport={{ once: true }}
+        >
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4 italic"
+            style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+          >
+            Color Palette
+          </h2>
+          <p
+            className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Reminiscent of a home-cooked meal
+          </p>
+        </motion.div>
+
+        {/* Color Grid */}
+        <motion.div
+          className="overflow-visible rounded-2xl"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+          viewport={{ once: true }}
+        >
+          {/* Two rows with gap */}
+          <div className="grid grid-rows-2 gap-2">
+            {/* Top row */}
+            <div className="grid grid-cols-8 gap-2">
+              {colors.slice(0, 8).map((color, index) => (
+                <motion.div
+                  key={color.name}
+                  className="relative aspect-[1/1.2] cursor-pointer rounded-lg overflow-hidden"
+                  style={{ backgroundColor: color.hex, willChange: "transform" }}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  animate={{
+                    scale: hoveredIndex === index ? 1.15 : 1,
+                    zIndex: hoveredIndex === index ? 10 : 1,
+                  }}
+                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  {/* Hover overlay with name and hex */}
+                  <motion.div
+                    className="absolute inset-0 flex flex-col items-center justify-center p-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <span
+                      className="text-[10px] md:text-xs font-medium tracking-wider uppercase text-center leading-tight mb-1"
+                      style={{
+                        fontFamily: "var(--font-inter)",
+                        color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
+                      }}
+                    >
+                      {color.name.split(" ").slice(0, 1).join(" ")}<br />
+                      {color.name.split(" ").slice(1).join(" ")}
+                    </span>
+                    <span
+                      className="text-[10px] md:text-xs font-mono"
+                      style={{
+                        color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {color.hex}
+                    </span>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+            {/* Bottom row */}
+            <div className="grid grid-cols-8 gap-2">
+              {colors.slice(8, 16).map((color, index) => (
+                <motion.div
+                  key={color.name}
+                  className="relative aspect-[1/1.2] cursor-pointer rounded-lg overflow-hidden"
+                  style={{ backgroundColor: color.hex, willChange: "transform" }}
+                  onMouseEnter={() => setHoveredIndex(index + 8)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  animate={{
+                    scale: hoveredIndex === index + 8 ? 1.15 : 1,
+                    zIndex: hoveredIndex === index + 8 ? 10 : 1,
+                  }}
+                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  {/* Hover overlay with name and hex */}
+                  <motion.div
+                    className="absolute inset-0 flex flex-col items-center justify-center p-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: hoveredIndex === index + 8 ? 1 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <span
+                      className="text-[10px] md:text-xs font-medium tracking-wider uppercase text-center leading-tight mb-1"
+                      style={{
+                        fontFamily: "var(--font-inter)",
+                        color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
+                      }}
+                    >
+                      {color.name.split(" ").slice(0, 1).join(" ")}<br />
+                      {color.name.split(" ").slice(1).join(" ")}
+                    </span>
+                    <span
+                      className="text-[10px] md:text-xs font-mono"
+                      style={{
+                        color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {color.hex}
+                    </span>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// Link Logistics Color Palette Component
+function LinkLogisticsColorPalette() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // Colors eyedropped from reference image
+  // borderRadius: each swatch has one curved corner
+  const colors = [
+    { name: "Solar", hex: "#8BAAB8", gridArea: "solar", borderRadius: "0 12px 0 0" },
+    { name: "Site", hex: "#C4A55E", gridArea: "site", borderRadius: "12px 0 0 0" },
+    { name: "Rust", hex: "#B5674A", gridArea: "rust", borderRadius: "0 12px 0 0" },
+    { name: "Freight", hex: "#E57B68", gridArea: "freight", borderRadius: "12px 0 0 0" },
+    { name: "White", hex: "#FFFFFF", gridArea: "white", borderRadius: "0 12px 0 0" },
+    { name: "Pipeline", hex: "#E5968A", gridArea: "pipeline", borderRadius: "12px 0 0 0" },
+    { name: "Cement", hex: "#E5E1DA", gridArea: "cement", borderRadius: "0 0 0 12px" },
+    { name: "Slate", hex: "#3C3F44", gridArea: "slate", borderRadius: "0 0 12px 0" },
+    { name: "Cardboard", hex: "#DBBFA0", gridArea: "cardboard", borderRadius: "12px 0 0 0" },
+  ];
+
+  // Determine if text should be light or dark based on background
+  const isLightColor = (hex: string) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5;
+  };
+
+  return (
+    <div className="relative z-20 bg-black px-6 md:px-12 lg:px-24 py-32 md:py-48">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          viewport={{ once: true }}
+        >
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4 italic"
+            style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+          >
+            Color Palette
+          </h2>
+          <p
+            className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Muted palette inspired by industrial photography
+          </p>
+        </motion.div>
+
+        {/* Color Grid - Custom L-shaped layout */}
+        <motion.div
+          className="overflow-visible"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+          viewport={{ once: true }}
+        >
+          <div
+            className="grid gap-2"
+            style={{
+              gridTemplateColumns: "1.2fr 1.5fr 1fr 1fr 1fr 1fr",
+              gridTemplateRows: "120px 120px 120px",
+              gridTemplateAreas: `
+                "solar site rust freight white pipeline"
+                "cement slate slate slate slate slate"
+                "cardboard slate slate slate slate slate"
+              `,
+            }}
+          >
+            {colors.map((color, index) => (
+              <motion.div
+                key={color.name}
+                className="relative cursor-pointer overflow-hidden"
+                style={{
+                  backgroundColor: color.hex,
+                  gridArea: color.gridArea,
+                  borderRadius: color.borderRadius,
+                  willChange: "transform",
+                }}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                animate={{
+                  scale: hoveredIndex === index ? 1.18 : 1,
+                  zIndex: hoveredIndex === index ? 10 : 1,
+                }}
+                transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+              >
+                {/* Hover overlay with name and hex */}
+                <motion.div
+                  className="absolute inset-0 flex flex-col items-center justify-center p-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <span
+                    className="text-xs md:text-sm font-medium tracking-wider uppercase text-center leading-tight mb-1"
+                    style={{
+                      fontFamily: "var(--font-inter)",
+                      color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
+                    }}
+                  >
+                    {color.name}
+                  </span>
+                  <span
+                    className="text-xs md:text-sm font-mono"
+                    style={{
+                      color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
+                      opacity: 0.7,
+                    }}
+                  >
+                    {color.hex}
+                  </span>
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
 // Vesta Guiding Personas Component with scroll-driven carousel
 function VestaGuidingPersonas() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -819,18 +1109,64 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
   };
 
   const isDescription = activeContent === "description";
-  const activeSection = isDescription ? null : item.sections.find((s) => s.id === activeContent);
-  const activeIndex = isDescription ? -1 : item.sections.findIndex((s) => s.id === activeContent);
 
   // Total scroll segments: 3 for description (longer scroll) + number of sections
+  // Increased height multiplier for smoother, more premium feel
   const descriptionWeight = 3;
   const totalSegments = descriptionWeight + item.sections.length;
+  const heightPerSegment = 80; // Increased from 60vh for more comfortable pacing
 
   // Track scroll progress through the container
   const { scrollYProgress } = useScroll({
     target: scrollContainerRef,
     offset: ["start center", "end center"],
   });
+
+  // Calculate where description ends and sections begin (as percentage of scroll)
+  const descriptionEndProgress = descriptionWeight / totalSegments;
+
+  // Smooth transforms for description view
+  const descriptionOpacity = useTransform(
+    scrollYProgress,
+    [0, descriptionEndProgress * 0.7, descriptionEndProgress * 0.9, descriptionEndProgress],
+    [1, 1, 0.5, 0]
+  );
+  const descriptionScale = useTransform(
+    scrollYProgress,
+    [descriptionEndProgress * 0.7, descriptionEndProgress],
+    [1, 0.96]
+  );
+  const descriptionBlur = useTransform(
+    scrollYProgress,
+    [descriptionEndProgress * 0.7, descriptionEndProgress],
+    [0, 8]
+  );
+  const descriptionFilter = useMotionTemplate`blur(${descriptionBlur}px)`;
+
+  // Smooth transforms for sections view
+  const sectionsOpacity = useTransform(
+    scrollYProgress,
+    [descriptionEndProgress * 0.85, descriptionEndProgress * 1.1],
+    [0, 1]
+  );
+  const sectionsScale = useTransform(
+    scrollYProgress,
+    [descriptionEndProgress * 0.85, descriptionEndProgress * 1.1],
+    [0.96, 1]
+  );
+  const sectionsY = useTransform(
+    scrollYProgress,
+    [descriptionEndProgress * 0.85, descriptionEndProgress * 1.1],
+    [30, 0]
+  );
+
+  // Calculate active section index for nav indicator positioning
+  const getActiveSectionIndex = () => {
+    if (isDescription) return 0;
+    const idx = item.sections.findIndex((s) => s.id === activeContent);
+    return idx >= 0 ? idx : 0;
+  };
+  const activeSectionIndex = getActiveSectionIndex();
 
   // Update active content based on scroll progress
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
@@ -845,7 +1181,6 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
     );
 
     // Calculate reveal progress within description phase (0 to 1)
-    const descriptionEndProgress = descriptionWeight / totalSegments;
     if (progress < descriptionEndProgress) {
       const normalizedProgress = progress / descriptionEndProgress;
       setRevealProgress(normalizedProgress);
@@ -925,22 +1260,22 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       {/* Scroll-driven Content Container */}
       <div
         ref={scrollContainerRef}
-        style={{ height: `${totalSegments * 60}vh` }}
+        style={{ height: `${totalSegments * heightPerSegment}vh` }}
         className="relative"
       >
         {/* Sticky content area - full viewport height for centering, pb for optical center */}
         <div className="sticky top-0 min-h-screen flex items-center justify-center pb-20">
-          <AnimatePresence mode="wait">
-            {isDescription ? (
-              /* Description View - Full screen centered */
-              <motion.div
-                key="description"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto"
-              >
+          {/* Description View - Full screen centered */}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              opacity: descriptionOpacity,
+              scale: descriptionScale,
+              filter: descriptionFilter,
+              pointerEvents: isDescription ? "auto" : "none",
+            }}
+          >
+            <div className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
                 {/* Logo - appears after description is revealed */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -1062,120 +1397,183 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                     </span>
                   ))}
                 </motion.div>
-              </motion.div>
-            ) : (
-              /* Sections View with Nav - shifted up for visual center */
-              <motion.div
-                key="sections"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-8 pb-24 md:pb-32 border-t border-white/10"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-24 lg:gap-32">
-                  {/* Left: Section Navigation with Glowing Indicator */}
-                  <div className="relative">
-                    {/* Glowing vertical bar indicator */}
-                    <motion.div
-                      className="absolute left-0 w-0.5 bg-[#85c3ed] rounded-full"
-                      style={{
-                        boxShadow: "0 0 20px 4px rgba(133, 195, 237, 0.5), 0 0 40px 8px rgba(133, 195, 237, 0.3)",
-                      }}
-                      initial={false}
-                      animate={{
-                        top: Math.max(0, activeIndex) * 56 + 18,
-                        height: 20,
-                      }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 30,
-                      }}
-                    />
+            </div>
+          </motion.div>
 
-                    {/* Section Labels */}
-                    <div className="flex flex-col">
-                      {item.sections.map((section) => (
-                        <div
-                          key={section.id}
-                          className="relative h-14 pl-6 flex items-center"
-                          style={{ fontFamily: "var(--font-heading)" }}
+          {/* Sections View with Nav */}
+          <motion.div
+            className="absolute inset-0 flex items-center w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-8 pb-24 md:pb-32 border-t border-white/10"
+            style={{
+              opacity: sectionsOpacity,
+              scale: sectionsScale,
+              y: sectionsY,
+              pointerEvents: isDescription ? "none" : "auto",
+            }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-24 lg:gap-32 w-full">
+              {/* Left: Section Navigation with Glowing Indicator */}
+              <div className="relative">
+                {/* Glowing vertical bar indicator - smoothly animated to active section */}
+                <motion.div
+                  className="absolute left-0 w-0.5 bg-[#85c3ed] rounded-full"
+                  animate={{
+                    top: activeSectionIndex * 56 + 18,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                  }}
+                  style={{
+                    boxShadow: "0 0 20px 4px rgba(133, 195, 237, 0.5), 0 0 40px 8px rgba(133, 195, 237, 0.3)",
+                    height: 20,
+                  }}
+                />
+
+                {/* Section Labels - clickable to navigate */}
+                <div className="flex flex-col">
+                  {item.sections.map((section, sectionIdx) => {
+                    const isActiveSection = activeContent === section.id;
+
+                    // Click handler to scroll to this section
+                    const handleClick = () => {
+                      if (!scrollContainerRef.current) return;
+
+                      // Calculate the scroll position for this section
+                      // Section i starts at (descriptionWeight + i) / totalSegments progress
+                      const targetProgress = (descriptionWeight + sectionIdx + 0.5) / totalSegments;
+
+                      // Get the container's position and dimensions
+                      const containerTop = scrollContainerRef.current.offsetTop;
+                      const containerHeight = scrollContainerRef.current.offsetHeight;
+
+                      // The scroll offset uses "start center" to "end center"
+                      // So we need to calculate where to scroll to achieve targetProgress
+                      const viewportHeight = window.innerHeight;
+                      const scrollStart = containerTop - viewportHeight / 2;
+                      const scrollRange = containerHeight;
+                      const targetScrollY = scrollStart + (targetProgress * scrollRange);
+
+                      window.scrollTo({
+                        top: targetScrollY,
+                        behavior: "smooth",
+                      });
+                    };
+
+                    return (
+                      <div
+                        key={section.id}
+                        className="relative h-14 pl-6 flex items-center cursor-pointer group"
+                        style={{ fontFamily: "var(--font-heading)" }}
+                        onClick={handleClick}
+                      >
+                        <motion.span
+                          className="text-sm font-bold tracking-wider uppercase"
+                          animate={{
+                            color: isActiveSection ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.4)",
+                            x: isActiveSection ? 4 : 0,
+                          }}
+                          whileHover={{
+                            color: "rgba(255, 255, 255, 0.8)",
+                          }}
+                          transition={{
+                            duration: 0.3,
+                            ease: [0.4, 0, 0.2, 1],
+                          }}
                         >
-                          <span
-                            className={`text-sm font-bold tracking-wider uppercase transition-colors duration-200 ${
-                              activeContent === section.id
-                                ? "text-white"
-                                : "text-white/40"
-                            }`}
-                          >
-                            {section.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Right: Section Content */}
-                  <div className="relative">
-                    {item.sections.map((section) => {
-                      const content = section.content || "";
-                      const paragraphs = content.split("\n\n");
-                      const firstParagraph = paragraphs[0];
-                      const restParagraphs = paragraphs.slice(1).join("\n\n");
-                      const isActive = activeContent === section.id;
-
-                      return (
-                        <div
-                          key={section.id}
-                          className={`transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 absolute inset-0 pointer-events-none"}`}
-                        >
-                          <p
-                            className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
-                            style={{ fontFamily: "var(--font-inter)" }}
-                          >
-                            {firstParagraph}
-                          </p>
-                          {section.link && (
-                            <a
-                              href={section.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 mt-6 mb-6 px-6 py-3 bg-white/10 hover:bg-[#16588E] rounded-full text-white font-medium transition-colors duration-200"
-                              style={{ fontFamily: "var(--font-inter)" }}
-                            >
-                              {section.linkLabel || "Learn More"}
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                />
-                              </svg>
-                            </a>
-                          )}
-                          {restParagraphs && (
-                            <p
-                              className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
-                              style={{ fontFamily: "var(--font-inter)" }}
-                            >
-                              {restParagraphs}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                          {section.label}
+                        </motion.span>
+                      </div>
+                    );
+                  })}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+
+              {/* Right: Section Content */}
+              <div className="relative">
+                <AnimatePresence mode="wait">
+                  {item.sections.map((section) => {
+                    const content = section.content || "";
+                    const paragraphs = content.split("\n\n");
+                    const firstParagraph = paragraphs[0];
+                    const restParagraphs = paragraphs.slice(1).join("\n\n");
+                    const isActive = activeContent === section.id;
+
+                    // Helper to render text with *italic* support
+                    const renderWithItalics = (text: string) => {
+                      const parts = text.split(/(\*[^*]+\*)/g);
+                      return parts.map((part, i) => {
+                        if (part.startsWith("*") && part.endsWith("*")) {
+                          return <em key={i}>{part.slice(1, -1)}</em>;
+                        }
+                        return part;
+                      });
+                    };
+
+                    if (!isActive) return null;
+
+                    return (
+                      <motion.div
+                        key={section.id}
+                        initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                        transition={{
+                          duration: 0.5,
+                          ease: [0.4, 0, 0.2, 1],
+                        }}
+                      >
+                        <p
+                          className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
+                          style={{ fontFamily: "var(--font-inter)" }}
+                        >
+                          {renderWithItalics(firstParagraph)}
+                        </p>
+                        {section.link && (
+                          <motion.a
+                            href={section.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 mt-6 mb-6 px-6 py-3 bg-white/10 hover:bg-[#16588E] rounded-full text-white font-medium transition-colors duration-200"
+                            style={{ fontFamily: "var(--font-inter)" }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                          >
+                            {section.linkLabel || "Learn More"}
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
+                          </motion.a>
+                        )}
+                        {restParagraphs && (
+                          <motion.p
+                            className="mt-8 text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
+                            style={{ fontFamily: "var(--font-inter)" }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.15 }}
+                          >
+                            {renderWithItalics(restParagraphs)}
+                          </motion.p>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
@@ -1386,6 +1784,192 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       )}
 
+      {/* Link Logistics Shipping Container with Container Scroll Animation */}
+      {item.slug === "link-logistics" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <Image
+              src="/Work/LinkLogistics/Shipping Container.png"
+              alt="Link Logistics Shipping Container"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* Link Logistics Color Palette Section */}
+      {item.slug === "link-logistics" && (
+        <LinkLogisticsColorPalette />
+      )}
+
+      {/* Link Logistics Warehouse Image with Scroll Animation */}
+      {item.slug === "link-logistics" && (
+        <div className="mx-12 pt-16 md:pt-24">
+          <ContainerScroll>
+            <Image
+              src="/Work/LinkLogistics/Warehouse.png"
+              alt="Link Logistics Warehouse"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* Link Logistics Leasing Brochure and Website side by side */}
+      {item.slug === "link-logistics" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/LinkLogistics/LeasingBrochure.png"
+                alt="Link Logistics Leasing Brochure"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <video
+                src="/Work/LinkLogistics/Icons.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </div>
+
+          {/* Lower Thirds Video */}
+          <motion.div
+            className="relative overflow-hidden rounded-2xl mt-4 md:mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <video
+              src="/Work/LinkLogistics/LowerThirds.mov"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            />
+          </motion.div>
+
+          {/* Logo Animation Video */}
+          <motion.div
+            className="relative overflow-hidden rounded-2xl mt-4 md:mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <video
+              src="/Work/LinkLogistics/LogoAnimation.mov"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            />
+          </motion.div>
+
+          {/* Signage and Website side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/LinkLogistics/Signage.png"
+                alt="Link Logistics Signage"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <video
+                src="/Work/LinkLogistics/Website.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </div>
+
+          {/* Link System GIF */}
+          <motion.div
+            className="relative overflow-hidden rounded-2xl mt-4 md:mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <Image
+              src="/Work/LinkLogistics/LinkSystem.gif"
+              alt="Link Logistics System"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+              unoptimized
+            />
+          </motion.div>
+
+          {/* Brand Book */}
+          <motion.div
+            className="relative overflow-hidden rounded-2xl mt-4 md:mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <Image
+              src="/Work/LinkLogistics/BrandBook.png"
+              alt="Link Logistics Brand Book"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </motion.div>
+        </div>
+      )}
+
       {/* Vesta Onboarding Content Section */}
       {item.slug === "vesta" && (
         <VestaOnboardingContent />
@@ -1455,6 +2039,232 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       {item.slug === "vesta" && (
         <VestaReflection />
       )}
+
+      {/* Instacart Billboard Image with Container Scroll Animation */}
+      {item.slug === "instacart" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <Image
+              src="/Work/Instacart/SweetPotato_Billboard.png"
+              alt="Instacart Sweet Potato Billboard"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* Instacart Color Palette Section */}
+      {item.slug === "instacart" && (
+        <InstacartColorPalette />
+      )}
+
+      {/* Instacart Tamales OOH Image with Container Scroll Animation */}
+      {item.slug === "instacart" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <Image
+              src="/Work/Instacart/Tamales_OOH.png"
+              alt="Instacart Tamales Out of Home"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* Instacart Bento Grid */}
+      {item.slug === "instacart" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Instacart/Headline1.png"
+                alt="Instacart Headline"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Instacart/ShortRib_Layflat.png"
+                alt="Instacart Short Rib Layflat"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl md:col-span-2"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <video
+                src="/Work/Instacart/BoozyBrunch.mov"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-auto"
+              />
+            </motion.div>
+          </div>
+        </div>
+      )}
+
+      {/* Instacart Apple Pie Billboard */}
+      {item.slug === "instacart" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <motion.div
+            className="relative overflow-hidden rounded-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <Image
+              src="/Work/Instacart/ApplePie_Billboard.png"
+              alt="Instacart Apple Pie Billboard"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </motion.div>
+        </div>
+      )}
+
+      {/* Instacart Tamales Layflat and Headline2 Side by Side */}
+      {item.slug === "instacart" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Instacart/Tamales_Layflat.png"
+                alt="Instacart Tamales Layflat"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Instacart/Headline2.png"
+                alt="Instacart Headline 2"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+          </div>
+        </div>
+      )}
+
+      {/* Instacart Phones GIF */}
+      {item.slug === "instacart" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <motion.div
+            className="relative overflow-hidden rounded-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <Image
+              src="/Work/Instacart/Phones.gif"
+              alt="Instacart Phones"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+              unoptimized
+            />
+          </motion.div>
+        </div>
+      )}
+
+      {/* Instacart Image Grid */}
+      {item.slug === "instacart" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Instacart/Image1.png"
+                alt="Instacart Image 1"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+            <motion.div
+              className="relative overflow-hidden rounded-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src="/Work/Instacart/Image3.png"
+                alt="Instacart Image 3"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </motion.div>
+          </div>
+        </div>
+      )}
+
+      {/* Tapered Divider Line */}
+      <div
+        className="w-full max-w-3xl mx-auto h-px mt-20 md:mt-28"
+        style={{
+          background: "linear-gradient(to right, transparent, rgba(255,255,255,0.3) 20%, rgba(255,255,255,0.3) 80%, transparent)",
+        }}
+      />
 
       {/* Explore More Work Section - shown on all case studies */}
       <ExploreMoreWork currentItem={item} />

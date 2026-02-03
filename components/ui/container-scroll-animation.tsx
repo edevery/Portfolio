@@ -28,7 +28,7 @@ export function ContainerScroll({
       className="flex items-center justify-center relative -mt-16 md:-mt-24"
     >
       <div
-        className="w-full relative"
+        className="w-full relative pt-16"
         style={{
           perspective: "1000px",
         }}
