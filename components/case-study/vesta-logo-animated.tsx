@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 interface VestaLogoAnimatedProps {
   className?: string;
 }
 
 export function VestaLogoAnimated({ className }: VestaLogoAnimatedProps) {
-  const pathVariants = {
+  const pathVariants: Variants = {
     hidden: {
       pathLength: 0,
       fillOpacity: 0,
@@ -19,12 +19,12 @@ export function VestaLogoAnimated({ className }: VestaLogoAnimatedProps) {
         pathLength: {
           delay: 0.8 + i * 0.15,
           duration: 1.2,
-          ease: [0.4, 0, 0.2, 1],
+          ease: [0.4, 0, 0.2, 1] as [number, number, number, number],
         },
         fillOpacity: {
           delay: 1.6 + i * 0.15,
           duration: 0.6,
-          ease: [0, 0, 0.2, 1] as const,
+          ease: [0, 0, 0.2, 1] as [number, number, number, number],
         },
       },
     }),
