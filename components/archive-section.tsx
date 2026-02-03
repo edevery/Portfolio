@@ -553,13 +553,12 @@ function CategoryPills({
     return { text, width };
   });
 
-  // Calculate x positions for each pill
-  let currentX = 0;
-  const pillsWithPositions = pillData.map((pill) => {
-    const x = currentX;
-    currentX += pill.width + gap;
-    return { ...pill, x };
-  });
+  // Calculate x positions for each pill using reduce to avoid mutation
+  const pillsWithPositions = pillData.reduce<Array<{ text: string; width: number; x: number }>>((acc, pill, index) => {
+    const x = index === 0 ? 0 : acc[index - 1].x + acc[index - 1].width + gap;
+    acc.push({ ...pill, x });
+    return acc;
+  }, []);
 
   return (
     <group position={position}>
