@@ -24,7 +24,7 @@ export function VestaLogoAnimated({ className }: VestaLogoAnimatedProps) {
         fillOpacity: {
           delay: 1.6 + i * 0.15,
           duration: 0.6,
-          ease: "easeOut",
+          ease: [0, 0, 0.2, 1] as const,
         },
       },
     }),
