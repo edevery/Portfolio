@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from "framer-motion";
 import { useSpring, animated } from "@react-spring/web";
 import Image from "next/image";
 import type { WorkItem } from "@/lib/work-data";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
 
 interface CaseStudyInfoProps {
   item: WorkItem;
@@ -19,6 +20,338 @@ const calcRotation = (x: number, y: number, rect: DOMRect) => {
   const rotateY = ((x - centerX) / (rect.width / 2)) * 15;
   return [rotateX, rotateY];
 };
+
+// Vesta Onboarding Content Component with scroll-linked column animations
+function VestaOnboardingContent() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: scrollContainerRef,
+    offset: ["start center", "end center"],
+  });
+
+  // Each column animates in sequence as user scrolls through the tall container
+  // Column 1: appears first (15-40%)
+  // Column 2: appears second (35-60%)
+  // Column 3: appears third (55-80%)
+  const column1Opacity = useTransform(scrollYProgress, [0.15, 0.28, 0.4], [0, 0.5, 1]);
+  const column1Y = useTransform(scrollYProgress, [0.15, 0.4], [60, 0]);
+
+  const column2Opacity = useTransform(scrollYProgress, [0.35, 0.48, 0.6], [0, 0.5, 1]);
+  const column2Y = useTransform(scrollYProgress, [0.35, 0.6], [60, 0]);
+
+  const column3Opacity = useTransform(scrollYProgress, [0.55, 0.68, 0.8], [0, 0.5, 1]);
+  const column3Y = useTransform(scrollYProgress, [0.55, 0.8], [60, 0]);
+
+  const columns = [
+    {
+      title: "Relationship Context",
+      content: "Vesta adjusts its tone and content based on the couple's relationship duration and living dynamic, recognizing that a 6-month relationship and a 6-year one require different forms of support.",
+      opacity: column1Opacity,
+      y: column1Y,
+    },
+    {
+      title: "Location",
+      content: "Location awareness enables Vesta to suggest contextually relevant date ideas, from nearby restaurants to weekend getaways. The app adapts to users' surroundings while respecting privacy preferences.",
+      opacity: column2Opacity,
+      y: column2Y,
+    },
+    {
+      title: "Emotional Frameworks",
+      content: "Vesta recognizes that partners express love differently: through quality time, words of affirmation, acts of service, physical touch, or gifts. This understanding allows tailored suggestions for each unique relationship dynamic.",
+      opacity: column3Opacity,
+      y: column3Y,
+    },
+  ];
+
+  return (
+    <div ref={scrollContainerRef} className="relative z-10 bg-black" style={{ height: "200vh" }}>
+      {/* Sticky content that stays centered while scrolling */}
+      <div className="sticky top-0 min-h-screen flex items-center">
+        <section className="w-full px-6 md:px-12 lg:px-24 py-16 md:py-24">
+          <div className="max-w-6xl mx-auto">
+            {/* Intro text */}
+            <p
+              className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl mb-16"
+              style={{ fontFamily: "var(--font-inter)" }}
+            >
+              Vesta's onboarding guides users through a series of reflective prompts to uncover how they love and connect. Users share key details such as relationship duration, location, love language, and attachment style. These inputs shape every experience that follows.
+            </p>
+
+            {/* Three column grid with scroll-linked animations */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              {columns.map((column, index) => (
+                <motion.div
+                  key={column.title}
+                  className={`${index > 0 ? "border-l border-[#85c3ed]/30 pl-8" : ""}`}
+                  style={{
+                    opacity: column.opacity,
+                    y: column.y,
+                  }}
+                >
+                  <h3
+                    className="text-xs font-bold tracking-wider uppercase mb-4"
+                    style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                  >
+                    {column.title}
+                  </h3>
+                  <p
+                    className="text-sm text-white/60 leading-relaxed"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {column.content}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+// Vesta Brand System Component with animated annotations
+function VestaBrandSystem() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(-1); // -1 = intro, 0-3 = symbols
+
+  const { scrollYProgress } = useScroll({
+    target: scrollContainerRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    // First 20% is intro, then 4 equal sections for each symbol
+    if (progress < 0.2) {
+      setActiveIndex(-1);
+    } else {
+      const symbolProgress = (progress - 0.2) / 0.8;
+      const index = Math.min(Math.floor(symbolProgress * 4), 3);
+      setActiveIndex(index);
+    }
+  });
+
+  // Each symbol has explicit positioning calculated from SVG coordinates
+  // Pill spans x=258.93 to x=2171.27 (width=1912.34)
+  // Symbol centers derived from path coordinates
+  const symbols = [
+    {
+      name: "Daily Flame",
+      description: "Symbol for Vesta, goddess of the hearth, home, and family.",
+      subDescription: "Revered for maintaining the sacred and eternal flame that symbolized domestic harmony.",
+      horizontalPercent: 15.2, // Center ~550px → (550-258.93)/1912.34
+      verticalPosition: "above" as const,
+    },
+    {
+      name: "Hearth Hub",
+      description: "Adaptation of the Herculean knot, associated with marriage, love and protection.",
+      subDescription: "The tradition of knot symbols represents love and commitment throughout cultures.",
+      horizontalPercent: 40.1, // Center ~1025px → (1025-258.93)/1912.34
+      verticalPosition: "below" as const,
+    },
+    {
+      name: "Juno",
+      description: "Symbol for Juno, goddess of marriage and communication.",
+      subDescription: "Juno blessed sacred conversations and mediated understanding between individuals.",
+      horizontalPercent: 62.5, // Adjusted for visual alignment
+      verticalPosition: "above" as const,
+    },
+    {
+      name: "Oracle's Mirror",
+      description: "Symbol for the ancient wisdom from the Oracle of Delphi \"Know Thyself\".",
+      subDescription: "The oracle was known for guiding people towards greater self-awareness.",
+      horizontalPercent: 85.0, // Center ~1885px → (1885-258.93)/1912.34
+      verticalPosition: "below" as const,
+    },
+  ];
+
+  return (
+    <div ref={scrollContainerRef} className="relative z-10 bg-black mt-32 md:mt-48" style={{ height: "500vh" }}>
+      <div className="sticky top-0 min-h-screen flex items-center justify-center pb-32 md:pb-48">
+        <div className="w-full max-w-6xl mx-auto px-6 md:px-12 lg:px-24">
+          {/* Intro - visible when activeIndex is -1 */}
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+              opacity: activeIndex === -1 ? 1 : 0,
+              y: activeIndex === -1 ? 0 : -20,
+            }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <h2
+              className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-6"
+              style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+            >
+              Brand System
+            </h2>
+            <p
+              className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-3xl mx-auto"
+              style={{ fontFamily: "var(--font-inter)" }}
+            >
+              Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element, from app name to navigation, carries symbolic meaning rooted in ancient wisdom.
+            </p>
+          </motion.div>
+
+          {/* Central Image with Annotations */}
+          <div className="relative w-full max-w-2xl mx-auto">
+            {/* Annotations Above */}
+            <div className="relative h-32 mb-8">
+              {symbols
+                .filter((s) => s.verticalPosition === "above")
+                .map((symbol) => {
+                  const index = symbols.indexOf(symbol);
+                  const isActive = activeIndex === index;
+
+                  return (
+                    <motion.div
+                      key={symbol.name}
+                      className="absolute text-left"
+                      style={{
+                        left: `${symbol.horizontalPercent}%`,
+                        bottom: 0,
+                        width: "200px",
+                      }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{
+                        opacity: isActive ? 1 : 0,
+                        y: isActive ? 0 : 10,
+                      }}
+                      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <h4
+                        className="text-sm md:text-base font-bold tracking-wider uppercase mb-2"
+                        style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                      >
+                        {symbol.name}
+                      </h4>
+                      <p
+                        className="text-sm text-white/80 leading-relaxed mb-1"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {symbol.description}
+                      </p>
+                      <p
+                        className="text-xs text-white/50 leading-relaxed"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {symbol.subDescription}
+                      </p>
+                      {/* Connecting Line */}
+                      <motion.div
+                        className="absolute w-px h-8 bg-white/30"
+                        style={{ left: 0, top: "calc(100% + 12px)" }}
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: isActive ? 1 : 0 }}
+                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                      />
+                    </motion.div>
+                  );
+                })}
+            </div>
+
+            {/* Navigation Dock Image */}
+            <motion.div
+              className="relative z-10"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{
+                opacity: activeIndex >= 0 ? 1 : 0.3,
+                scale: activeIndex >= 0 ? 1 : 0.95,
+              }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/Work/Vesta/Vesta/BrandNavigationDock.svg"
+                alt="Vesta Brand Navigation Dock"
+                className="w-full h-auto"
+                draggable={false}
+              />
+              {/* Icon glow overlays - highlight active icon */}
+              {symbols.map((symbol, index) => (
+                <motion.div
+                  key={`glow-${symbol.name}`}
+                  className="absolute top-1/2 -translate-y-1/2 pointer-events-none"
+                  style={{
+                    left: `${symbol.horizontalPercent}%`,
+                    width: "60px",
+                    height: "60px",
+                    marginLeft: "-30px",
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle, rgba(133, 195, 237, 0.4) 0%, rgba(133, 195, 237, 0) 70%)",
+                    filter: "blur(8px)",
+                  }}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{
+                    opacity: activeIndex === index ? 1 : 0,
+                    scale: activeIndex === index ? 1.2 : 0.5,
+                  }}
+                  transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                />
+              ))}
+            </motion.div>
+
+            {/* Annotations Below */}
+            <div className="relative h-32 mt-8">
+              {symbols
+                .filter((s) => s.verticalPosition === "below")
+                .map((symbol) => {
+                  const index = symbols.indexOf(symbol);
+                  const isActive = activeIndex === index;
+
+                  return (
+                    <motion.div
+                      key={symbol.name}
+                      className="absolute text-left"
+                      style={{
+                        left: `${symbol.horizontalPercent}%`,
+                        top: 0,
+                        width: "200px",
+                      }}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{
+                        opacity: isActive ? 1 : 0,
+                        y: isActive ? 0 : -10,
+                      }}
+                      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      {/* Connecting Line */}
+                      <motion.div
+                        className="absolute w-px h-8 bg-white/30"
+                        style={{ left: 0, bottom: "calc(100% + 12px)" }}
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: isActive ? 1 : 0 }}
+                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                      />
+                      <h4
+                        className="text-sm md:text-base font-bold tracking-wider uppercase mb-2 mt-4"
+                        style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                      >
+                        {symbol.name}
+                      </h4>
+                      <p
+                        className="text-sm text-white/80 leading-relaxed mb-1"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {symbol.description}
+                      </p>
+                      <p
+                        className="text-xs text-white/50 leading-relaxed"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {symbol.subDescription}
+                      </p>
+                    </motion.div>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
   // "description" for the intro, or a section id for the nav sections
@@ -409,6 +742,45 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             />
           </ContainerScroll>
         </div>
+      )}
+
+      {/* Vesta Onboarding Content Section */}
+      {item.slug === "vesta" && (
+        <VestaOnboardingContent />
+      )}
+
+      {/* Vesta Features Sticky Scroll Section */}
+      {item.slug === "vesta" && (
+        <StickyScroll
+          content={[
+            {
+              title: "Daily Flame + Notifications",
+              description: "A simple daily check-in that turns awareness into thoughtful actions with ember alerts tailored to each user's relationship.",
+              image: "/Work/Vesta/Vesta/DailyFlame.png",
+            },
+            {
+              title: "Connection Compass",
+              description: "A guide to how your partner loves, helping you deepen your relationship with intention.",
+              image: "/Work/Vesta/Vesta/PartnerLens.png",
+            },
+            {
+              title: "Spark some Romance",
+              description: "Smart suggestions tailored to your time and place, helping shake things up and make time together more memorable.",
+              image: "/Work/Vesta/Vesta/LoveArsenal.png",
+            },
+            {
+              title: "Wisdom for Love",
+              description: "A companion that listens, remembers, and helps you deepen your connection with care.",
+              subDescription: "Juno speaks as a third presence in the relationship: calm, curious, and attuned. Through deliberate prompt engineering, it uses fire as its central metaphor to reinforce the brand verbally. Rather than prescriptive solutions, Juno asks reflective questions and speaks poetically yet accessibly in lowercase text, creating conversations that feel less like app advice and more like journaling with a trusted confidant.",
+              image: "/Work/Vesta/Vesta/Juno.png",
+            },
+          ]}
+        />
+      )}
+
+      {/* Vesta Brand System Section */}
+      {item.slug === "vesta" && (
+        <VestaBrandSystem />
       )}
     </section>
   );
