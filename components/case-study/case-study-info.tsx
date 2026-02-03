@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform, useMotionTemplate } from "framer-motion";
 import { useSpring, animated } from "@react-spring/web";
 import Image from "next/image";
-import type { WorkItem } from "@/lib/work-data";
+import { workItems, type WorkItem } from "@/lib/work-data";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
+import Link from "next/link";
+import { TransitionLink } from "@/components/case-study/transition-link";
 
 interface CaseStudyInfoProps {
   item: WorkItem;
@@ -75,7 +77,7 @@ function VestaOnboardingContent() {
               className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl mb-16"
               style={{ fontFamily: "var(--font-inter)" }}
             >
-              Vesta's onboarding guides users through a series of reflective prompts to uncover how they love and connect. Users share key details such as relationship duration, location, love language, and attachment style. These inputs shape every experience that follows.
+              Vesta&apos;s onboarding guides users through a series of reflective prompts to uncover how they love and connect. Users share key details such as relationship duration, location, love language, and attachment style. These inputs shape every experience that follows.
             </p>
 
             {/* Three column grid with scroll-linked animations */}
@@ -107,6 +109,449 @@ function VestaOnboardingContent() {
           </div>
         </section>
       </div>
+    </div>
+  );
+}
+
+// Vesta Brand Elements Carousel Component
+function VestaBrandElements() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: scrollContainerRef,
+    offset: ["start end", "end end"],
+  });
+
+  // Transform scroll progress to horizontal translation
+  // 5 slides means we need to move -400% total (each slide is 100%)
+  // Delayed start at 0.22 gives pause for first slide to settle
+  const carouselX = useTransform(scrollYProgress, [0.22, 0.92], ["0%", "-400%"]);
+
+  // Individual slide opacities - first slide gets extra hold time
+  // Slide 1: visible immediately, holds until 0.28, then fades
+  const slide1Opacity = useTransform(scrollYProgress, [0.08, 0.12, 0.28, 0.35], [0.4, 1, 1, 0.4]);
+  const slide2Opacity = useTransform(scrollYProgress, [0.28, 0.35, 0.45, 0.52], [0.4, 1, 1, 0.4]);
+  const slide3Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.62, 0.69], [0.4, 1, 1, 0.4]);
+  const slide4Opacity = useTransform(scrollYProgress, [0.62, 0.69, 0.79, 0.86], [0.4, 1, 1, 0.4]);
+  const slide5Opacity = useTransform(scrollYProgress, [0.79, 0.86, 0.92, 0.98], [0.4, 1, 1, 1]);
+
+  // Text animations - appears when slide is at full opacity, fades before next slide
+  // Text 1: appears after image settles, holds, then fades before transition
+  const text1Opacity = useTransform(scrollYProgress, [0.10, 0.14, 0.24, 0.28], [0, 1, 1, 0]);
+  const text2Opacity = useTransform(scrollYProgress, [0.33, 0.37, 0.43, 0.47], [0, 1, 1, 0]);
+  const text3Opacity = useTransform(scrollYProgress, [0.50, 0.54, 0.60, 0.64], [0, 1, 1, 0]);
+  const text4Opacity = useTransform(scrollYProgress, [0.67, 0.71, 0.77, 0.81], [0, 1, 1, 0]);
+  const text5Opacity = useTransform(scrollYProgress, [0.84, 0.88, 0.94, 0.98], [0, 1, 1, 1]);
+
+  // Progress indicator opacities
+  const dot1Opacity = useTransform(scrollYProgress, [0.08, 0.12, 0.28, 0.35], [0.3, 1, 1, 0.3]);
+  const dot2Opacity = useTransform(scrollYProgress, [0.28, 0.35, 0.45, 0.52], [0.3, 1, 1, 0.3]);
+  const dot3Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.62, 0.69], [0.3, 1, 1, 0.3]);
+  const dot4Opacity = useTransform(scrollYProgress, [0.62, 0.69, 0.79, 0.86], [0.3, 1, 1, 0.3]);
+  const dot5Opacity = useTransform(scrollYProgress, [0.79, 0.86, 0.92, 0.98], [0.3, 1, 1, 1]);
+  const dotOpacities = [dot1Opacity, dot2Opacity, dot3Opacity, dot4Opacity, dot5Opacity];
+
+  const slides = [
+    {
+      image: "/Work/Vesta/Vesta/BrandSystem4.png",
+      title: "Mood Board",
+      description: "I was inspired by classical murals in the Louvre and Roman sculptures of gods and goddesses, delicate serif typography, and fire-like gradients to express love as both timeless and luminous.",
+      opacity: slide1Opacity,
+      textOpacity: text1Opacity,
+    },
+    {
+      image: "/Work/Vesta/Vesta/BrandSystem1.png",
+      title: "Color Palette",
+      description: "The warm reds and golds balance the cool blues to convey both passion and ease.",
+      opacity: slide2Opacity,
+      textOpacity: text2Opacity,
+    },
+    {
+      image: "/Work/Vesta/Vesta/BrandSystem2.png",
+      title: "Gradients",
+      description: "I created custom CSS mesh gradients for a modern sense of light and warmth. Inspired by flames, designed to feel calm, fluid, and alive within the app experience.",
+      opacity: slide3Opacity,
+      textOpacity: text3Opacity,
+    },
+    {
+      image: "/Work/Vesta/Vesta/BrandSystem3.png",
+      title: "Typography",
+      description: "I paired Bugari, inspired by Roman engravings to bring a sense of timeless reverence, with Inter for its modern clarity.",
+      opacity: slide4Opacity,
+      textOpacity: text4Opacity,
+    },
+    {
+      image: "/Work/Vesta/Vesta/BrandSystem5.png",
+      title: "Logo",
+      description: "I customized the logotype to overlap the e-s and t-a. A subtle adjustment to make the letters feel close and connected.",
+      opacity: slide5Opacity,
+      textOpacity: text5Opacity,
+    },
+  ];
+
+  return (
+    <div ref={scrollContainerRef} className="relative z-20 bg-black mt-32 md:mt-48" style={{ height: "600vh" }}>
+      <div className="sticky top-0 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 md:pt-20 pb-40">
+        {/* Text Container - above carousel */}
+        <div className="relative h-36 mb-10 w-full max-w-3xl mx-auto px-6">
+          {slides.map((slide, index) => (
+            <motion.div
+              key={index}
+              className="absolute inset-0 flex flex-col items-center justify-end text-center px-6"
+              style={{ opacity: slide.textOpacity }}
+            >
+              <h3
+                className="text-sm md:text-base font-bold tracking-wider uppercase mb-3"
+                style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+              >
+                {slide.title}
+              </h3>
+              <p
+                className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                {slide.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Carousel Container - mask only affects overflow edges, not the centered image */}
+        <div
+          className="w-full max-w-6xl mx-auto overflow-hidden"
+          style={{
+            maskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
+            WebkitMaskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
+          }}
+        >
+          <motion.div
+            className="flex"
+            style={{ x: carouselX }}
+          >
+            {slides.map((slide, index) => (
+              <motion.div
+                key={index}
+                className="flex-shrink-0 w-full px-8 md:px-16"
+                style={{ opacity: slide.opacity }}
+              >
+                <Image
+                  src={slide.image}
+                  alt={slide.title}
+                  width={1920}
+                  height={1080}
+                  className="w-full h-auto rounded-2xl"
+                  draggable={false}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Progress Indicators - below carousel */}
+        <div className="flex gap-3 mt-8">
+          {dotOpacities.map((dotOpacity, index) => (
+            <motion.div
+              key={index}
+              className="w-2 h-2 rounded-full bg-white"
+              style={{ opacity: dotOpacity }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Vesta Reflection Component - final section with video
+function VestaReflection() {
+  const videoRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: videoRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Video starts full screen, waits until centered, then settles in with margins and rounded corners
+  // 0.3 = video is centered on screen, 0.5 = settled
+  const videoMargin = useTransform(scrollYProgress, [0.3, 0.5], [0, 48]);
+  const videoBorderRadius = useTransform(scrollYProgress, [0.3, 0.5], [0, 24]);
+
+  return (
+    <div className="relative z-20 bg-black mt-32 md:mt-48 pb-32 md:pb-48">
+      {/* Video - starts full screen, settles in with rounded corners */}
+      <div ref={videoRef} className="relative mb-32 md:mb-40">
+        <motion.div
+          className="relative overflow-hidden"
+          style={{
+            marginLeft: videoMargin,
+            marginRight: videoMargin,
+            borderRadius: videoBorderRadius,
+          }}
+        >
+          <video
+            src="/Work/Vesta/Vesta/Reflection.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-auto"
+          />
+        </motion.div>
+      </div>
+
+      {/* Text Container - animates in after video */}
+      <motion.div
+        className="max-w-4xl mx-auto px-6 md:px-12 lg:px-24 text-center"
+        initial={{ opacity: 0, y: 60, scale: 0.92, filter: "blur(12px)" }}
+        whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+        viewport={{ once: true, margin: "-50px" }}
+      >
+        <h2
+          className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-6"
+          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+        >
+          Reflection
+        </h2>
+        <p
+          className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed mb-6"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people.
+        </p>
+        <p
+          className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Building it solo, with AI as my collaborator, pushed me to think not just as a designer, but as a systems thinker, strategist, and developer. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+// Explore More Work Component - shows next projects with square thumbnails
+function ExploreMoreWork({ currentItem }: { currentItem: WorkItem }) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // Find current item index and get next 2 projects (wrapping to beginning)
+  const currentIndex = workItems.findIndex((item) => item.slug === currentItem.slug);
+  const nextProjects = [
+    workItems[(currentIndex + 1) % workItems.length],
+    workItems[(currentIndex + 2) % workItems.length],
+  ];
+
+  return (
+    <div className="relative z-20 bg-black px-6 md:px-12 lg:px-24 pb-32 md:pb-48">
+      {/* Divider Line - tapered gradient */}
+      <div
+        className="w-full max-w-3xl mx-auto h-px mb-20 md:mb-28"
+        style={{
+          background: "linear-gradient(to right, transparent, rgba(255,255,255,0.3) 20%, rgba(255,255,255,0.3) 80%, transparent)",
+        }}
+      />
+
+      <div className="max-w-5xl mx-auto">
+        {/* Project Thumbnails - Square */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {nextProjects.map((project, index) => (
+            <TransitionLink
+              key={project.id}
+              href={`/work/${project.slug}`}
+              className="block"
+            >
+              <motion.div
+                className="relative overflow-hidden rounded-xl cursor-pointer aspect-square"
+                style={{ backgroundColor: project.accentColor }}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                {/* Project Image - contracts on hover */}
+                <motion.div
+                  className="absolute overflow-hidden rounded-lg"
+                  animate={{
+                    top: hoveredIndex === index ? 12 : 0,
+                    left: hoveredIndex === index ? 12 : 0,
+                    right: hoveredIndex === index ? 12 : 0,
+                    bottom: hoveredIndex === index ? 140 : 0,
+                  }}
+                  transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <motion.img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.div>
+
+                {/* Content that reveals on hover */}
+                <motion.div
+                  className="absolute bottom-0 left-0 right-0 px-4 pb-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: hoveredIndex === index ? 1 : 0,
+                    y: hoveredIndex === index ? 0 : 20,
+                  }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                  <h3 className="text-white text-lg lg:text-xl font-semibold tracking-tight">
+                    {project.title}
+                  </h3>
+                  <p className="text-white/80 text-sm mt-1 line-clamp-2">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {project.categories.map((cat) => (
+                      <span
+                        key={cat}
+                        className="px-2 py-1 text-xs rounded-full bg-white/20 text-white/90"
+                      >
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            </TransitionLink>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Vesta Guiding Personas Component with scroll-driven carousel
+function VestaGuidingPersonas() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: scrollContainerRef,
+    offset: ["start end", "end end"],
+  });
+
+  // Card slides up from below viewport
+  const cardY = useTransform(scrollYProgress, [0, 0.08], ["60vh", "0vh"]);
+  const cardOpacity = useTransform(scrollYProgress, [0, 0.06], [0, 1]);
+
+  // Transform scroll progress to horizontal translation (after intro settles)
+  const carouselX = useTransform(scrollYProgress, [0.45, 0.92], ["0%", "-200%"]);
+
+  // Intro text animations - elegant entrance with longer visibility
+  // Fades in 5-15%, stays visible 15-35%, fades out 35-45%
+  const introOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [0, 1, 1, 0]);
+  const introY = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [60, 0, 0, -40]);
+  const introBlur = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [12, 0, 0, 6]);
+  const introFilter = useMotionTemplate`blur(${introBlur}px)`;
+  const introScale = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [0.92, 1, 1, 0.96]);
+
+  // Carousel fades in smoothly with slight scale as intro exits
+  const carouselOpacity = useTransform(scrollYProgress, [0.40, 0.50], [0, 1]);
+  const carouselScale = useTransform(scrollYProgress, [0.40, 0.50], [0.94, 1]);
+
+  // Individual persona opacities for highlighting active one
+  const persona1Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.58, 0.64], [0.4, 1, 1, 0.4]);
+  const persona2Opacity = useTransform(scrollYProgress, [0.58, 0.65, 0.72, 0.78], [0.4, 1, 1, 0.4]);
+  const persona3Opacity = useTransform(scrollYProgress, [0.72, 0.80, 0.88, 0.95], [0.4, 1, 1, 1]);
+
+  // Progress indicator opacities (defined at top level to follow rules of hooks)
+  const dot1Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.58, 0.64], [0.3, 1, 1, 0.3]);
+  const dot2Opacity = useTransform(scrollYProgress, [0.58, 0.65, 0.72, 0.78], [0.3, 1, 1, 0.3]);
+  const dot3Opacity = useTransform(scrollYProgress, [0.72, 0.80, 0.88, 0.95], [0.3, 1, 1, 1]);
+  const dotOpacities = [dot1Opacity, dot2Opacity, dot3Opacity];
+
+  const personas = [
+    {
+      image: "/Work/Vesta/Vesta/UserPersona-1.png",
+      opacity: persona1Opacity,
+    },
+    {
+      image: "/Work/Vesta/Vesta/UserPersona-2.png",
+      opacity: persona2Opacity,
+    },
+    {
+      image: "/Work/Vesta/Vesta/UserPersona-3.png",
+      opacity: persona3Opacity,
+    },
+  ];
+
+  return (
+    <div ref={scrollContainerRef} className="relative z-20 bg-black" style={{ height: "500vh" }}>
+      {/* Card that slides up */}
+      <motion.div
+        className="sticky top-0 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 md:pt-20 pb-32"
+        style={{ y: cardY, opacity: cardOpacity }}
+      >
+        {/* Intro Text */}
+        <motion.div
+          className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center px-6 md:px-12 lg:px-24 max-w-4xl mx-auto pointer-events-none z-10"
+          style={{
+            opacity: introOpacity,
+            y: introY,
+            scale: introScale,
+            filter: introFilter,
+          }}
+        >
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-6"
+            style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+          >
+            Guiding Personas
+          </h2>
+          <p
+            className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            To guide my design decisions, I developed three personas representing different relationship challenges: new couples who struggle to express needs (Elyse), established partners drowning in busy schedules (Matthew), and long-term couples seeking sustainable growth tools (Ericka & Ben). These profiles shaped everything from Vesta&apos;s gentle tone to its calendar integration.
+          </p>
+        </motion.div>
+
+        {/* Progress Indicators - above carousel */}
+        <motion.div
+          className="flex gap-3 mb-8"
+          style={{ opacity: carouselOpacity }}
+        >
+          {dotOpacities.map((dotOpacity, index) => (
+            <motion.div
+              key={index}
+              className="w-2 h-2 rounded-full bg-white"
+              style={{ opacity: dotOpacity }}
+            />
+          ))}
+        </motion.div>
+
+        {/* Carousel Container - mask only affects overflow edges, not the centered image */}
+        <motion.div
+          className="w-full max-w-6xl mx-auto overflow-hidden"
+          style={{
+            opacity: carouselOpacity,
+            scale: carouselScale,
+            maskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
+            WebkitMaskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
+          }}
+        >
+          <motion.div
+            className="flex"
+            style={{ x: carouselX }}
+          >
+            {personas.map((persona, index) => (
+              <motion.div
+                key={index}
+                className="flex-shrink-0 w-full px-8 md:px-16"
+                style={{ opacity: persona.opacity }}
+              >
+                <Image
+                  src={persona.image}
+                  alt={`User Persona ${index + 1}`}
+                  width={1200}
+                  height={800}
+                  className="w-full h-auto rounded-2xl"
+                  draggable={false}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
@@ -167,7 +612,7 @@ function VestaBrandSystem() {
   ];
 
   return (
-    <div ref={scrollContainerRef} className="relative z-10 bg-black mt-32 md:mt-48" style={{ height: "500vh" }}>
+    <div ref={scrollContainerRef} className="relative z-10 bg-black mt-32 md:mt-48" style={{ height: "350vh" }}>
       <div className="sticky top-0 min-h-screen flex items-center justify-center pb-32 md:pb-48">
         <div className="w-full max-w-6xl mx-auto px-6 md:px-12 lg:px-24">
           {/* Intro - visible when activeIndex is -1 */}
@@ -195,7 +640,7 @@ function VestaBrandSystem() {
           </motion.div>
 
           {/* Central Image with Annotations */}
-          <div className="relative w-full max-w-2xl mx-auto">
+          <div className="relative w-full max-w-4xl mx-auto">
             {/* Annotations Above */}
             <div className="relative h-32 mb-8">
               {symbols
@@ -782,6 +1227,40 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       {item.slug === "vesta" && (
         <VestaBrandSystem />
       )}
+
+      {/* Vesta Guiding Personas Section */}
+      {item.slug === "vesta" && (
+        <VestaGuidingPersonas />
+      )}
+
+      {/* Vesta User Flow Section */}
+      {item.slug === "vesta" && (
+        <div className="mx-12 mt-32 md:mt-48">
+          <ContainerScroll>
+            <Image
+              src="/Work/Vesta/Vesta/UserFlow.png"
+              alt="Vesta User Flow"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* Vesta Brand Elements Carousel */}
+      {item.slug === "vesta" && (
+        <VestaBrandElements />
+      )}
+
+      {/* Vesta Reflection Section */}
+      {item.slug === "vesta" && (
+        <VestaReflection />
+      )}
+
+      {/* Explore More Work Section - shown on all case studies */}
+      <ExploreMoreWork currentItem={item} />
     </section>
   );
 }

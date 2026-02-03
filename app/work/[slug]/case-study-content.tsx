@@ -26,14 +26,16 @@ export function CaseStudyContent({ item }: CaseStudyContentProps) {
       {/* Project info section */}
       <CaseStudyInfo item={item} />
 
-      {/* Placeholder for custom content - this is where project-specific content will go */}
-      <section className="relative z-10 bg-black px-6 md:px-12 lg:px-24 py-16 md:py-24">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-white/40 text-center py-32" style={{ fontFamily: "var(--font-inter)" }}>
-            Project content coming soon...
-          </p>
-        </div>
-      </section>
+      {/* Placeholder for custom content - shown for projects without custom case study content */}
+      {item.slug !== "vesta" && (
+        <section className="relative z-10 bg-black px-6 md:px-12 lg:px-24 py-16 md:py-24">
+          <div className="max-w-6xl mx-auto">
+            <p className="text-white/40 text-center py-32" style={{ fontFamily: "var(--font-inter)" }}>
+              Project content coming soon...
+            </p>
+          </div>
+        </section>
+      )}
     </motion.div>
   );
 }
