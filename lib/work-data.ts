@@ -178,7 +178,7 @@ export const workItems: WorkItem[] = [
     image: "/Thumbnails/BMWChampionship.png",
     heroMedia: {
       type: "image",
-      src: "/Thumbnails/BMWChampionship.png",
+      src: "/work/BMW/BMW Championship/Hero.png",
     },
     accentColor: "#1a1a1a",
     logo: "/Work/BMW/BMWLogo.png",

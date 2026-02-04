@@ -2250,6 +2250,159 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       )}
 
+      {/* BMW Championship X3 with Container Scroll Animation */}
+      {item.slug === "bmw-championship" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <Image
+              src="/work/BMW/BMW Championship/X3.png"
+              alt="BMW X3"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* BMW Championship Image Gallery */}
+      {item.slug === "bmw-championship" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          {/* Trophy1 and Course1 side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/Trophy1.png"
+                alt="BMW Championship Trophy"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/course1.png"
+                alt="Castle Pines Golf Course"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* i4 full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/work/BMW/BMW Championship/i4.png"
+              alt="BMW i4"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* Keegan and Trophy2 side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/Keegan.png"
+                alt="Keegan Bradley"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/Trophy2.png"
+                alt="BMW Championship Trophy"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* course2 full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/work/BMW/BMW Championship/course2.png"
+              alt="Castle Pines Golf Course"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* Trophy3 and Backwall side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/Trophy3.png"
+                alt="BMW Championship Trophy"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/Backwall.png"
+                alt="BMW Championship Backwall"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* Rory full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/work/BMW/BMW Championship/Rory.png"
+              alt="Rory McIlroy"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* Flag and Trophy4 side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/flag.png"
+                alt="BMW Championship Flag"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/work/BMW/BMW Championship/Trophy4.png"
+                alt="BMW Championship Trophy"
+                width={1200}
+                height={800}
+                className="w-full h-full object-cover"
+                draggable={false}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tapered Divider Line */}
       <div
         className="w-full max-w-3xl mx-auto h-px mt-20 md:mt-28"
