@@ -2403,6 +2403,285 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       )}
 
+      {/* BMW Indian Wells - RacketRoad with Container Scroll Animation */}
+      {item.slug === "bmw-indian-wells" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <Image
+              src="/Work/BMW/BMW Tennis/RacketRoad.png"
+              alt="BMW Tennis Racket Road"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* BMW Indian Wells Image Gallery */}
+      {item.slug === "bmw-indian-wells" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          {/* iX full width */}
+          <div className="relative overflow-hidden rounded-2xl">
+            <Image
+              src="/Work/BMW/BMW Tennis/iX.png"
+              alt="BMW iX"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* RacingCars video full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <video
+              src="/Work/BMW/BMW Tennis/RacingCars.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            />
+          </div>
+
+          {/* Court full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/BMW/BMW Tennis/Court.png"
+              alt="BMW Tennis Court"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* i4 full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/BMW/BMW Tennis/i4.png"
+              alt="BMW i4"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* Racket video full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <video
+              src="/Work/BMW/BMW Tennis/Racket.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            />
+          </div>
+
+          {/* Rackets full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/BMW/BMW Tennis/Rackets.png"
+              alt="BMW Tennis Rackets"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* m5 full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/BMW/BMW Tennis/m5.png"
+              alt="BMW M5"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* RacketBall full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/BMW/BMW Tennis/RacketBall.png"
+              alt="BMW Tennis Racket Ball"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* DigitalBanners full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/BMW/BMW Tennis/DigitalBanners.png"
+              alt="BMW Digital Banners"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* CarFlip gif full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/BMW/BMW Tennis/CarFlip.gif"
+              alt="BMW Car Flip Animation"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+              unoptimized
+            />
+          </div>
+
+          {/* Storyboards Section */}
+          <div className="py-32 md:py-56">
+            <div className="text-center mb-12">
+              <h2
+                className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4 italic"
+                style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+              >
+                Storyboards
+              </h2>
+              <p
+                className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                Worked closely with Cekai Studio to bring the identity to life for the stadium jumbotron and LED boards.
+              </p>
+            </div>
+
+            {/* 4x2 Grid of Storyboards */}
+            <div className="max-w-5xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board1.png"
+                    alt="BMW Storyboard 1"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board2.png"
+                    alt="BMW Storyboard 2"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board3.png"
+                    alt="BMW Storyboard 3"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board4.png"
+                    alt="BMW Storyboard 4"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board5.png"
+                    alt="BMW Storyboard 5"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board6.png"
+                    alt="BMW Storyboard 6"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board7.png"
+                    alt="BMW Storyboard 7"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <Image
+                    src="/Work/BMW/BMW Tennis/Board8.png"
+                    alt="BMW Storyboard 8"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto"
+                    draggable={false}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* BMW Indian Wells - Stadium with Container Scroll Animation */}
+      {item.slug === "bmw-indian-wells" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <video
+              src="/Work/BMW/BMW Tennis/Stadium.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* BMW Indian Wells - BMWBall */}
+      {item.slug === "bmw-indian-wells" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <div className="relative overflow-hidden rounded-2xl">
+            <Image
+              src="/Work/BMW/BMW Tennis/BMWBall.png"
+              alt="BMW Tennis Ball"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Tapered Divider Line */}
       <div
         className="w-full max-w-3xl mx-auto h-px mt-20 md:mt-28"
