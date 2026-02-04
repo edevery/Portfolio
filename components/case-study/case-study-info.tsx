@@ -7,6 +7,7 @@ import Image from "next/image";
 import { workItems, type WorkItem } from "@/lib/work-data";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
+import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { TransitionLink } from "@/components/case-study/transition-link";
 
 interface CaseStudyInfoProps {
@@ -2673,6 +2674,129 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             <Image
               src="/Work/BMW/BMW Tennis/BMWBall.png"
               alt="BMW Tennis Ball"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Merit Systems - 3D Marquee */}
+      {item.slug === "merit-systems" && (
+        <ThreeDMarquee
+          images={[
+            "/Work/MeritSystems/BrandBook/MeritBrandBook2.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook4.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook3.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook20.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook8.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook19.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook7.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook5.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook9.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook10.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook11.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook12.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook8.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook14.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook15.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook16.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook17.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook18.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook6.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook13.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook12.jpg",
+            "/Work/MeritSystems/BrandBook/MeritBrandBook22.jpg",
+          ]}
+        />
+      )}
+
+      {/* Merit Systems - Conference Stage with Container Scroll Animation */}
+      {item.slug === "merit-systems" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <Image
+              src="/Work/MeritSystems/Merit.png"
+              alt="Merit Systems"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* Merit Systems Image Gallery */}
+      {item.slug === "merit-systems" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          {/* Homepage full width */}
+          <div className="relative overflow-hidden rounded-2xl">
+            <Image
+              src="/Work/MeritSystems/Homepage.png"
+              alt="Merit Systems Homepage"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* ConferenceStage */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/MeritSystems/ConferenceStage.png"
+              alt="Merit Systems Conference Stage"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* DeconstructedIcon video */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <video
+              src="/Work/MeritSystems/DeconstructedIcon.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            />
+          </div>
+
+          {/* Hoodie and Moleskin side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/MeritSystems/Hoodie.png"
+                alt="Merit Systems Hoodie"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/MeritSystems/Moleskin.png"
+                alt="Merit Systems Moleskin"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* Merit-Twitter full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/MeritSystems/Merit-Twitter.png"
+              alt="Merit Systems Twitter"
               width={1920}
               height={1080}
               className="w-full h-auto"

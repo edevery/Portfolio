@@ -249,8 +249,9 @@ export const workItems: WorkItem[] = [
     categories: ["identity", "product"],
     image: "/Thumbnails/MeritSystems.png",
     heroMedia: {
-      type: "image",
-      src: "/Thumbnails/MeritSystems.png",
+      type: "video",
+      src: "/Work/MeritSystems/TerminalVideo.mp4",
+      poster: "/Thumbnails/MeritSystems.png",
     },
     accentColor: "#7c3aed",
     logo: "/Work/MeritSystems/MeritIcon.png",
