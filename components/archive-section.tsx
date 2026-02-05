@@ -78,6 +78,11 @@ const archiveItems: ArchiveItem[] = [
   { id: "a40", title: "Spanx\nWhite Pants", categories: ["art direction"], image: "/archive/project-Spanx White Pants-3.png" },
 ];
 
+// Helper to get thumbnail path from full image path
+const getThumbnailPath = (imagePath: string) => {
+  return imagePath.replace("/archive/", "/archive/thumbnails/");
+};
+
 // Aspect ratios
 const CAROUSEL_ASPECT = 4 / 3; // 1.333 - slightly landscape for carousel cards
 const FEATURED_ASPECT = 9 / 16; // 0.5625 - portrait for featured card
@@ -371,7 +376,8 @@ function Card({
         <Image
           transparent
           radius={0.075}
-          url={url}
+          url={getThumbnailPath(url)}
+          rotation={[0, 0, Math.PI / 2]}
           scale={[CAROUSEL_ASPECT * CAROUSEL_SIZE, CAROUSEL_SIZE, 1] as unknown as number}
           side={THREE.DoubleSide}
         />
@@ -422,7 +428,7 @@ function ActiveCard({
           radius={0.3}
           position={[0, 1.5, 0]}
           scale={[FEATURED_SIZE * FEATURED_ASPECT, FEATURED_SIZE, 1] as unknown as number}
-          url={hovered?.item.image ?? "/Thumbnails/Vesta.png"}
+          url={hovered ? getThumbnailPath(hovered.item.image) : "/Thumbnails/Vesta.png"}
         />
         {hovered && (
           <>
