@@ -2806,6 +2806,155 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       )}
 
+      {/* It All Starts Here - OOH Chatbot with Container Scroll Animation */}
+      {item.slug === "it-all-starts-here" && (
+        <div className="mx-12">
+          <ContainerScroll>
+            <Image
+              src="/Work/ItAllStartsHere/OOH_Chatbot.jpg"
+              alt="It All Starts Here - Chatbot OOH"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* It All Starts Here - Image Gallery */}
+      {item.slug === "it-all-starts-here" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          {/* OOH Bus full width */}
+          <div className="relative overflow-hidden rounded-2xl">
+            <Image
+              src="/Work/ItAllStartsHere/OOH_Bus.jpg"
+              alt="It All Starts Here - Bus OOH"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* OOH Garcia full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/ItAllStartsHere/OOH_Garcia.jpg"
+              alt="It All Starts Here - Garcia OOH"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* Small Business Imagery - 2x2 grid */}
+          <div className="grid grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/ItAllStartsHere/Imagery_SmallBusiness_Bikes.jpg"
+                alt="Small Business - Bikes"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/ItAllStartsHere/Imagery_SmallBusiness_Coffee.jpg"
+                alt="Small Business - Coffee"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/ItAllStartsHere/Imagery_SmallBusiness_Tatoo.jpg"
+                alt="Small Business - Tattoo"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/ItAllStartsHere/Imagery_SmallBusiness_Records.jpg"
+                alt="Small Business - Records"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* Magazine full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/ItAllStartsHere/Magazine.png"
+              alt="It All Starts Here - Magazine"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* Projection Coit Tower full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/ItAllStartsHere/Projection_CoitTower.jpg"
+              alt="It All Starts Here - Coit Tower Projection"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+
+          {/* Monsters and Oracle side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/ItAllStartsHere/Monsters.png"
+                alt="It All Starts Here - Monsters"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src="/Work/ItAllStartsHere/Oracle.png"
+                alt="It All Starts Here - Oracle"
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          {/* OOH Martini Mai Tai full width */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
+            <Image
+              src="/Work/ItAllStartsHere/OOH_MartiniMaiTai.jpg"
+              alt="It All Starts Here - Martini Mai Tai OOH"
+              width={1920}
+              height={1080}
+              className="w-full h-auto"
+              draggable={false}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Tapered Divider Line */}
       <div
         className="w-full max-w-3xl mx-auto h-px mt-20 md:mt-28"
