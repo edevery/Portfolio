@@ -153,7 +153,7 @@ export const workItems: WorkItem[] = [
     image: "/Thumbnails/Instacart.png",
     heroMedia: {
       type: "video",
-      src: "/Work/Instacart/Hero_IndianSpice.mov",
+      src: "/Work/Instacart/Hero_IndianSpice.mp4",
       poster: "/Thumbnails/Instacart.png",
     },
     accentColor: "#16a34a",
@@ -272,7 +272,7 @@ export const workItems: WorkItem[] = [
     slug: "it-all-starts-here",
     title: "It All Starts Here",
     description: "A citywide campaign celebrating San Francisco's enduring influence on innovation.",
-    categories: ["art direction", "experiential", "generative"],
+    categories: ["art direction", "experiential"],
     image: "/Thumbnails/ItAllStartsHere.png",
     heroMedia: {
       type: "image",

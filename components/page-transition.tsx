@@ -28,14 +28,14 @@ export function PageTransitionProvider({ children }: PageTransitionProviderProps
     (href: string) => {
       setIsTransitioning(true);
 
-      // Wait for overlay to cover screen, then navigate
+      // Wait for overlay to fully cover screen, then navigate
       setTimeout(() => {
         router.push(href);
         // Keep overlay visible while new page mounts, then reveal
         setTimeout(() => {
           setIsTransitioning(false);
-        }, 300);
-      }, 500);
+        }, 400);
+      }, 550);
     },
     [router]
   );
@@ -49,12 +49,12 @@ export function PageTransitionProvider({ children }: PageTransitionProviderProps
         {isTransitioning && (
           <motion.div
             className="fixed inset-0 z-[9999] bg-black"
-            initial={{ y: "-100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
+            initial={{ clipPath: "inset(100% 0 0 0)" }}
+            animate={{ clipPath: "inset(0 0 0 0)" }}
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{
               duration: 0.5,
-              ease: [0.4, 0, 0.2, 1],
+              ease: [0.76, 0, 0.24, 1],
             }}
           />
         )}
