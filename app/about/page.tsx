@@ -165,22 +165,19 @@ export default function About() {
           <div className="md:col-span-2 bg-zinc-900 rounded-3xl p-8 md:p-10">
             <div className="space-y-4 text-zinc-300 text-sm md:text-base leading-relaxed font-[family-name:var(--font-inter)]">
               <p>
-                <span className="text-[#85c3ed] font-[family-name:var(--font-display)] italic">hi, i&apos;m emily</span> — a brand designer who cares deeply about how things feel. I&apos;m interested in how thoughtful design shapes meaning, trust, and experience, and how brand systems quietly influence the way people connect with products and each other.
+                <span className="text-[#85c3ed] font-bold">Hi, I&apos;m Emily.</span> I care deeply about how things feel. How thoughtful design shapes meaning, trust, and experience. How brand systems quietly influence the way people relate to products and each other.
               </p>
               <p>
-                I grew up in Boulder, Colorado, studied design and marketing at USC, and spent a formative year in London, where I first saw how intentional design can give brands a soul people connect with. Living in LA, Dallas, San Francisco, and now New York has shaped how I think about culture, context, and building work that resonates across environments.
+                I grew up in Boulder, studied design and marketing at USC, and spent a formative year at UAL, where I first saw how intentional design can make a brand feel alive. Living across LA, London, SF, and now NY has shaped how I see the world and design within it.
               </p>
               <p>
-                Outside of client work, I&apos;ve been building an AI-powered relationship companion, using emerging tools to prototype quickly and explore how narrative, voice, and design can make intelligent technology feel more human.
-              </p>
-              <p>
-                When I&apos;m not designing, I enjoy running through the city, skiing whenever I can escape it, hosting dinner parties, building things with my partner, and exploring ideas that bring people together.
+                I&apos;m most excited by the intersection of brand and emerging technology. Recently I designed and built an AI-powered relationship companion, exploring what it takes to give intelligent tools a voice, a point of view, and a new way to connect with the people we love most.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section: Music, Photos, Social Links */}
+        {/* Bottom Section: Photos, Music, Social Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Photos Carousel */}
           <div className="relative aspect-square bg-zinc-900 rounded-3xl overflow-hidden group">
@@ -217,17 +214,13 @@ export default function About() {
               />
             </div>
 
-            {/* Location - Liquid Glass (bottom left) */}
-            <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-lg flex items-center justify-center">
-              <span className="text-white text-xs font-medium text-center">{photos[currentPhotoIndex].location}</span>
-            </div>
           </div>
 
           {/* Music Player */}
           <MusicPlayer />
 
           {/* Social Links */}
-          <div className="aspect-square bg-[#85c3ed] rounded-3xl p-6 flex flex-col justify-center">
+          <div className="aspect-square bg-zinc-900 rounded-3xl p-6 flex flex-col justify-center">
             <div className="grid grid-cols-2 gap-4">
               {socialLinks.map((link) => (
                 <TiltSocialLink key={link.name} link={link} />
