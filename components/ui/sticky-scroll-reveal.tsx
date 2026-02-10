@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef } from "react";
-import { useScroll, useTransform, motion, useMotionValueEvent } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
 import Image from "next/image";
 
 interface ContentItem {
@@ -15,29 +15,91 @@ interface StickyScrollProps {
   content: ContentItem[];
 }
 
+// Hook to detect mobile screen
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  return isMobile;
+}
+
 export function StickyScroll({ content }: StickyScrollProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = React.useState(0);
+  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const index = Math.min(
-      Math.floor(progress * content.length),
-      content.length - 1
+  // Transform scroll progress to horizontal translation (desktop only)
+  const carouselX = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["0%", `${-(content.length - 1) * 100}%`]
+  );
+
+  // Mobile: Simple stacked cards
+  if (isMobile) {
+    return (
+      <div className="bg-black px-4 py-16 space-y-8">
+        {content.map((item) => (
+          <motion.div
+            key={item.title}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <div className="bg-[#141414] rounded-2xl overflow-hidden border border-white/5">
+              {/* Image */}
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                  draggable={false}
+                />
+              </div>
+
+              {/* Content */}
+              <div className="p-5">
+                <h3
+                  className="text-lg tracking-tight mb-2"
+                  style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="text-sm text-white/60 leading-relaxed"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  {item.description}
+                </p>
+                {item.subDescription && (
+                  <p
+                    className="text-xs text-white/40 leading-relaxed mt-3"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {item.subDescription}
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     );
-    if (index !== activeIndex) {
-      setActiveIndex(index);
-    }
-  });
+  }
 
-  // Transform for the first image's container scroll effect
-  const firstImageScale = useTransform(scrollYProgress, [0, 0.15], [1.05, 1]);
-  const firstImageRotate = useTransform(scrollYProgress, [0, 0.15], [15, 0]);
-
+  // Desktop: Horizontal scroll-linked carousel
   return (
     <div
       ref={containerRef}
@@ -45,95 +107,55 @@ export function StickyScroll({ content }: StickyScrollProps) {
       style={{ height: `${content.length * 100}vh` }}
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-12 md:gap-16 items-center">
-            {/* Left: Text Content */}
-            <div className="relative h-[300px] md:h-[400px]">
-              {content.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  className="absolute inset-0 flex flex-col justify-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{
-                    opacity: activeIndex === index ? 1 : 0,
-                    y: activeIndex === index ? 0 : 20,
-                  }}
-                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                >
+        <motion.div
+          className="flex gap-8 pl-12"
+          style={{ x: carouselX }}
+        >
+          {content.map((item) => (
+            <motion.div
+              key={item.title}
+              className="flex-shrink-0 w-[80vw] lg:w-[70vw]"
+            >
+              {/* Card */}
+              <div className="bg-[#141414] rounded-3xl overflow-hidden border border-white/5">
+                {/* Image */}
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                    draggable={false}
+                  />
+                </div>
+
+                {/* Content */}
+                <div className="p-8 lg:p-10">
                   <h3
-                    className="text-2xl md:text-3xl lg:text-4xl tracking-tight mb-4"
+                    className="text-2xl lg:text-3xl tracking-tight mb-3"
                     style={{ fontFamily: "'Noe Display', serif", color: "white" }}
                   >
                     {item.title}
                   </h3>
                   <p
-                    className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed"
+                    className="text-base lg:text-lg text-white/60 leading-relaxed max-w-2xl"
                     style={{ fontFamily: "var(--font-inter)" }}
                   >
                     {item.description}
                   </p>
                   {item.subDescription && (
                     <p
-                      className="text-sm md:text-base text-white/40 leading-relaxed mt-4"
+                      className="text-sm text-white/40 leading-relaxed mt-4 max-w-2xl"
                       style={{ fontFamily: "var(--font-inter)" }}
                     >
                       {item.subDescription}
                     </p>
                   )}
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Right: Sticky Image */}
-            <div className="relative" style={{ perspective: "1000px" }}>
-              {content.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  className="absolute inset-0"
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: activeIndex === index ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                  style={
-                    index === 0
-                      ? {
-                          rotateX: firstImageRotate,
-                          scale: firstImageScale,
-                        }
-                      : undefined
-                  }
-                >
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    width={1920}
-                    height={1080}
-                    className="w-full h-auto rounded-2xl"
-                    style={{
-                      boxShadow:
-                        index === 0
-                          ? "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003"
-                          : undefined,
-                    }}
-                    draggable={false}
-                  />
-                </motion.div>
-              ))}
-              {/* Placeholder for layout */}
-              <div className="invisible">
-                <Image
-                  src={content[0].image}
-                  alt=""
-                  width={1920}
-                  height={1080}
-                  className="w-full h-auto rounded-2xl"
-                  draggable={false}
-                />
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </div>
   );

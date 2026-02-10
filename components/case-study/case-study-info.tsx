@@ -23,92 +23,87 @@ const calcRotation = (x: number, y: number, rect: DOMRect) => {
   return [rotateX, rotateY];
 };
 
-// Vesta Onboarding Content Component with scroll-linked column animations
+// Vesta Onboarding Content Component with staggered entrance animations
 function VestaOnboardingContent() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start center", "end center"],
-  });
-
-  // Each column animates in sequence as user scrolls through the tall container
-  // Column 1: appears first (15-40%)
-  // Column 2: appears second (35-60%)
-  // Column 3: appears third (55-80%)
-  const column1Opacity = useTransform(scrollYProgress, [0.15, 0.28, 0.4], [0, 0.5, 1]);
-  const column1Y = useTransform(scrollYProgress, [0.15, 0.4], [60, 0]);
-
-  const column2Opacity = useTransform(scrollYProgress, [0.35, 0.48, 0.6], [0, 0.5, 1]);
-  const column2Y = useTransform(scrollYProgress, [0.35, 0.6], [60, 0]);
-
-  const column3Opacity = useTransform(scrollYProgress, [0.55, 0.68, 0.8], [0, 0.5, 1]);
-  const column3Y = useTransform(scrollYProgress, [0.55, 0.8], [60, 0]);
-
   const columns = [
     {
       title: "Relationship Context",
       content: "Vesta adjusts its tone and content based on the couple's relationship duration and living dynamic, recognizing that a 6-month relationship and a 6-year one require different forms of support.",
-      opacity: column1Opacity,
-      y: column1Y,
     },
     {
       title: "Location",
       content: "Location awareness enables Vesta to suggest contextually relevant date ideas, from nearby restaurants to weekend getaways. The app adapts to users' surroundings while respecting privacy preferences.",
-      opacity: column2Opacity,
-      y: column2Y,
     },
     {
       title: "Emotional Frameworks",
       content: "Vesta recognizes that partners express love differently: through quality time, words of affirmation, acts of service, physical touch, or gifts. This understanding allows tailored suggestions for each unique relationship dynamic.",
-      opacity: column3Opacity,
-      y: column3Y,
     },
   ];
 
   return (
-    <div ref={scrollContainerRef} className="relative z-10 bg-black" style={{ height: "200vh" }}>
-      {/* Sticky content that stays centered while scrolling */}
-      <div className="sticky top-0 min-h-screen flex items-center">
-        <section className="w-full px-6 md:px-12 lg:px-24 py-16 md:py-24">
-          <div className="max-w-6xl mx-auto">
-            {/* Intro text */}
-            <p
-              className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl mb-16"
-              style={{ fontFamily: "var(--font-inter)" }}
-            >
-              Vesta&apos;s onboarding guides users through a series of reflective prompts to uncover how they love and connect. Users share key details such as relationship duration, location, love language, and attachment style. These inputs shape every experience that follows.
-            </p>
+    <div className="relative z-10 bg-black">
+      <section className="mx-4 md:mx-12 pt-6 md:pt-8 pb-4 md:pb-6">
+        <div className="bg-[#141414] rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-12 border border-white/5">
+          {/* Intro text */}
+          <motion.p
+            className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl mb-16"
+            style={{ fontFamily: "var(--font-inter)" }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          >
+            Vesta&apos;s onboarding uses reflective prompts to understand how users love and connect. Relationship duration, location, love language, and attachment style personalize every experience that follows.
+          </motion.p>
 
-            {/* Three column grid with scroll-linked animations */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-              {columns.map((column, index) => (
-                <motion.div
-                  key={column.title}
-                  className={`${index > 0 ? "border-l border-[#85c3ed]/30 pl-8" : ""}`}
-                  style={{
-                    opacity: column.opacity,
-                    y: column.y,
+          {/* Three column grid with staggered animations */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            {columns.map((column, index) => (
+              <motion.div
+                key={column.title}
+                className={`${index > 0 ? "border-l border-[#85c3ed]/30 pl-8" : ""}`}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  duration: 0.6,
+                  ease: [0.4, 0, 0.2, 1],
+                  delay: index * 0.2,
+                }}
+              >
+                <motion.h3
+                  className="text-xs font-bold tracking-wider uppercase mb-4"
+                  style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                  initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{
+                    duration: 0.5,
+                    ease: [0.4, 0, 0.2, 1],
+                    delay: index * 0.2 + 0.1,
                   }}
                 >
-                  <h3
-                    className="text-xs font-bold tracking-wider uppercase mb-4"
-                    style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
-                  >
-                    {column.title}
-                  </h3>
-                  <p
-                    className="text-sm text-white/60 leading-relaxed"
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  >
-                    {column.content}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+                  {column.title}
+                </motion.h3>
+                <motion.p
+                  className="text-sm text-white/60 leading-relaxed"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                  initial={{ opacity: 0, y: 15, filter: "blur(6px)" }}
+                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.4, 0, 0.2, 1],
+                    delay: index * 0.2 + 0.2,
+                  }}
+                >
+                  {column.content}
+                </motion.p>
+              </motion.div>
+            ))}
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
@@ -1090,13 +1085,9 @@ function VestaBrandSystem() {
 }
 
 export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
-  // "description" for the intro, or a section id for the nav sections
-  const [activeContent, setActiveContent] = useState<"description" | string>("description");
-  const [hasRevealed, setHasRevealed] = useState(false);
-  const [revealProgress, setRevealProgress] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
+  const [activeSection, setActiveSection] = useState(item.sections[0]?.id || "");
   const logoRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   // Toggle mute for all videos
@@ -1109,100 +1100,6 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
     });
   };
 
-  const isDescription = activeContent === "description";
-
-  // Total scroll segments: 3 for description (longer scroll) + number of sections
-  // Increased height multiplier for smoother, more premium feel
-  const descriptionWeight = 3;
-  const totalSegments = descriptionWeight + item.sections.length;
-  const heightPerSegment = 80; // Increased from 60vh for more comfortable pacing
-
-  // Track scroll progress through the container
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start center", "end center"],
-  });
-
-  // Calculate where description ends and sections begin (as percentage of scroll)
-  const descriptionEndProgress = descriptionWeight / totalSegments;
-
-  // Smooth transforms for description view
-  const descriptionOpacity = useTransform(
-    scrollYProgress,
-    [0, descriptionEndProgress * 0.7, descriptionEndProgress * 0.9, descriptionEndProgress],
-    [1, 1, 0.5, 0]
-  );
-  const descriptionScale = useTransform(
-    scrollYProgress,
-    [descriptionEndProgress * 0.7, descriptionEndProgress],
-    [1, 0.96]
-  );
-  const descriptionBlur = useTransform(
-    scrollYProgress,
-    [descriptionEndProgress * 0.7, descriptionEndProgress],
-    [0, 8]
-  );
-  const descriptionFilter = useMotionTemplate`blur(${descriptionBlur}px)`;
-
-  // Smooth transforms for sections view
-  const sectionsOpacity = useTransform(
-    scrollYProgress,
-    [descriptionEndProgress * 0.85, descriptionEndProgress * 1.1],
-    [0, 1]
-  );
-  const sectionsScale = useTransform(
-    scrollYProgress,
-    [descriptionEndProgress * 0.85, descriptionEndProgress * 1.1],
-    [0.96, 1]
-  );
-  const sectionsY = useTransform(
-    scrollYProgress,
-    [descriptionEndProgress * 0.85, descriptionEndProgress * 1.1],
-    [30, 0]
-  );
-
-  // Calculate active section index for nav indicator positioning
-  const getActiveSectionIndex = () => {
-    if (isDescription) return 0;
-    const idx = item.sections.findIndex((s) => s.id === activeContent);
-    return idx >= 0 ? idx : 0;
-  };
-  const activeSectionIndex = getActiveSectionIndex();
-
-  // Update active content based on scroll progress
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    // Trigger reveal animation when scrolling starts
-    if (progress > 0.02 && !hasRevealed) {
-      setHasRevealed(true);
-    }
-
-    const segmentIndex = Math.min(
-      Math.floor(progress * totalSegments),
-      totalSegments - 1
-    );
-
-    // Calculate reveal progress within description phase (0 to 1)
-    if (progress < descriptionEndProgress) {
-      const normalizedProgress = progress / descriptionEndProgress;
-      setRevealProgress(normalizedProgress);
-    } else {
-      setRevealProgress(1);
-    }
-
-    if (segmentIndex < descriptionWeight) {
-      // First segments are for description (takes 2 scrolls worth)
-      if (activeContent !== "description") {
-        setActiveContent("description");
-      }
-    } else {
-      // Remaining segments are the sections
-      const sectionIndex = segmentIndex - descriptionWeight;
-      const section = item.sections[sectionIndex];
-      if (section && activeContent !== section.id) {
-        setActiveContent(section.id);
-      }
-    }
-  });
 
   // React Spring for 3D tilt effect on logos
   const [springProps, api] = useSpring(() => ({
@@ -1223,13 +1120,11 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
     api.start({ rotateX: 0, rotateY: 0, scale: 1 });
   };
 
-  // Jiggle animation after logo appears to hint interactivity
-  const hasJiggledRef = useRef(false);
+  // Jiggle animation after logo appears to hint interactivity (Vesta only)
   useEffect(() => {
-    if (item.slug === "vesta" && revealProgress > 0.65 && !hasJiggledRef.current) {
-      hasJiggledRef.current = true;
+    if (item.slug === "vesta") {
       // Wait for logo entrance animation (0.6s) + small pause before jiggle
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         api.start({
           rotateX: -8,
           rotateY: 12,
@@ -1252,329 +1147,260 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             });
           }, 150);
         }, 150);
-      }, 800);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
-  }, [item.slug, api, revealProgress]);
+  }, [item.slug, api]);
+
+  // Helper to render text with *italic* support
+  const renderWithItalics = (text: string) => {
+    const parts = text.split(/(\*[^*]+\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith("*") && part.endsWith("*")) {
+        return <em key={i}>{part.slice(1, -1)}</em>;
+      }
+      return part;
+    });
+  };
 
   return (
     <section className="relative z-10 bg-black">
-      {/* Scroll-driven Content Container */}
-      <div
-        ref={scrollContainerRef}
-        style={{ height: `${totalSegments * heightPerSegment}vh` }}
-        className="relative"
-      >
-        {/* Sticky content area - full viewport height for centering, pb for optical center */}
-        <div className="sticky top-0 min-h-screen flex items-center justify-center pb-20">
-          {/* Description View - Full screen centered */}
+      {/* Description Section - Full screen centered */}
+      <div className="min-h-screen flex items-center justify-center py-20">
+        <div className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
+          {/* Logo */}
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{
-              opacity: descriptionOpacity,
-              scale: descriptionScale,
-              filter: descriptionFilter,
-              pointerEvents: isDescription ? "auto" : "none",
-            }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+            className="mb-12"
           >
-            <div className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
-                {/* Logo - appears after description is revealed */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{
-                    opacity: revealProgress > 0.65 ? 1 : 0,
-                    scale: revealProgress > 0.65 ? 1 : 0.8,
-                  }}
-                  transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-                  className="mb-12"
-                >
-                  {item.logo ? (
-                    item.slug === "vesta" ? (
-                      <motion.div className="perspective-[1000px]">
-                        <animated.div
-                          ref={logoRef}
-                          onMouseMove={handleMouseMove}
-                          onMouseLeave={handleMouseLeave}
-                          className={`${item.logoClassName || "h-8 md:h-12 lg:h-16"} w-auto relative rounded-[22%] overflow-hidden cursor-pointer`}
-                          style={{
-                            aspectRatio: "1 / 1",
-                            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2)",
-                            transform: springProps.rotateX.to(
-                              (rx) => `perspective(1000px) rotateX(${rx}deg) rotateY(${springProps.rotateY.get()}deg) scale(${springProps.scale.get()})`
-                            ),
-                          }}
-                        >
-                          <Image
-                            src={item.logo}
-                            alt={item.title}
-                            fill
-                            className="object-cover"
-                            priority
-                          />
-                        </animated.div>
-                      </motion.div>
-                    ) : (
-                      <motion.div className="perspective-[1000px]">
-                        <animated.div
-                          ref={logoRef}
-                          onMouseMove={handleMouseMove}
-                          onMouseLeave={handleMouseLeave}
-                          className={`${item.logoClassName || "h-8 md:h-12 lg:h-16"} w-auto relative cursor-pointer`}
-                          style={{
-                            aspectRatio: "3 / 1",
-                            transform: springProps.rotateX.to(
-                              (rx) => `perspective(1000px) rotateX(${rx}deg) rotateY(${springProps.rotateY.get()}deg) scale(${springProps.scale.get()})`
-                            ),
-                          }}
-                        >
-                          <Image
-                            src={item.logo}
-                            alt={item.title}
-                            fill
-                            className="object-contain"
-                            priority
-                          />
-                        </animated.div>
-                      </motion.div>
-                    )
-                  ) : (
-                    <h1
-                      className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white"
-                      style={{ fontFamily: "var(--font-heading)" }}
-                    >
-                      {item.title}
-                    </h1>
-                  )}
+            {item.logo ? (
+              item.slug === "vesta" ? (
+                <motion.div className="perspective-[1000px]">
+                  <animated.div
+                    ref={logoRef}
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                    className={`${item.logoClassName || "h-8 md:h-12 lg:h-16"} w-auto relative rounded-[22%] overflow-hidden cursor-pointer`}
+                    style={{
+                      aspectRatio: "1 / 1",
+                      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2)",
+                      transform: springProps.rotateX.to(
+                        (rx) => `perspective(1000px) rotateX(${rx}deg) rotateY(${springProps.rotateY.get()}deg) scale(${springProps.scale.get()})`
+                      ),
+                    }}
+                  >
+                    <Image
+                      src={item.logo}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </animated.div>
                 </motion.div>
+              ) : (
+                <motion.div className="perspective-[1000px]">
+                  <animated.div
+                    ref={logoRef}
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                    className={`${item.logoClassName || "h-8 md:h-12 lg:h-16"} w-auto relative cursor-pointer`}
+                    style={{
+                      aspectRatio: "3 / 1",
+                      transform: springProps.rotateX.to(
+                        (rx) => `perspective(1000px) rotateX(${rx}deg) rotateY(${springProps.rotateY.get()}deg) scale(${springProps.scale.get()})`
+                      ),
+                    }}
+                  >
+                    <Image
+                      src={item.logo}
+                      alt={item.title}
+                      fill
+                      className="object-contain"
+                      priority
+                    />
+                  </animated.div>
+                </motion.div>
+              )
+            ) : (
+              <h1
+                className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {item.title}
+              </h1>
+            )}
+          </motion.div>
 
-                {/* Description - cascading word reveal with blur-to-sharp */}
-                <p
-                  className="text-3xl md:text-4xl lg:text-5xl text-white/60 italic max-w-4xl text-center leading-tight"
-                  style={{ fontFamily: "'Noe Display', serif" }}
-                >
-                  {item.description.split(" ").map((word, index, arr) => {
-                    // Stagger with significant overlap - words cascade smoothly
-                    const staggerStart = (index / arr.length) * 0.4;
-                    const staggerEnd = staggerStart + 0.25;
+          {/* Description */}
+          <p
+            className="text-3xl md:text-4xl lg:text-5xl text-white/60 italic max-w-4xl text-center leading-tight"
+            style={{ fontFamily: "'Noe Display', serif" }}
+          >
+            {item.description}
+          </p>
 
-                    // Calculate interpolated progress for smooth transition
-                    const wordRevealProgress = hasRevealed
-                      ? Math.max(0, Math.min(1, (revealProgress - staggerStart) / (staggerEnd - staggerStart)))
-                      : 0;
+          {/* Category Tags */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            className="mt-12 flex gap-3 justify-center"
+          >
+            {item.categories.map((category) => (
+              <span
+                key={category}
+                className="inline-block px-3 py-1 text-[10px] font-medium tracking-wider uppercase rounded-full border border-white/20"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                {category}
+              </span>
+            ))}
+          </motion.div>
+        </div>
+      </div>
 
-                    return (
-                      <span
-                        key={index}
-                        className="inline"
+      {/* Sections - Side navigation with content */}
+      <div className="px-4 md:mx-12 py-16 md:py-24">
+        <div className="bg-[#141414] rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-12 border border-white/5">
+          <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-16 lg:gap-24">
+          {/* Left: Section Navigation */}
+          <div className="relative">
+            {/* Glowing vertical indicator */}
+            <motion.div
+              className="absolute left-0 w-0.5 bg-[#85c3ed] rounded-full hidden md:block"
+              animate={{
+                top: item.sections.findIndex(s => s.id === activeSection) * 56 + 18,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+              }}
+              style={{
+                boxShadow: "0 0 20px 4px rgba(133, 195, 237, 0.5), 0 0 40px 8px rgba(133, 195, 237, 0.3)",
+                height: 20,
+              }}
+            />
+
+            {/* Section Labels */}
+            <div className="flex flex-row md:flex-col gap-2 md:gap-0 overflow-x-auto md:overflow-visible pb-4 md:pb-0">
+              {item.sections.map((section) => {
+                const isActive = activeSection === section.id;
+
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className="relative h-auto md:h-14 px-4 md:px-0 md:pl-6 py-2 md:py-0 flex items-center text-left whitespace-nowrap md:whitespace-normal"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    <motion.span
+                      className="text-sm font-bold tracking-wider uppercase"
+                      animate={{
+                        color: isActive ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.4)",
+                        x: isActive ? 4 : 0,
+                      }}
+                      whileHover={{
+                        color: "rgba(255, 255, 255, 0.8)",
+                      }}
+                      transition={{
+                        duration: 0.3,
+                        ease: [0.4, 0, 0.2, 1],
+                      }}
+                    >
+                      {section.label}
+                    </motion.span>
+                    {/* Mobile active indicator */}
+                    {isActive && (
+                      <motion.div
+                        layoutId="mobile-indicator"
+                        className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#85c3ed] md:hidden"
                         style={{
-                          opacity: wordRevealProgress,
-                          filter: `blur(${(1 - wordRevealProgress) * 4}px)`,
-                          transition: "opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1), filter 0.38s cubic-bezier(0.16, 1, 0.3, 1)",
+                          boxShadow: "0 0 10px 2px rgba(133, 195, 237, 0.5)",
                         }}
-                      >
-                        {word}
-                        {index < arr.length - 1 && " "}
-                      </span>
-                    );
-                  })}
-                </p>
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-                {/* Category Tags - appear in parallel with logo after description is revealed */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{
-                    opacity: revealProgress > 0.65 ? 1 : 0,
-                    y: revealProgress > 0.65 ? 0 : 10
-                  }}
-                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                  className="mt-12 flex gap-3 justify-center"
-                >
-                  {item.categories.map((category) => (
-                    <span
-                      key={category}
-                      className="inline-block px-3 py-1 text-[10px] font-medium tracking-wider uppercase rounded-full border border-white/20"
+          {/* Right: Section Content */}
+          <div className="relative min-h-[300px] max-w-5xl">
+            <AnimatePresence mode="wait">
+              {item.sections.map((section) => {
+                if (section.id !== activeSection) return null;
+
+                const content = section.content || "";
+                const paragraphs = content.split("\n\n");
+                const firstParagraph = paragraphs[0];
+                const restParagraphs = paragraphs.slice(1).join("\n\n");
+
+                return (
+                  <motion.div
+                    key={section.id}
+                    initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                    transition={{
+                      duration: 0.4,
+                      ease: [0.4, 0, 0.2, 1],
+                    }}
+                  >
+                    <p
+                      className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed whitespace-pre-line"
                       style={{ fontFamily: "var(--font-inter)" }}
                     >
-                      {category}
-                    </span>
-                  ))}
-                </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Sections View with Nav */}
-          <motion.div
-            className="absolute inset-0 flex items-center w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-8 pb-24 md:pb-32 border-t border-white/10"
-            style={{
-              opacity: sectionsOpacity,
-              scale: sectionsScale,
-              y: sectionsY,
-              pointerEvents: isDescription ? "none" : "auto",
-            }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-24 lg:gap-32 w-full">
-              {/* Left: Section Navigation with Glowing Indicator */}
-              <div className="relative">
-                {/* Glowing vertical bar indicator - smoothly animated to active section */}
-                <motion.div
-                  className="absolute left-0 w-0.5 bg-[#85c3ed] rounded-full"
-                  animate={{
-                    top: activeSectionIndex * 56 + 18,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 30,
-                  }}
-                  style={{
-                    boxShadow: "0 0 20px 4px rgba(133, 195, 237, 0.5), 0 0 40px 8px rgba(133, 195, 237, 0.3)",
-                    height: 20,
-                  }}
-                />
-
-                {/* Section Labels - clickable to navigate */}
-                <div className="flex flex-col">
-                  {item.sections.map((section, sectionIdx) => {
-                    const isActiveSection = activeContent === section.id;
-
-                    // Click handler to scroll to this section
-                    const handleClick = () => {
-                      if (!scrollContainerRef.current) return;
-
-                      // Calculate the scroll position for this section
-                      // Section i starts at (descriptionWeight + i) / totalSegments progress
-                      const targetProgress = (descriptionWeight + sectionIdx + 0.5) / totalSegments;
-
-                      // Get the container's position and dimensions
-                      const containerTop = scrollContainerRef.current.offsetTop;
-                      const containerHeight = scrollContainerRef.current.offsetHeight;
-
-                      // The scroll offset uses "start center" to "end center"
-                      // So we need to calculate where to scroll to achieve targetProgress
-                      const viewportHeight = window.innerHeight;
-                      const scrollStart = containerTop - viewportHeight / 2;
-                      const scrollRange = containerHeight;
-                      const targetScrollY = scrollStart + (targetProgress * scrollRange);
-
-                      window.scrollTo({
-                        top: targetScrollY,
-                        behavior: "smooth",
-                      });
-                    };
-
-                    return (
-                      <div
-                        key={section.id}
-                        className="relative h-14 pl-6 flex items-center cursor-pointer group"
-                        style={{ fontFamily: "var(--font-heading)" }}
-                        onClick={handleClick}
+                      {renderWithItalics(firstParagraph)}
+                    </p>
+                    {section.link && (
+                      <motion.a
+                        href={section.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-white/10 hover:bg-[#16588E] rounded-full text-white font-medium transition-colors duration-200"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.15 }}
                       >
-                        <motion.span
-                          className="text-sm font-bold tracking-wider uppercase"
-                          animate={{
-                            color: isActiveSection ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.4)",
-                            x: isActiveSection ? 4 : 0,
-                          }}
-                          whileHover={{
-                            color: "rgba(255, 255, 255, 0.8)",
-                          }}
-                          transition={{
-                            duration: 0.3,
-                            ease: [0.4, 0, 0.2, 1],
-                          }}
+                        {section.linkLabel || "Learn More"}
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          {section.label}
-                        </motion.span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Right: Section Content */}
-              <div className="relative">
-                <AnimatePresence mode="wait">
-                  {item.sections.map((section) => {
-                    const content = section.content || "";
-                    const paragraphs = content.split("\n\n");
-                    const firstParagraph = paragraphs[0];
-                    const restParagraphs = paragraphs.slice(1).join("\n\n");
-                    const isActive = activeContent === section.id;
-
-                    // Helper to render text with *italic* support
-                    const renderWithItalics = (text: string) => {
-                      const parts = text.split(/(\*[^*]+\*)/g);
-                      return parts.map((part, i) => {
-                        if (part.startsWith("*") && part.endsWith("*")) {
-                          return <em key={i}>{part.slice(1, -1)}</em>;
-                        }
-                        return part;
-                      });
-                    };
-
-                    if (!isActive) return null;
-
-                    return (
-                      <motion.div
-                        key={section.id}
-                        initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                        transition={{
-                          duration: 0.5,
-                          ease: [0.4, 0, 0.2, 1],
-                        }}
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                      </motion.a>
+                    )}
+                    {restParagraphs && (
+                      <motion.p
+                        className="mt-8 text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed whitespace-pre-line"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.1 }}
                       >
-                        <p
-                          className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
-                          style={{ fontFamily: "var(--font-inter)" }}
-                        >
-                          {renderWithItalics(firstParagraph)}
-                        </p>
-                        {section.link && (
-                          <motion.a
-                            href={section.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 mt-6 mb-6 px-6 py-3 bg-white/10 hover:bg-[#16588E] rounded-full text-white font-medium transition-colors duration-200"
-                            style={{ fontFamily: "var(--font-inter)" }}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                          >
-                            {section.linkLabel || "Learn More"}
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                              />
-                            </svg>
-                          </motion.a>
-                        )}
-                        {restParagraphs && (
-                          <motion.p
-                            className="mt-8 text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl whitespace-pre-line"
-                            style={{ fontFamily: "var(--font-inter)" }}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.15 }}
-                          >
-                            {renderWithItalics(restParagraphs)}
-                          </motion.p>
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
-              </div>
-            </div>
-          </motion.div>
+                        {renderWithItalics(restParagraphs)}
+                      </motion.p>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </div>
         </div>
       </div>
 

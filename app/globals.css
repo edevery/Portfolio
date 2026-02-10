@@ -36,6 +36,11 @@
   font-style: normal;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
@@ -64,4 +69,18 @@ body {
 
 .animate-shiny-text {
   animation: shiny-text 8s infinite;
+}
+
+/* Mobile: no blur animation on description section */
+@media (max-width: 767px) {
+  .description-container {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+  .description-word {
+    opacity: 1 !important;
+    filter: none !important;
+    transition: none !important;
+  }
 }

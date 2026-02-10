@@ -8,7 +8,6 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
@@ -42,12 +41,14 @@ const FloatingDockMobile = ({
 }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className={cn("relative block md:hidden", className)}>
+    <div className={cn("fixed bottom-8 left-1/2 -translate-x-1/2 md:hidden z-[200]", className)}>
+      <div className="flex flex-col items-center">
+      {/* Menu items - centered above button */}
       <AnimatePresence>
         {open && (
           <motion.div
             layoutId="nav"
-            className="absolute inset-x-0 bottom-full mb-2 flex flex-col gap-2"
+            className="flex flex-col items-center gap-2 mb-4"
           >
             {items.map((item, idx) => (
               <motion.div
@@ -75,19 +76,39 @@ const FloatingDockMobile = ({
                     item.isActive ? "bg-white/90 text-[#171717]" : "bg-white/10 text-white/90"
                   )}
                 >
-                  <div>{item.icon}</div>
+                  <span className="text-sm font-medium">{item.title}</span>
                 </Link>
               </motion.div>
             ))}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Hamburger button - centered below menu */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-[84px] w-[84px] items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20"
       >
-        <IconLayoutNavbarCollapse className="h-10 w-10 text-white/70" />
+        {/* Hamburger / X icon */}
+        <div className="flex flex-col items-center justify-center gap-1.5 w-6">
+          <motion.span
+            animate={open ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="block h-0.5 w-full bg-white/70 origin-center"
+          />
+          <motion.span
+            animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.1 }}
+            className="block h-0.5 w-full bg-white/70"
+          />
+          <motion.span
+            animate={open ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="block h-0.5 w-full bg-white/70 origin-center"
+          />
+        </div>
       </button>
+      </div>
     </div>
   );
 };

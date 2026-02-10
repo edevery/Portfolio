@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ProjectCard } from "./ui/project-card";
+import { MobileCarousel } from "./ui/mobile-carousel";
 import { workItems, categories, type Category } from "@/lib/work-data";
 
 export function WorkSection() {
@@ -16,8 +17,8 @@ export function WorkSection() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-12">
-      {/* Category Filter Tags */}
-      <div className="flex flex-wrap gap-3 mb-10 justify-center">
+      {/* Category Filter Tags - hidden on mobile */}
+      <div className="hidden md:flex flex-wrap gap-3 mb-10 justify-center">
         {categories.map((category) => (
           <button
             key={category.id}
@@ -36,10 +37,24 @@ export function WorkSection() {
         ))}
       </div>
 
-      {/* Bento Box Grid - fixed row heights for perfect alignment */}
+      {/* Mobile Carousel - visible only on mobile */}
+      <div className="md:hidden">
+        <MobileCarousel
+          cards={workItems.map((item) => ({
+            title: item.title,
+            description: item.description,
+            image: item.image,
+            accentColor: item.accentColor,
+            slug: item.slug,
+            logo: item.logo,
+          }))}
+        />
+      </div>
+
+      {/* Bento Box Grid - hidden on mobile, visible on tablet/desktop */}
       <motion.div
         layout
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 md:auto-rows-[28rem] grid-flow-row-dense"
+        className="hidden md:grid grid-cols-3 gap-4 auto-rows-[28rem] grid-flow-row-dense"
       >
         <AnimatePresence mode="popLayout">
           {filteredItems.map((item) => (

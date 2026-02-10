@@ -1,9 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { WorkItem } from "@/lib/work-data";
 import { VestaLogoAnimated } from "./vesta-logo-animated";
+
+// Hook to detect mobile screen
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  return isMobile;
+}
 
 interface CaseStudyHeroProps {
   item: WorkItem;
@@ -49,6 +63,7 @@ function SoundIcon({ muted }: { muted: boolean }) {
 export function CaseStudyHero({ item }: CaseStudyHeroProps) {
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isMobile = useIsMobile();
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -56,6 +71,10 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
       setIsMuted(videoRef.current.muted);
     }
   };
+
+  // Responsive inset and border radius
+  const inset = isMobile ? 16 : 48;
+  const radius = isMobile ? 16 : 24;
 
   return (
     <div className="relative h-screen w-full bg-black">
@@ -70,11 +89,11 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           borderRadius: 0,
         }}
         animate={{
-          top: 48,
-          left: 48,
-          right: 48,
-          bottom: 48,
-          borderRadius: 24,
+          top: inset,
+          left: inset,
+          right: inset,
+          bottom: inset,
+          borderRadius: radius,
         }}
         transition={{
           duration: 0.8,
@@ -100,17 +119,19 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                 delay: 0.2,
               }}
             />
-            {/* Sound toggle button - glass/sleek style */}
-            <motion.button
-              onClick={toggleMute}
-              className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 0.3 }}
-              aria-label={isMuted ? "Unmute video" : "Mute video"}
-            >
-              <SoundIcon muted={isMuted} />
-            </motion.button>
+            {/* Sound toggle button - hidden on mobile */}
+            {!isMobile && (
+              <motion.button
+                onClick={toggleMute}
+                className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1, duration: 0.3 }}
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+              >
+                <SoundIcon muted={isMuted} />
+              </motion.button>
+            )}
           </>
         ) : (
           <motion.img
