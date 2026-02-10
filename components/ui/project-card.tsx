@@ -40,10 +40,9 @@ export function ProjectCard({
     <TransitionLink href={`/work/${slug}`} className="block h-full">
       <motion.div
         className={cn(
-          "relative overflow-hidden rounded-xl cursor-pointer h-full",
+          "relative overflow-hidden rounded-xl cursor-pointer h-full bg-[#1e1e1e] border-none",
           className
         )}
-        style={{ backgroundColor: accentColor }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >

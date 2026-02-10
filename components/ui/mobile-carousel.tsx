@@ -133,34 +133,13 @@ function MobileCarouselCard({ card, width }: MobileCarouselCardProps) {
         className="block"
         onClick={handleClick}
       >
-        <div
-          className="rounded-2xl overflow-hidden border border-white/30 bg-transparent"
-        >
-          {/* Image */}
-          <div className="m-3 rounded-xl overflow-hidden aspect-[3/4]">
-            <img
-              src={card.image}
-              alt={card.title}
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
-          </div>
-
-          {/* Logo - centered below the image */}
-          <div className="px-4 pb-4 pt-2 flex justify-center">
-            {card.logo ? (
-              <img
-                src={card.logo}
-                alt={card.title}
-                className="h-8 w-auto object-contain"
-                draggable={false}
-              />
-            ) : (
-              <h3 className="text-white text-xl font-semibold tracking-tight">
-                {card.title}
-              </h3>
-            )}
-          </div>
+        <div className="rounded-2xl overflow-hidden aspect-[3/4]">
+          <img
+            src={card.image}
+            alt={card.title}
+            className="w-full h-full object-cover"
+            draggable={false}
+          />
         </div>
       </TransitionLink>
     </motion.div>

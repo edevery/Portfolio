@@ -38,7 +38,7 @@ export function WorkSection() {
       </div>
 
       {/* Mobile Carousel - visible only on mobile */}
-      <div className="md:hidden">
+      <div className="md:hidden flex items-center min-h-[65vh]">
         <MobileCarousel
           cards={workItems.map((item) => ({
             title: item.title,
@@ -54,7 +54,7 @@ export function WorkSection() {
       {/* Bento Box Grid - hidden on mobile, visible on tablet/desktop */}
       <motion.div
         layout
-        className="hidden md:grid grid-cols-3 gap-4 auto-rows-[28rem] grid-flow-row-dense"
+        className="hidden md:grid grid-cols-3 gap-4 grid-flow-row-dense"
       >
         <AnimatePresence mode="popLayout">
           {filteredItems.map((item) => (

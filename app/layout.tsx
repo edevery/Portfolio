@@ -50,7 +50,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
-        <span className="hidden md:block fixed top-6 left-6 text-xs font-medium font-[family-name:var(--font-inter)] z-50">
+        <span className="fixed top-6 left-6 text-xs font-medium font-[family-name:var(--font-inter)] z-50">
           <AnimatedShinyText className="text-white/60">Made in NYC</AnimatedShinyText>
         </span>
         <TitleDisplay />
