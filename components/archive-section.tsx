@@ -14,6 +14,20 @@ import {
 import { easing } from "maath";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 
+// Hook to detect mobile screen
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  return isMobile;
+}
+
 // Archive items organized by category
 type ArchiveCategory = "identity" | "graphic" | "illustration" | "layout" | "art direction";
 
@@ -92,6 +106,7 @@ const CAROUSEL_SIZE = 0.7; // smaller cards in carousel
 const FEATURED_SIZE = 6.5; // larger featured card for hero presence
 
 export function ArchiveSection() {
+  const isMobile = useIsMobile();
   const [keyboardIndex, setKeyboardIndex] = useState<number | null>(null);
   const [expandedItem, setExpandedItem] = useState<ArchiveItem | null>(null);
 
@@ -163,6 +178,7 @@ export function ArchiveSection() {
               keyboardIndex={keyboardIndex}
               setKeyboardIndex={setKeyboardIndex}
               onExpand={handleExpand}
+              isMobile={isMobile}
             />
           </ScrollControls>
         </Suspense>
@@ -200,7 +216,7 @@ export function ArchiveSection() {
 
       {/* Controls legend - bottom right corner */}
       {!expandedItem && (
-        <div className="fixed bottom-4 right-4 flex flex-col items-end gap-1 text-white/50 text-[10px] font-mono group">
+        <div className="fixed bottom-4 right-4 hidden md:flex flex-col items-end gap-1 text-white/50 text-[10px] font-mono group">
           <div className="flex items-center gap-1.5">
             <span className="opacity-0 group-hover:opacity-100 transition-opacity">navigate</span>
             <div className="flex gap-0.5">
@@ -240,23 +256,29 @@ function Scene({
   keyboardIndex,
   setKeyboardIndex,
   onExpand,
+  isMobile,
   ...props
 }: {
   position?: [number, number, number];
   keyboardIndex: number | null;
   setKeyboardIndex: React.Dispatch<React.SetStateAction<number | null>>;
   onExpand: (item: ArchiveItem) => void;
+  isMobile: boolean;
 }) {
   const ref = useRef<THREE.Group>(null);
   const scroll = useScroll();
   const [hovered, setHovered] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
+  const [tapped, setTapped] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
 
-  // Determine what to show in the featured card (hover takes priority over keyboard)
-  const activeSelection = hovered ?? (keyboardIndex !== null ? {
-    categories: archiveItems[keyboardIndex].categories,
-    index: keyboardIndex,
-    item: archiveItems[keyboardIndex],
-  } : null);
+  // Determine what to show in the featured card
+  // Mobile: only show on tap; Desktop: hover takes priority over keyboard
+  const activeSelection = isMobile
+    ? tapped
+    : hovered ?? (keyboardIndex !== null ? {
+        categories: archiveItems[keyboardIndex].categories,
+        index: keyboardIndex,
+        item: archiveItems[keyboardIndex],
+      } : null);
 
   useFrame((state, delta) => {
     if (!ref.current) return;
@@ -273,23 +295,30 @@ function Scene({
 
   const handlePointerOver = useCallback((categories: ArchiveCategory[], index: number, item: ArchiveItem) => {
     setHovered({ categories, index, item });
-    setKeyboardIndex(index); // Update keyboard index to match hover position
+    setKeyboardIndex(index);
   }, [setKeyboardIndex]);
 
   const handlePointerOut = useCallback(() => {
     setHovered(null);
   }, []);
 
+  const handleTap = useCallback((categories: ArchiveCategory[], index: number, item: ArchiveItem) => {
+    setTapped({ categories, index, item });
+    setKeyboardIndex(index);
+  }, [setKeyboardIndex]);
+
   return (
     <group ref={ref} {...props}>
       <Cards
         items={archiveItems}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
+        onPointerOver={isMobile ? undefined : handlePointerOver}
+        onPointerOut={isMobile ? undefined : handlePointerOut}
+        onTap={isMobile ? handleTap : undefined}
         keyboardIndex={keyboardIndex}
         isHovering={hovered !== null}
+        isMobile={isMobile}
       />
-      <ActiveCard hovered={activeSelection} onExpand={onExpand} />
+      <ActiveCard hovered={activeSelection} onExpand={onExpand} isMobile={isMobile} />
     </group>
   );
 }
@@ -299,15 +328,19 @@ function Cards({
   radius = 5.25,
   onPointerOver,
   onPointerOut,
+  onTap,
   keyboardIndex,
   isHovering,
+  isMobile,
 }: {
   items: ArchiveItem[];
   radius?: number;
-  onPointerOver: (categories: ArchiveCategory[], index: number, item: ArchiveItem) => void;
-  onPointerOut: () => void;
+  onPointerOver?: (categories: ArchiveCategory[], index: number, item: ArchiveItem) => void;
+  onPointerOut?: () => void;
+  onTap?: (categories: ArchiveCategory[], index: number, item: ArchiveItem) => void;
   keyboardIndex: number | null;
   isHovering: boolean;
+  isMobile: boolean;
 }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const amount = items.length;
@@ -321,15 +354,19 @@ function Cards({
         return (
           <Card
             key={item.id}
-            onPointerOver={(e: ThreeEvent<PointerEvent>) => {
+            onClick={isMobile ? (e: ThreeEvent<MouseEvent>) => {
+              e.stopPropagation();
+              onTap?.(item.categories, i, item);
+            } : undefined}
+            onPointerOver={!isMobile ? (e: ThreeEvent<PointerEvent>) => {
               e.stopPropagation();
               setHoveredIndex(i);
-              onPointerOver(item.categories, i, item);
-            }}
-            onPointerOut={() => {
+              onPointerOver?.(item.categories, i, item);
+            } : undefined}
+            onPointerOut={!isMobile ? () => {
               setHoveredIndex(null);
-              onPointerOut();
-            }}
+              onPointerOut?.();
+            } : undefined}
             position={[Math.sin(angle) * radius, 0, Math.cos(angle) * radius]}
             rotation={[0, Math.PI / 2 + angle, 0]}
             active={hoveredIndex !== null || keyboardIndex !== null}
@@ -356,8 +393,9 @@ function Card({
   keyboardSelected: boolean;
   position: [number, number, number];
   rotation: [number, number, number];
-  onPointerOver: (e: ThreeEvent<PointerEvent>) => void;
-  onPointerOut: () => void;
+  onClick?: (e: ThreeEvent<MouseEvent>) => void;
+  onPointerOver?: (e: ThreeEvent<PointerEvent>) => void;
+  onPointerOut?: () => void;
 }) {
   const ref = useRef<THREE.Group>(null);
   const isHighlighted = hovered || keyboardSelected;
@@ -389,12 +427,17 @@ function Card({
 function ActiveCard({
   hovered,
   onExpand,
+  isMobile,
   ...props
 }: {
   hovered: { categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null;
   onExpand: (item: ArchiveItem) => void;
+  isMobile: boolean;
 }) {
   const ref = useRef<THREE.Group>(null);
+
+  // Mobile uses smaller featured card
+  const size = isMobile ? 4.5 : FEATURED_SIZE;
 
   useLayoutEffect(() => {
     if (ref.current) {
@@ -426,33 +469,54 @@ function ActiveCard({
         <Image
           transparent
           radius={0.3}
-          position={[0, 1.5, 0]}
-          scale={[FEATURED_SIZE * FEATURED_ASPECT, FEATURED_SIZE, 1] as unknown as number}
+          position={[0, isMobile ? 1.8 : 1.5, 0]}
+          scale={[size * FEATURED_ASPECT, size, 1] as unknown as number}
           url={hovered ? getThumbnailPath(hovered.item.image) : "/Thumbnails/Desktop/Vesta.png"}
         />
         {hovered && (
           <>
-            {/* Title - positioned at top right of featured card */}
-            <Text
-              position={[FEATURED_SIZE * FEATURED_ASPECT / 2 + 0.6, 1.5 + FEATURED_SIZE / 2 - 0.5, 0]}
-              fontSize={0.5}
-              fontWeight={700}
-              color="white"
-              anchorX="left"
-              anchorY="top"
-              maxWidth={6}
-              lineHeight={1.1}
-            >
-              {hovered.item.title}
-            </Text>
-            {/* Category tags - below the title with pill outlines */}
-            <CategoryPills
-              categories={hovered.categories}
-              position={[FEATURED_SIZE * FEATURED_ASPECT / 2 + 0.6, 1.5 + FEATURED_SIZE / 2 - 2.1, 0]}
-            />
+            {isMobile ? (
+              <>
+                {/* Mobile: Title centered below the image */}
+                <Text
+                  position={[0, 1.8 - size / 2 - 0.4, 0]}
+                  fontSize={0.35}
+                  fontWeight={700}
+                  color="white"
+                  anchorX="center"
+                  anchorY="top"
+                  maxWidth={4}
+                  lineHeight={1.1}
+                  textAlign="center"
+                >
+                  {hovered.item.title}
+                </Text>
+              </>
+            ) : (
+              <>
+                {/* Desktop: Title at top right of featured card */}
+                <Text
+                  position={[size * FEATURED_ASPECT / 2 + 0.6, 1.5 + size / 2 - 0.5, 0]}
+                  fontSize={0.5}
+                  fontWeight={700}
+                  color="white"
+                  anchorX="left"
+                  anchorY="top"
+                  maxWidth={6}
+                  lineHeight={1.1}
+                >
+                  {hovered.item.title}
+                </Text>
+                {/* Desktop: Category tags below the title */}
+                <CategoryPills
+                  categories={hovered.categories}
+                  position={[size * FEATURED_ASPECT / 2 + 0.6, 1.5 + size / 2 - 2.1, 0]}
+                />
+              </>
+            )}
             {/* Expand button - diagonal arrow at bottom right of featured card with liquid glass effect */}
             <group
-              position={[FEATURED_SIZE * FEATURED_ASPECT / 2 - 0.35, 1.5 - FEATURED_SIZE / 2 + 0.35, 0.1]}
+              position={[size * FEATURED_ASPECT / 2 - 0.35, (isMobile ? 1.8 : 1.5) - size / 2 + 0.35, 0.1]}
               onClick={handleExpandClick}
               onPointerOver={() => { document.body.style.cursor = 'pointer'; }}
               onPointerOut={() => { document.body.style.cursor = 'auto'; }}
@@ -509,6 +573,15 @@ function ActiveCard({
       </group>
     </Billboard>
   );
+}
+
+// Helper to calculate total width of all pills (for centering on mobile)
+function getTotalPillsWidth(categories: ArchiveCategory[]): number {
+  const gap = 0.15;
+  return categories.reduce((total, cat, i) => {
+    const width = cat.toUpperCase().length * 0.11 + 0.4;
+    return total + width + (i < categories.length - 1 ? gap : 0);
+  }, 0);
 }
 
 // Helper to create pill outline points
