@@ -266,7 +266,7 @@ export const workItems: WorkItem[] = [
       { id: "background", label: "Background", content: "Merit Systems is an a16z-backed startup pioneering open-source economics. I partnered with the founders before the company had a name, funding, or product, helping shape how their vision for a new way of working would be understood, trusted, and shared." },
       { id: "challenge", label: "Challenge", content: "Because Merit's model didn't yet exist, there were no features to show or competitors to reference. For investors, contributors, and early hires to believe in it, the system itself needed to be visualized, not just described." },
       { id: "approach", label: "Approach", content: "I developed a Swiss-inspired identity rooted in grids, typographic clarity, and restraint to signal seriousness and long-term intent.\n\n\nUsing nodes, flows, and network diagrams, I translated abstract ideas around merit, agency, and ownership into clear visual systems.\n\nTo support social and digital presence, I also created a contemporary gradient system derived from the core palette to add depth and dynamism while preserving the brand's disciplined, systems-driven foundation." },
-      { id: "impact", label: "Impact", content: "Closed a $10M seed round\n100K landing page views in the first week\n30K GitHub waitlist signups\n1K+ job applications\nCoverage in CNBC" },
+      { id: "impact", label: "Impact", content: "Closed a $10M seed round.\n\n100K landing page views in the first week.\n\n30K GitHub waitlist signups.\n\n1K+ job applications.\n\nCoverage in CNBC.", link: "https://www.cnbc.com/2025/01/16/merit-systems-raises-10-million-from-a16z-blockchain-capital.html", linkLabel: "CNBC" },
     ],
     className: "md:col-span-1",
   },

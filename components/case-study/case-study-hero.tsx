@@ -101,7 +101,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           delay: 0.4,
         }}
       >
-        {item.heroMedia.type === "video" ? (
+        {item.heroMedia.type === "video" && !(isMobile && item.slug === "merit-systems") ? (
           <>
             <motion.video
               ref={videoRef}
@@ -135,7 +135,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           </>
         ) : (
           <motion.img
-            src={item.heroMedia.src}
+            src={isMobile && item.slug === "merit-systems" ? "/Work/MeritSystems/BrandBook.png" : item.heroMedia.src}
             alt={item.title}
             className="absolute inset-0 w-full h-full object-cover"
             initial={{ opacity: 0, scale: 1.05 }}
