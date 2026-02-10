@@ -119,19 +119,17 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                 delay: 0.2,
               }}
             />
-            {/* Sound toggle button - hidden on mobile */}
-            {!isMobile && (
-              <motion.button
-                onClick={toggleMute}
-                className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1, duration: 0.3 }}
-                aria-label={isMuted ? "Unmute video" : "Mute video"}
-              >
-                <SoundIcon muted={isMuted} />
-              </motion.button>
-            )}
+            {/* Sound toggle button */}
+            <motion.button
+              onClick={toggleMute}
+              className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1, duration: 0.3 }}
+              aria-label={isMuted ? "Unmute video" : "Mute video"}
+            >
+              <SoundIcon muted={isMuted} />
+            </motion.button>
           </>
         ) : (
           <motion.img

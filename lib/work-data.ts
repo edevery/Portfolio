@@ -129,7 +129,7 @@ export const workItems: WorkItem[] = [
     image: "/Thumbnails/LinkLogistics.png",
     heroMedia: {
       type: "video",
-      src: "/Work/LinkLogistics/SpacetoGrow.mp4",
+      src: "/Work/LinkLogistics/LogoAnimation.mp4",
       poster: "/Thumbnails/LinkLogistics.png",
     },
     accentColor: "#f97316",

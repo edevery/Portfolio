@@ -317,7 +317,7 @@ function MobileVestaBrandElements() {
 function BrandElementCard({ item, className }: { item: { image: string; title: string; description: string }; className?: string }) {
   return (
     <motion.div
-      className={`overflow-hidden rounded-2xl bg-[#141414] ${className || ""}`}
+      className={`overflow-hidden rounded-2xl ${className || ""}`}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
@@ -362,7 +362,7 @@ function DesktopVestaBrandElements() {
 
   return (
     <div className="relative z-20 bg-black">
-      <div className="mx-12 py-12 space-y-4">
+      <div className="mx-12 pt-0 pb-12 space-y-4">
         {/* Mood Board - full width at top */}
         <BrandElementCard item={moodboard} />
 
@@ -478,34 +478,36 @@ function VestaBrandElements() {
   return <DesktopVestaBrandElements />;
 }
 
-// Vesta Reflection Component - final section with video
-// Mobile Vesta Reflection - text first, then video without animation
+// Vesta Reflection Component - final section with video + card (styled like Personalized Nudges)
+// Mobile Vesta Reflection - text card first, then video
 function MobileVestaReflection() {
   return (
-    <div className="relative z-20 bg-black pt-8 pb-16">
-      {/* Text Container first */}
+    <div id="vesta-reflection" className="relative z-20 bg-black pt-8 pb-16">
+      {/* Reflection card - same format as Personalized Nudges */}
       <motion.div
-        className="mx-4 text-center mb-8"
+        className="mx-4 mb-8"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         viewport={{ once: true, margin: "-50px" }}
       >
-        <h2
-          className="text-2xl tracking-tight mb-4"
-          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
-        >
-          Reflection
-        </h2>
-        <p
-          className="text-sm text-white/60 leading-relaxed"
-          style={{ fontFamily: "var(--font-inter)" }}
-        >
-          Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
-        </p>
+        <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+          <h3
+            className="text-xs font-bold tracking-wider uppercase mb-3"
+            style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+          >
+            Reflection
+          </h3>
+          <p
+            className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
+          </p>
+        </div>
       </motion.div>
 
-      {/* Video after text - same width as Question2.png (mx-4) */}
+      {/* Video below card */}
       <div className="mx-4">
         <video
           src="/Work/Vesta/Vesta/Reflection.mp4"
@@ -520,63 +522,44 @@ function MobileVestaReflection() {
   );
 }
 
-// Desktop Vesta Reflection - video with scroll animation, then text
+// Desktop Vesta Reflection - video then card (styled like Personalized Nudges)
 function DesktopVestaReflection() {
-  const videoRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: videoRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Video starts full screen, waits until centered, then settles in with margins and rounded corners
-  // 0.3 = video is centered on screen, 0.5 = settled
-  const videoMargin = useTransform(scrollYProgress, [0.3, 0.5], [0, 48]);
-  const videoBorderRadius = useTransform(scrollYProgress, [0.3, 0.5], [0, 24]);
-
   return (
-    <div className="relative z-20 bg-black mt-48 pb-48">
-      {/* Video - starts full screen, settles in with rounded corners */}
-      <div ref={videoRef} className="relative mb-40">
-        <motion.div
-          className="relative overflow-hidden"
-          style={{
-            marginLeft: videoMargin,
-            marginRight: videoMargin,
-            borderRadius: videoBorderRadius,
-          }}
-        >
-          <video
-            src="/Work/Vesta/Vesta/Reflection.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-auto"
-          />
-        </motion.div>
+    <div id="vesta-reflection" className="relative z-20 bg-black pb-24">
+      {/* Video - same width as card below (mx-12) */}
+      <div className="mx-12 mb-16">
+        <video
+          src="/Work/Vesta/Vesta/Reflection.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-auto rounded-2xl"
+        />
       </div>
 
-      {/* Text Container - animates in after video */}
+      {/* Reflection card - same format as Personalized Nudges */}
       <motion.div
-        className="max-w-4xl mx-auto px-12 lg:px-24 text-center"
+        className="bg-black mx-12 pb-12"
         initial={{ opacity: 0, y: 60, scale: 0.92, filter: "blur(12px)" }}
         whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
         viewport={{ once: true, margin: "-50px" }}
       >
-        <h2
-          className="text-4xl lg:text-5xl tracking-tight mb-6"
-          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
-        >
-          Reflection
-        </h2>
-        <p
-          className="text-lg lg:text-xl text-white/60 leading-relaxed"
-          style={{ fontFamily: "var(--font-inter)" }}
-        >
-          Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
-        </p>
+        <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+          <h3
+            className="text-xs font-bold tracking-wider uppercase mb-3"
+            style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+          >
+            Reflection
+          </h3>
+          <p
+            className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
+          </p>
+        </div>
       </motion.div>
     </div>
   );
@@ -689,21 +672,23 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
                   />
 
                   {/* Section Content */}
-                  <p
-                    className="text-base text-white/70 leading-relaxed whitespace-pre-line flex-1"
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  >
-                    {renderWithItalics(firstParagraph)}
-                  </p>
-
-                  {restParagraphs && (
+                  <div className="flex-1">
                     <p
-                      className="mt-4 text-base text-white/70 leading-relaxed whitespace-pre-line"
+                      className="text-base text-white/70 leading-relaxed whitespace-pre-line"
                       style={{ fontFamily: "var(--font-inter)" }}
                     >
-                      {renderWithItalics(restParagraphs)}
+                      {renderWithItalics(firstParagraph)}
                     </p>
-                  )}
+
+                    {restParagraphs && (
+                      <p
+                        className="mt-4 text-base text-white/70 leading-relaxed whitespace-pre-line"
+                        style={{ fontFamily: "var(--font-inter)" }}
+                      >
+                        {renderWithItalics(restParagraphs)}
+                      </p>
+                    )}
+                  </div>
 
                   {/* Link button if present */}
                   {section.link && (
@@ -865,38 +850,10 @@ function InstacartColorPalette() {
   };
 
   return (
-    <div className="relative z-20 bg-black px-6 md:px-12 lg:px-24 py-32 md:py-48">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          viewport={{ once: true }}
-        >
-          <h2
-            className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4 italic"
-            style={{ fontFamily: "'Noe Display', serif", color: "white" }}
-          >
-            Color Palette
-          </h2>
-          <p
-            className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto"
-            style={{ fontFamily: "var(--font-inter)" }}
-          >
-            Reminiscent of a home-cooked meal
-          </p>
-        </motion.div>
-
+    <div className="relative z-20 bg-black px-6 md:px-12 mt-4 md:mt-6">
+      <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
         {/* Color Grid */}
-        <motion.div
-          className="overflow-visible rounded-2xl"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
-          viewport={{ once: true }}
-        >
+        <div className="overflow-visible rounded-2xl">
           {/* Two rows with gap */}
           <div className="grid grid-rows-2 gap-2">
             {/* Top row */}
@@ -922,7 +879,7 @@ function InstacartColorPalette() {
                     transition={{ duration: 0.2 }}
                   >
                     <span
-                      className="text-[10px] md:text-xs font-medium tracking-wider uppercase text-center leading-tight mb-1"
+                      className="text-[8px] font-medium tracking-wider uppercase text-center leading-tight mb-1"
                       style={{
                         fontFamily: "var(--font-inter)",
                         color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
@@ -932,7 +889,7 @@ function InstacartColorPalette() {
                       {color.name.split(" ").slice(1).join(" ")}
                     </span>
                     <span
-                      className="text-[10px] md:text-xs font-mono"
+                      className="text-[8px] font-mono"
                       style={{
                         color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
                         opacity: 0.7,
@@ -967,7 +924,7 @@ function InstacartColorPalette() {
                     transition={{ duration: 0.2 }}
                   >
                     <span
-                      className="text-[10px] md:text-xs font-medium tracking-wider uppercase text-center leading-tight mb-1"
+                      className="text-[8px] font-medium tracking-wider uppercase text-center leading-tight mb-1"
                       style={{
                         fontFamily: "var(--font-inter)",
                         color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
@@ -977,7 +934,7 @@ function InstacartColorPalette() {
                       {color.name.split(" ").slice(1).join(" ")}
                     </span>
                     <span
-                      className="text-[10px] md:text-xs font-mono"
+                      className="text-[8px] font-mono"
                       style={{
                         color: isLightColor(color.hex) ? "#1a1a1a" : "#ffffff",
                         opacity: 0.7,
@@ -990,7 +947,21 @@ function InstacartColorPalette() {
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Header */}
+        <h3
+          className="text-xs font-bold tracking-wider uppercase mb-3 mt-10"
+          style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+        >
+          Color Palette
+        </h3>
+        <p
+          className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Reminiscent of a home-cooked meal
+        </p>
       </div>
     </div>
   );
@@ -1024,38 +995,10 @@ function LinkLogisticsColorPalette() {
   };
 
   return (
-    <div className="relative z-20 bg-black px-6 md:px-12 lg:px-24 py-32 md:py-48">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          viewport={{ once: true }}
-        >
-          <h2
-            className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4 italic"
-            style={{ fontFamily: "'Noe Display', serif", color: "white" }}
-          >
-            Color Palette
-          </h2>
-          <p
-            className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto"
-            style={{ fontFamily: "var(--font-inter)" }}
-          >
-            Muted palette inspired by industrial photography
-          </p>
-        </motion.div>
-
+    <div className="relative z-20 bg-black px-6 md:px-12 mt-4 md:mt-6">
+      <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
         {/* Color Grid - Custom L-shaped layout */}
-        <motion.div
-          className="overflow-visible"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
-          viewport={{ once: true }}
-        >
+        <div className="overflow-visible">
           <div
             className="grid gap-2"
             style={{
@@ -1115,7 +1058,21 @@ function LinkLogisticsColorPalette() {
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </div>
+
+        {/* Header */}
+        <h3
+          className="text-xs font-bold tracking-wider uppercase mb-3 mt-10"
+          style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+        >
+          Color Palette
+        </h3>
+        <p
+          className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Muted palette inspired by industrial photography
+        </p>
       </div>
     </div>
   );
@@ -1876,7 +1833,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       <MobileSectionsCarousel item={item} renderWithItalics={renderWithItalics} />
 
       {/* Sections - Desktop Side navigation with content */}
-      <div className="hidden md:block px-4 md:mx-12 py-16 md:py-24">
+      <div className="hidden md:block mx-12 py-16 md:py-24">
         <div className="bg-[#141414] rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-12 border border-white/5">
           <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-16 lg:gap-24">
           {/* Left: Section Navigation */}
@@ -2245,7 +2202,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Link Logistics Shipping Container with Container Scroll Animation */}
       {item.slug === "link-logistics" && (
-        <div className="mx-12">
+        <div className="px-6 md:mx-12">
           <ContainerScroll>
             <Image
               src="/Work/LinkLogistics/Shipping Container.png"
@@ -2264,10 +2221,38 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         <LinkLogisticsColorPalette />
       )}
 
-      {/* Link Logistics Warehouse Image with Scroll Animation */}
+      {/* Link Logistics Space to Grow Video */}
       {item.slug === "link-logistics" && (
-        <div className="mx-12 pt-16 md:pt-24">
-          <ContainerScroll>
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <motion.div
+            className="relative overflow-hidden rounded-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <video
+              src="/Work/LinkLogistics/SpacetoGrow.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto block"
+            />
+          </motion.div>
+        </div>
+      )}
+
+      {/* Link Logistics Warehouse Image */}
+      {item.slug === "link-logistics" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <motion.div
+            className="relative overflow-hidden rounded-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
             <Image
               src="/Work/LinkLogistics/Warehouse.png"
               alt="Link Logistics Warehouse"
@@ -2276,7 +2261,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               className="w-full h-auto"
               draggable={false}
             />
-          </ContainerScroll>
+          </motion.div>
         </div>
       )}
 
@@ -2327,30 +2312,12 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             viewport={{ once: true }}
           >
             <video
-              src="/Work/LinkLogistics/LowerThirds.mov"
+              src="/Work/LinkLogistics/LowerThirds.mp4"
               autoPlay
               muted
               loop
               playsInline
-              className="w-full h-auto"
-            />
-          </motion.div>
-
-          {/* Logo Animation Video */}
-          <motion.div
-            className="relative overflow-hidden rounded-2xl mt-4 md:mt-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-            viewport={{ once: true }}
-          >
-            <video
-              src="/Work/LinkLogistics/LogoAnimation.mov"
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-auto"
+              className="w-full h-auto block"
             />
           </motion.div>
 
@@ -2540,10 +2507,16 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         <InstacartColorPalette />
       )}
 
-      {/* Instacart Tamales OOH Image with Container Scroll Animation */}
+      {/* Instacart Tamales OOH Image */}
       {item.slug === "instacart" && (
-        <div className="mx-12">
-          <ContainerScroll>
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <motion.div
+            className="relative overflow-hidden rounded-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
             <Image
               src="/Work/Instacart/Tamales_OOH.png"
               alt="Instacart Tamales Out of Home"
@@ -2552,7 +2525,29 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               className="w-full h-auto"
               draggable={false}
             />
-          </ContainerScroll>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Instacart Boozy Brunch Video */}
+      {item.slug === "instacart" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <motion.div
+            className="relative overflow-hidden rounded-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true }}
+          >
+            <video
+              src="/Work/Instacart/BoozyBrunch.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            />
+          </motion.div>
         </div>
       )}
 
@@ -2590,22 +2585,6 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 height={800}
                 className="w-full h-full object-cover"
                 draggable={false}
-              />
-            </motion.div>
-            <motion.div
-              className="relative overflow-hidden rounded-2xl md:col-span-2"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <video
-                src="/Work/Instacart/BoozyBrunch.mov"
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-auto"
               />
             </motion.div>
           </div>
