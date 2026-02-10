@@ -204,9 +204,8 @@ export const workItems: WorkItem[] = [
     categories: ["illustration", "identity", "art direction", "experiential"],
     image: "/Thumbnails/BMW.png",
     heroMedia: {
-      type: "video",
-      src: "/Work/BMW/BMW Tennis/HeroVideo.mp4",
-      poster: "/Thumbnails/BMW.png",
+      type: "image",
+      src: "/Work/BMW/BMW Tennis/CarFlip.gif",
     },
     accentColor: "#0ea5e9",
     logo: "/Work/BMW/BMWLogo.png",

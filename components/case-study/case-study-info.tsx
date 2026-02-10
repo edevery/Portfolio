@@ -1825,7 +1825,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
     <section className="relative z-10 bg-black">
       {/* Description Section - Full screen centered */}
       <div className="flex items-center justify-center py-8 md:py-20 md:min-h-screen">
-        <div className="flex flex-col items-center justify-center text-center px-4 md:px-12 lg:px-24 max-w-5xl mx-auto">
+        <div className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -1905,7 +1905,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
-            className="mt-6 md:mt-12 flex gap-3 justify-center"
+            className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3 justify-center"
           >
             {item.categories.map((category) => (
               <span
@@ -2987,10 +2987,53 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       )}
 
-      {/* BMW Indian Wells - RacketRoad with Container Scroll Animation */}
+      {/* BMW Indian Wells - HeroVideo with Container Scroll Animation */}
       {item.slug === "bmw-indian-wells" && (
-        <div className="mx-12">
+        <div className="px-6 md:mx-12">
           <ContainerScroll>
+            <div className="relative">
+              <video
+                ref={(el) => { videoRefs.current[2] = el; }}
+                src="/Work/BMW/BMW Tennis/HeroVideo.mp4"
+                autoPlay
+                muted={isMuted}
+                loop
+                playsInline
+                className="w-full h-auto rounded-2xl"
+              />
+              {/* Sound Toggle Button */}
+              <motion.button
+                onClick={toggleMute}
+                className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.3 }}
+                viewport={{ once: true }}
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+              >
+                {isMuted ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <line x1="23" y1="9" x2="17" y2="15" />
+                    <line x1="17" y1="9" x2="23" y2="15" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  </svg>
+                )}
+              </motion.button>
+            </div>
+          </ContainerScroll>
+        </div>
+      )}
+
+      {/* BMW Indian Wells - RacketRoad */}
+      {item.slug === "bmw-indian-wells" && (
+        <div className="px-6 md:px-12 mt-4 md:mt-6">
+          <div className="relative overflow-hidden rounded-2xl">
             <Image
               src="/Work/BMW/BMW Tennis/RacketRoad.png"
               alt="BMW Tennis Racket Road"
@@ -2999,7 +3042,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               className="w-full h-auto"
               draggable={false}
             />
-          </ContainerScroll>
+          </div>
         </div>
       )}
 
@@ -3114,37 +3157,32 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             />
           </div>
 
-          {/* CarFlip gif full width */}
-          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
-            <Image
-              src="/Work/BMW/BMW Tennis/CarFlip.gif"
-              alt="BMW Car Flip Animation"
-              width={1920}
-              height={1080}
-              className="w-full h-auto"
-              draggable={false}
-              unoptimized
-            />
-          </div>
-
-          {/* Storyboards Section */}
-          <div className="py-32 md:py-56">
-            <div className="text-center mb-12">
-              <h2
-                className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4 italic"
-                style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+          {/* Storyboards Card */}
+          <motion.div
+            className="mt-4 md:mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+              <h3
+                className="text-xs font-bold tracking-wider uppercase mb-3"
+                style={{ fontFamily: "var(--font-inter)", color: "#0ea5e9" }}
               >
                 Storyboards
-              </h2>
+              </h3>
               <p
-                className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto"
+                className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                Worked closely with Cekai Studio to bring the identity to life for the stadium jumbotron and LED boards.
+                Worked closely with <a href="https://cekai.jp/" target="_blank" rel="noopener noreferrer" className="text-[#dd0510] underline hover:text-white transition-colors">Cekai Studio</a> to bring the identity to life for the stadium jumbotron and LED boards.
               </p>
             </div>
+          </motion.div>
 
-            {/* 4x2 Grid of Storyboards */}
+          {/* 4x2 Grid of Storyboards */}
+          <div className="mt-4 md:mt-6">
             <div className="max-w-5xl mx-auto">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 <div className="relative overflow-hidden rounded-2xl">
@@ -3231,22 +3269,20 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
           </div>
 
-        </div>
-      )}
-
-      {/* BMW Indian Wells - Stadium with Container Scroll Animation */}
-      {item.slug === "bmw-indian-wells" && (
-        <div className="mx-12">
-          <ContainerScroll>
+          {/* Stadium video */}
+          <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <video
-              src="/Work/BMW/BMW Tennis/Stadium.mp4"
+              src="/Work/BMW/BMW Tennis/Stadium.mov"
               autoPlay
               muted
               loop
               playsInline
-              className="w-full h-auto"
+              width={1696}
+              height={1264}
+              className="w-full h-full object-cover rounded-2xl"
             />
-          </ContainerScroll>
+          </div>
+
         </div>
       )}
 
