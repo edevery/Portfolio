@@ -313,148 +313,142 @@ function MobileVestaBrandElements() {
 }
 
 // Desktop Vesta Brand Elements Carousel Component
+// Hover card for brand elements grid - expands on hover to reveal text
+function BrandElementCard({ item, className }: { item: { image: string; title: string; description: string }; className?: string }) {
+  return (
+    <motion.div
+      className={`overflow-hidden rounded-2xl bg-[#141414] ${className || ""}`}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+    >
+      <Image
+        src={item.image}
+        alt={item.title}
+        width={1920}
+        height={1080}
+        className="w-full h-auto"
+        draggable={false}
+      />
+    </motion.div>
+  );
+}
+
 function DesktopVestaBrandElements() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const moodboard = {
+    image: "/Work/Vesta/Vesta/BrandSystem4.png",
+    title: "Mood Board",
+    description: "I was inspired by classical murals in the Louvre and Roman sculptures of gods and goddesses, delicate serif typography, and fire-like gradients to express love as both timeless and luminous.",
+  };
 
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start end", "end end"],
-  });
-
-  // Transform scroll progress to horizontal translation
-  // 5 slides means we need to move -400% total (each slide is 100%)
-  // Delayed start at 0.22 gives pause for first slide to settle
-  const carouselX = useTransform(scrollYProgress, [0.22, 0.92], ["0%", "-400%"]);
-
-  // Individual slide opacities - first slide gets extra hold time
-  // Slide 1: visible immediately, holds until 0.28, then fades
-  const slide1Opacity = useTransform(scrollYProgress, [0.08, 0.12, 0.28, 0.35], [0.4, 1, 1, 0.4]);
-  const slide2Opacity = useTransform(scrollYProgress, [0.28, 0.35, 0.45, 0.52], [0.4, 1, 1, 0.4]);
-  const slide3Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.62, 0.69], [0.4, 1, 1, 0.4]);
-  const slide4Opacity = useTransform(scrollYProgress, [0.62, 0.69, 0.79, 0.86], [0.4, 1, 1, 0.4]);
-  const slide5Opacity = useTransform(scrollYProgress, [0.79, 0.86, 0.92, 0.98], [0.4, 1, 1, 1]);
-
-  // Text animations - appears when slide is at full opacity, fades before next slide
-  // Text 1: appears after image settles, holds, then fades before transition
-  const text1Opacity = useTransform(scrollYProgress, [0.10, 0.14, 0.24, 0.28], [0, 1, 1, 0]);
-  const text2Opacity = useTransform(scrollYProgress, [0.33, 0.37, 0.43, 0.47], [0, 1, 1, 0]);
-  const text3Opacity = useTransform(scrollYProgress, [0.50, 0.54, 0.60, 0.64], [0, 1, 1, 0]);
-  const text4Opacity = useTransform(scrollYProgress, [0.67, 0.71, 0.77, 0.81], [0, 1, 1, 0]);
-  const text5Opacity = useTransform(scrollYProgress, [0.84, 0.88, 0.94, 0.98], [0, 1, 1, 1]);
-
-  // Progress indicator opacities
-  const dot1Opacity = useTransform(scrollYProgress, [0.08, 0.12, 0.28, 0.35], [0.3, 1, 1, 0.3]);
-  const dot2Opacity = useTransform(scrollYProgress, [0.28, 0.35, 0.45, 0.52], [0.3, 1, 1, 0.3]);
-  const dot3Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.62, 0.69], [0.3, 1, 1, 0.3]);
-  const dot4Opacity = useTransform(scrollYProgress, [0.62, 0.69, 0.79, 0.86], [0.3, 1, 1, 0.3]);
-  const dot5Opacity = useTransform(scrollYProgress, [0.79, 0.86, 0.92, 0.98], [0.3, 1, 1, 1]);
-  const dotOpacities = [dot1Opacity, dot2Opacity, dot3Opacity, dot4Opacity, dot5Opacity];
-
-  const slides = [
-    {
-      image: "/Work/Vesta/Vesta/BrandSystem4.png",
-      title: "Mood Board",
-      description: "I was inspired by classical murals in the Louvre and Roman sculptures of gods and goddesses, delicate serif typography, and fire-like gradients to express love as both timeless and luminous.",
-      opacity: slide1Opacity,
-      textOpacity: text1Opacity,
-    },
+  const gridElements = [
     {
       image: "/Work/Vesta/Vesta/BrandSystem1.png",
       title: "Color Palette",
       description: "The warm reds and golds balance the cool blues to convey both passion and ease.",
-      opacity: slide2Opacity,
-      textOpacity: text2Opacity,
-    },
-    {
-      image: "/Work/Vesta/Vesta/BrandSystem2.png",
-      title: "Gradients",
-      description: "I created custom CSS mesh gradients for a modern sense of light and warmth. Inspired by flames, designed to feel calm, fluid, and alive within the app experience.",
-      opacity: slide3Opacity,
-      textOpacity: text3Opacity,
     },
     {
       image: "/Work/Vesta/Vesta/BrandSystem3.png",
       title: "Typography",
       description: "I paired Bugari, inspired by Roman engravings to bring a sense of timeless reverence, with Inter for its modern clarity.",
-      opacity: slide4Opacity,
-      textOpacity: text4Opacity,
     },
     {
-      image: "/Work/Vesta/Vesta/BrandSystem5.png",
-      title: "Logo",
-      description: "I customized the logotype to overlap the e-s and t-a. A subtle adjustment to make the letters feel close and connected.",
-      opacity: slide5Opacity,
-      textOpacity: text5Opacity,
+      image: "/Work/Vesta/Vesta/BrandSystem2.png",
+      title: "Gradients",
+      description: "I created custom CSS mesh gradients for a modern sense of light and warmth. Inspired by flames, designed to feel calm, fluid, and alive within the app experience.",
     },
   ];
 
   return (
-    <div ref={scrollContainerRef} className="relative z-20 bg-black mt-48" style={{ height: "600vh" }}>
-      <div className="sticky top-0 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 pb-40">
-        {/* Text Container - above carousel */}
-        <div className="relative h-36 mb-10 w-full max-w-3xl mx-auto px-6">
-          {slides.map((slide, index) => (
+    <div className="relative z-20 bg-black">
+      <div className="mx-12 py-12 space-y-4">
+        {/* Mood Board - full width at top */}
+        <BrandElementCard item={moodboard} />
+
+        {/* 3-column grid: Color Palette, Typography, Gradients */}
+        <div className="grid grid-cols-3 gap-4">
+          {gridElements.map((item) => (
+            <BrandElementCard key={item.title} item={item} />
+          ))}
+        </div>
+
+        {/* Brand System description card */}
+        <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+          <motion.p
+            className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl mb-16"
+            style={{ fontFamily: "var(--font-inter)" }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          >
+            I was inspired by classical murals in the Louvre and Roman sculptures of gods and goddesses, delicate serif typography, and fire-like gradients to express love as both timeless and luminous. Vesta, Roman goddess of the hearth, became the brand&apos;s soul.
+          </motion.p>
+
+          <div className="grid grid-cols-3 gap-12">
             <motion.div
-              key={index}
-              className="absolute inset-0 flex flex-col items-center justify-end text-center px-6"
-              style={{ opacity: slide.textOpacity }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
             >
               <h3
-                className="text-base font-bold tracking-wider uppercase mb-3"
+                className="text-xs font-bold tracking-wider uppercase mb-4"
                 style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
               >
-                {slide.title}
+                Color Palette
               </h3>
               <p
-                className="text-base text-white/60 leading-relaxed max-w-2xl"
+                className="text-base text-white/60 leading-relaxed"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                {slide.description}
+                Warm reds and golds counterbalance cool blues, creating a sense of passion held in calm.
               </p>
             </motion.div>
-          ))}
-        </div>
 
-        {/* Carousel Container - mask only affects overflow edges, not the centered image */}
-        <div
-          className="w-full max-w-6xl mx-auto overflow-hidden"
-          style={{
-            maskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
-            WebkitMaskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
-          }}
-        >
-          <motion.div
-            className="flex"
-            style={{ x: carouselX }}
-          >
-            {slides.map((slide, index) => (
-              <motion.div
-                key={index}
-                className="flex-shrink-0 w-full px-16"
-                style={{ opacity: slide.opacity }}
-              >
-                <Image
-                  src={slide.image}
-                  alt={slide.title}
-                  width={1920}
-                  height={1080}
-                  className="w-full h-auto rounded-2xl"
-                  draggable={false}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Progress Indicators - below carousel */}
-        <div className="flex gap-3 mt-8">
-          {dotOpacities.map((dotOpacity, index) => (
             <motion.div
-              key={index}
-              className="w-2 h-2 rounded-full bg-white"
-              style={{ opacity: dotOpacity }}
-            />
-          ))}
+              className="border-l border-[#85c3ed]/30 pl-8"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
+            >
+              <h3
+                className="text-xs font-bold tracking-wider uppercase mb-4"
+                style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+              >
+                Gradients
+              </h3>
+              <p
+                className="text-base text-white/60 leading-relaxed"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                Custom CSS Gradients bring a modern sense of light and warmth.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="border-l border-[#85c3ed]/30 pl-8"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.4 }}
+            >
+              <h3
+                className="text-xs font-bold tracking-wider uppercase mb-4"
+                style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+              >
+                Typography
+              </h3>
+              <p
+                className="text-base text-white/60 leading-relaxed"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                Inspired by Roman engravings, Bugari brings timeless reverence, balanced by Inter&apos;s modern clarity.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>
@@ -1320,6 +1314,24 @@ function DesktopVestaGuidingPersonas() {
           className="w-full h-auto rounded-2xl"
           draggable={false}
         />
+      </div>
+
+      {/* Personalized Nudges description card */}
+      <div className="bg-black mx-12 pb-12">
+        <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+          <h3
+            className="text-xs font-bold tracking-wider uppercase mb-3"
+            style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+          >
+            Personalized Nudges
+          </h3>
+          <p
+            className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            I built a system that considers love languages, attachment patterns, mood, partner preferences, and the shifting context of your day. Those signals flow through Claude&apos;s API to create simple, personalized nudges that stay relevant as your relationship evolves.
+          </p>
+        </div>
       </div>
     </div>
   );
