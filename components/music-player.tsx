@@ -16,32 +16,32 @@ const tracks: Track[] = [
   {
     title: "Waste (RY X Remix)",
     artist: "Rhye",
-    src: "/about/music/Rhye/Blood Remixed/01 Waste (RY X Remix).m4a",
-    cover: "/about/music/Covers/Waste(RYXREMIX)_Rhye.jpg",
+    src: "/About/Music/Rhye/Blood Remixed/01 Waste (RY X Remix).m4a",
+    cover: "/About/Music/Covers/Waste(RYXREMIX)_Rhye.jpg",
   },
   {
     title: "Who I Am",
     artist: "Saje",
-    src: "/about/music/Saje/Take Care Of You/02 Who I Am.mp3",
-    cover: "/about/music/Covers/WhoIAM_Saje.jpeg",
+    src: "/About/Music/Saje/Take Care Of You/02 Who I Am.mp3",
+    cover: "/About/Music/Covers/WhoIAM_Saje.jpeg",
   },
   {
     title: "Lost",
     artist: "Maxomar",
-    src: "/about/music/Maxomar/Lost - Single/01 Lost.m4a",
-    cover: "/about/music/Covers/Lost_Maxomar.jpg",
+    src: "/About/Music/Maxomar/Lost - Single/01 Lost.m4a",
+    cover: "/About/Music/Covers/Lost_Maxomar.jpg",
   },
   {
     title: "Difficult to Love",
     artist: "Elderbrook",
-    src: "/about/music/Elderbrook/Difficult to Love - Single/01 Difficult to Love.m4a",
-    cover: "/about/music/Covers/DifficulttoLove_Elderbrook.jpeg",
+    src: "/About/Music/Elderbrook/Difficult to Love - Single/01 Difficult to Love.m4a",
+    cover: "/About/Music/Covers/DifficulttoLove_Elderbrook.jpeg",
   },
   {
     title: "Nobody Else",
     artist: "Snacks",
-    src: "/about/music/Snacks/Nobody Else EP - EP/01 Nobody Else.m4a",
-    cover: "/about/music/Covers/NobodyElse_Snacks.jpg",
+    src: "/About/Music/Snacks/Nobody Else EP - EP/01 Nobody Else.m4a",
+    cover: "/About/Music/Covers/NobodyElse_Snacks.jpg",
   },
 ];
 
@@ -164,7 +164,7 @@ export function MusicPlayer() {
         }}
       >
         <Image
-          src="/about/logos/SpotifyIcon.png"
+          src="/About/Logos/SpotifyIcon.png"
           alt="Open in Spotify"
           fill
           className="object-contain"

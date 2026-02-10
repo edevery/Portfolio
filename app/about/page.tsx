@@ -64,29 +64,29 @@ function TiltSocialLink({ link }: { link: { name: string; url: string; image: st
 
 // Photo list for carousel with locations
 const photos = [
-  { src: "/about/Photos/1-Rappel.png", location: "San Francisco, CA" },
-  { src: "/about/Photos/2-Skiing2.png", location: "Maroon Bells, CO" },
-  { src: "/about/Photos/3-ArtTech.png", location: "Mercer Labs, NY" },
-  { src: "/about/Photos/4-NewYorkSkyLine.png", location: "Williamsburg, NY" },
-  { src: "/about/Photos/5-Surfing.png", location: "Nayarit, Mexico" },
-  { src: "/about/Photos/6-PatagoniaCamping.png", location: "Torres Del Paine, Chile" },
-  { src: "/about/Photos/7-California.png", location: "Big Sur, CA" },
-  { src: "/about/Photos/8-SF.png", location: "San Francisco, CA" },
-  { src: "/about/Photos/9-SeaLion.png", location: "Baja, Mexico" },
-  { src: "/about/Photos/10-BaliYoga.png", location: "Ubud, Bali" },
-  { src: "/about/Photos/11-Westvillage.png", location: "New York, NY" },
-  { src: "/about/Photos/12-SkyDiving.png", location: "Queenstown, NZ" },
-  { src: "/about/Photos/13-Boulder.png", location: "Boulder, CO" },
-  { src: "/about/Photos/14-GG.png", location: "San Francisco, CA" },
-  { src: "/about/Photos/15-NorthernLights.png", location: "Staður, Iceland" },
-  { src: "/about/Photos/16-PatagoniaHiking.png", location: "W Trek, Patagonia" },
-  { src: "/about/Photos/17-Redwoods.png", location: "Santa Clara, CA" },
-  { src: "/about/Photos/18-show.png", location: "Miami, FL" },
-  { src: "/about/Photos/19-Skiing.png", location: "Highlands Bowl, CO" },
-  { src: "/about/Photos/20-Guggenheim.png", location: "Bilbao, Spain" },
-  { src: "/about/Photos/21-Iceland.png", location: "Ölfus, Iceland" },
-  { src: "/about/Photos/22-NewYorkWinter.png", location: "New York, NY" },
-  { src: "/about/Photos/23-London.png", location: "London, UK" },
+  { src: "/About/Photos/1-Rappel.png", location: "San Francisco, CA" },
+  { src: "/About/Photos/2-Skiing2.png", location: "Maroon Bells, CO" },
+  { src: "/About/Photos/3-ArtTech.png", location: "Mercer Labs, NY" },
+  { src: "/About/Photos/4-NewYorkSkyLine.png", location: "Williamsburg, NY" },
+  { src: "/About/Photos/5-Surfing.png", location: "Nayarit, Mexico" },
+  { src: "/About/Photos/6-PatagoniaCamping.png", location: "Torres Del Paine, Chile" },
+  { src: "/About/Photos/7-California.png", location: "Big Sur, CA" },
+  { src: "/About/Photos/8-SF.png", location: "San Francisco, CA" },
+  { src: "/About/Photos/9-SeaLion.png", location: "Baja, Mexico" },
+  { src: "/About/Photos/10-BaliYoga.png", location: "Ubud, Bali" },
+  { src: "/About/Photos/11-Westvillage.png", location: "New York, NY" },
+  { src: "/About/Photos/12-SkyDiving.png", location: "Queenstown, NZ" },
+  { src: "/About/Photos/13-Boulder.png", location: "Boulder, CO" },
+  { src: "/About/Photos/14-GG.png", location: "San Francisco, CA" },
+  { src: "/About/Photos/15-NorthernLights.png", location: "Staður, Iceland" },
+  { src: "/About/Photos/16-PatagoniaHiking.png", location: "W Trek, Patagonia" },
+  { src: "/About/Photos/17-Redwoods.png", location: "Santa Clara, CA" },
+  { src: "/About/Photos/18-show.png", location: "Miami, FL" },
+  { src: "/About/Photos/19-Skiing.png", location: "Highlands Bowl, CO" },
+  { src: "/About/Photos/20-Guggenheim.png", location: "Bilbao, Spain" },
+  { src: "/About/Photos/21-Iceland.png", location: "Ölfus, Iceland" },
+  { src: "/About/Photos/22-NewYorkWinter.png", location: "New York, NY" },
+  { src: "/About/Photos/23-London.png", location: "London, UK" },
 ];
 
 // Social links
@@ -94,22 +94,22 @@ const socialLinks = [
   {
     name: "Twitter",
     url: "https://x.com/emdevvv",
-    image: "/about/logos/XLogo.png",
+    image: "/About/Logos/XLogo.png",
   },
   {
     name: "LinkedIn",
     url: "https://www.linkedin.com/in/emily-devery/",
-    image: "/about/logos/LinkedInIcon.png",
+    image: "/About/Logos/LinkedInIcon.png",
   },
   {
     name: "Instagram",
     url: "https://www.instagram.com/edevery/",
-    image: "/about/logos/InstagramLogo.png",
+    image: "/About/Logos/InstagramLogo.png",
   },
   {
     name: "Email",
     url: "mailto:emilybdevery@gmail.com",
-    image: "/about/logos/Gmail.png",
+    image: "/About/Logos/Gmail.png",
   },
 ];
 
@@ -167,7 +167,7 @@ export default function About() {
           {/* Profile Picture */}
           <div className="relative w-full aspect-square rounded-3xl overflow-hidden">
             <Image
-              src="/about/Photos/ProfilePhoto.png"
+              src="/About/Photos/ProfilePhoto.png"
               alt="Emily Devery"
               fill
               className="object-cover"
@@ -221,7 +221,7 @@ export default function About() {
             {/* Photos Icon */}
             <div className="absolute top-3 right-3 w-[50px] h-[50px] z-10">
               <Image
-                src="/about/logos/PhotosIcon.png"
+                src="/About/Logos/PhotosIcon.png"
                 alt="Photos"
                 fill
                 className="object-contain"
