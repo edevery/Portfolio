@@ -3334,7 +3334,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Merit Systems - Conference Stage with Container Scroll Animation */}
       {item.slug === "merit-systems" && (
-        <div className="mx-12">
+        <div className="px-6 md:px-12">
           <ContainerScroll>
             <Image
               src="/Work/MeritSystems/Merit.png"
@@ -3427,7 +3427,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* It All Starts Here - OOH Chatbot with Container Scroll Animation */}
       {item.slug === "it-all-starts-here" && (
-        <div className="mx-12">
+        <div className="px-6 md:px-12">
           <ContainerScroll>
             <Image
               src="/Work/ItAllStartsHere/OOH_Chatbot.jpg"
