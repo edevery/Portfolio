@@ -3574,6 +3574,26 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       )}
 
+      {/* Zaxbys - Coming Soon Card */}
+      {item.slug === "zaxbys" && (
+        <motion.div
+          className="px-6 md:px-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          viewport={{ once: true, margin: "-50px" }}
+        >
+          <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+            <p
+              className="text-2xl lg:text-3xl leading-relaxed"
+              style={{ fontFamily: "var(--font-inter)", color: "#85c3ed" }}
+            >
+              Project coming soon
+            </p>
+          </div>
+        </motion.div>
+      )}
+
       {/* Tapered Divider Line */}
       <div
         className="w-full max-w-3xl mx-auto h-px mt-20 md:mt-28"
