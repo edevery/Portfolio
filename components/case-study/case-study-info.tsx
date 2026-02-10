@@ -1229,127 +1229,98 @@ function MobileVestaGuidingPersonas() {
   );
 }
 
-// Desktop Guiding Personas - scroll-based animation
+// Desktop Guiding Personas - 3-column grid with description card
 function DesktopVestaGuidingPersonas() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start end", "end end"],
-  });
-
-  // Card slides up from below viewport
-  const cardY = useTransform(scrollYProgress, [0, 0.08], ["60vh", "0vh"]);
-  const cardOpacity = useTransform(scrollYProgress, [0, 0.06], [0, 1]);
-
-  // Transform scroll progress to horizontal translation (after intro settles)
-  const carouselX = useTransform(scrollYProgress, [0.45, 0.92], ["0%", "-200%"]);
-
-  // Intro text animations - elegant entrance with longer visibility
-  const introOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [0, 1, 1, 0]);
-  const introY = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [60, 0, 0, -40]);
-  const introBlur = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [12, 0, 0, 6]);
-  const introFilter = useMotionTemplate`blur(${introBlur}px)`;
-  const introScale = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [0.92, 1, 1, 0.96]);
-
-  // Carousel fades in smoothly with slight scale as intro exits
-  const carouselOpacity = useTransform(scrollYProgress, [0.40, 0.50], [0, 1]);
-  const carouselScale = useTransform(scrollYProgress, [0.40, 0.50], [0.94, 1]);
-
-  // Individual persona opacities for highlighting active one
-  const persona1Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.58, 0.64], [0.4, 1, 1, 0.4]);
-  const persona2Opacity = useTransform(scrollYProgress, [0.58, 0.65, 0.72, 0.78], [0.4, 1, 1, 0.4]);
-  const persona3Opacity = useTransform(scrollYProgress, [0.72, 0.80, 0.88, 0.95], [0.4, 1, 1, 1]);
-
-  // Progress indicator opacities
-  const dot1Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.58, 0.64], [0.3, 1, 1, 0.3]);
-  const dot2Opacity = useTransform(scrollYProgress, [0.58, 0.65, 0.72, 0.78], [0.3, 1, 1, 0.3]);
-  const dot3Opacity = useTransform(scrollYProgress, [0.72, 0.80, 0.88, 0.95], [0.3, 1, 1, 1]);
-  const dotOpacities = [dot1Opacity, dot2Opacity, dot3Opacity];
-
-  const personas = [
-    { image: personaImages[0], opacity: persona1Opacity },
-    { image: personaImages[1], opacity: persona2Opacity },
-    { image: personaImages[2], opacity: persona3Opacity },
-  ];
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   return (
-    <div ref={scrollContainerRef} className="relative z-20 bg-black" style={{ height: "500vh" }}>
-      <motion.div
-        className="sticky top-0 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 md:pt-20 pb-32"
-        style={{ y: cardY, opacity: cardOpacity }}
-      >
-        {/* Intro Text */}
-        <motion.div
-          className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center px-6 md:px-12 lg:px-24 max-w-4xl mx-auto pointer-events-none z-10"
-          style={{
-            opacity: introOpacity,
-            y: introY,
-            scale: introScale,
-            filter: introFilter,
-          }}
-        >
-          <h2
-            className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-6"
-            style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+    <div className="relative z-20 bg-black">
+      {/* 3-column grid of persona images */}
+      <div className="mx-12 py-12">
+        <div className="grid grid-cols-3 gap-4">
+          {personaImages.map((image, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1], delay: index * 0.1 }}
+              onClick={() => setExpandedIndex(index)}
+              className="cursor-pointer"
+            >
+              <Image
+                src={image}
+                alt={`User Persona ${index + 1}`}
+                width={1200}
+                height={800}
+                className="w-full h-auto rounded-2xl transition-transform duration-300 hover:scale-110"
+                draggable={false}
+              />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Expanded image overlay */}
+      <AnimatePresence>
+        {expandedIndex !== null && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setExpandedIndex(null)}
+          >
+            <motion.div
+              className="relative max-w-[90vw] max-h-[90vh]"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Image
+                src={personaImages[expandedIndex]}
+                alt={`User Persona ${expandedIndex + 1}`}
+                width={1800}
+                height={1200}
+                className="w-auto h-auto max-w-full max-h-[90vh] rounded-2xl"
+                draggable={false}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Description card */}
+      <div className="bg-black mx-12 pb-12">
+        <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+          <h3
+            className="text-xs font-bold tracking-wider uppercase mb-3"
+            style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
           >
             Guiding Personas
-          </h2>
+          </h3>
           <p
-            className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed"
+            className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
             style={{ fontFamily: "var(--font-inter)" }}
           >
             To guide my design decisions, I developed three personas representing different relationship challenges: new couples who struggle to express needs (Elyse), established partners drowning in busy schedules (Matthew), and long-term couples seeking sustainable growth tools (Ericka & Ben). These profiles shaped everything from Vesta&apos;s gentle tone to its calendar integration.
           </p>
-        </motion.div>
+        </div>
+      </div>
 
-        {/* Progress Indicators */}
-        <motion.div
-          className="flex gap-3 mb-8"
-          style={{ opacity: carouselOpacity }}
-        >
-          {dotOpacities.map((dotOpacity, index) => (
-            <motion.div
-              key={index}
-              className="w-2 h-2 rounded-full bg-white"
-              style={{ opacity: dotOpacity }}
-            />
-          ))}
-        </motion.div>
-
-        {/* Carousel Container */}
-        <motion.div
-          className="w-full max-w-6xl mx-auto overflow-hidden"
-          style={{
-            opacity: carouselOpacity,
-            scale: carouselScale,
-            maskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
-            WebkitMaskImage: "linear-gradient(to right, transparent, black 2%, black 98%, transparent)",
-          }}
-        >
-          <motion.div
-            className="flex"
-            style={{ x: carouselX }}
-          >
-            {personas.map((persona, index) => (
-              <motion.div
-                key={index}
-                className="flex-shrink-0 w-full px-8 md:px-16"
-                style={{ opacity: persona.opacity }}
-              >
-                <Image
-                  src={persona.image}
-                  alt={`User Persona ${index + 1}`}
-                  width={1200}
-                  height={800}
-                  className="w-full h-auto rounded-2xl"
-                  draggable={false}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-      </motion.div>
+      {/* UserFlow image */}
+      <div className="bg-black mx-12 pb-12">
+        <Image
+          src="/Work/Vesta/Vesta/UserFlow.png"
+          alt="Vesta User Flow"
+          width={1920}
+          height={1080}
+          className="w-full h-auto rounded-2xl"
+          draggable={false}
+        />
+      </div>
     </div>
   );
 }
@@ -2512,34 +2483,18 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         <VestaGuidingPersonas />
       )}
 
-      {/* Vesta User Flow Section */}
+      {/* Vesta User Flow Section - Mobile only (desktop is in VestaGuidingPersonas) */}
       {item.slug === "vesta" && (
-        <>
-          {/* Desktop: UserFlow with ContainerScroll */}
-          <div className="hidden md:block mx-12 mt-48">
-            <ContainerScroll>
-              <Image
-                src="/Work/Vesta/Vesta/UserFlow.png"
-                alt="Vesta User Flow"
-                width={1920}
-                height={1080}
-                className="w-full h-auto"
-                draggable={false}
-              />
-            </ContainerScroll>
-          </div>
-          {/* Mobile: UserFlow without ContainerScroll, same width as Question2.png */}
-          <div className="block md:hidden mx-4 mt-8">
-            <Image
-              src="/Work/Vesta/Vesta/UserFlow.png"
-              alt="Vesta User Flow"
-              width={1920}
-              height={1080}
-              className="w-full h-auto rounded-2xl"
-              draggable={false}
-            />
-          </div>
-        </>
+        <div className="block md:hidden mx-4 mt-8">
+          <Image
+            src="/Work/Vesta/Vesta/UserFlow.png"
+            alt="Vesta User Flow"
+            width={1920}
+            height={1080}
+            className="w-full h-auto rounded-2xl"
+            draggable={false}
+          />
+        </div>
       )}
 
       {/* Vesta Brand Elements Carousel */}
