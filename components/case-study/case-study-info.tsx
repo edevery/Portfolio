@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform, useMotionTemplate } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform, useMotionTemplate, useMotionValue, PanInfo } from "framer-motion";
 import { useSpring, animated } from "@react-spring/web";
 import Image from "next/image";
 import { workItems, type WorkItem } from "@/lib/work-data";
@@ -25,6 +25,11 @@ const calcRotation = (x: number, y: number, rect: DOMRect) => {
 
 // Vesta Onboarding Content Component with staggered entrance animations
 function VestaOnboardingContent() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+
   const columns = [
     {
       title: "Relationship Context",
@@ -40,13 +45,53 @@ function VestaOnboardingContent() {
     },
   ];
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const cardWidth = containerWidth * 0.8; // 80% width to show glimpse of next card
+  const gap = 12;
+  const totalWidth = columns.length * (cardWidth + gap) - gap;
+  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
+
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const currentX = x.get();
+    const velocity = info.velocity.x;
+
+    const cardWithGap = cardWidth + gap;
+    let targetIndex = Math.round(-currentX / cardWithGap);
+
+    if (Math.abs(velocity) > 500) {
+      targetIndex += velocity > 0 ? -1 : 1;
+    }
+
+    targetIndex = Math.max(0, Math.min(columns.length - 1, targetIndex));
+    const targetX = -targetIndex * cardWithGap;
+    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
+  };
+
   return (
     <div className="relative z-10 bg-black">
-      <section className="mx-4 md:mx-12 pt-6 md:pt-8 pb-4 md:pb-6">
-        <div className="bg-[#141414] rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-12 border border-white/5">
+      {/* Desktop Layout */}
+      <section className="hidden md:block mx-12 pt-8 pb-6">
+        <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
           {/* Intro text */}
           <motion.p
-            className="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl mb-16"
+            className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl mb-16"
             style={{ fontFamily: "var(--font-inter)" }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -57,7 +102,7 @@ function VestaOnboardingContent() {
           </motion.p>
 
           {/* Three column grid with staggered animations */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          <div className="grid grid-cols-3 gap-12">
             {columns.map((column, index) => (
               <motion.div
                 key={column.title}
@@ -102,6 +147,44 @@ function VestaOnboardingContent() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Mobile Layout - Carousel only (intro text moved above Question2.png) */}
+      <section className="block md:hidden pt-6 pb-4">
+        {/* Swipe Carousel */}
+        <div ref={containerRef} className="overflow-hidden">
+          <motion.div
+            className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
+            style={{ x }}
+            drag="x"
+            dragConstraints={{ left: -maxDrag, right: 0 }}
+            onDragEnd={handleDragEnd}
+            dragElastic={0.1}
+          >
+            {columns.map((column) => (
+              <motion.div
+                key={column.title}
+                className="flex-shrink-0"
+                style={{ width: cardWidth }}
+              >
+                <div className="rounded-2xl p-5 border border-white/20 h-full">
+                  <h3
+                    className="text-xs font-bold tracking-wider uppercase mb-3"
+                    style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                  >
+                    {column.title}
+                  </h3>
+                  <p
+                    className="text-sm text-white/60 leading-relaxed"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {column.content}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
     </div>
@@ -707,7 +790,109 @@ function LinkLogisticsColorPalette() {
 }
 
 // Vesta Guiding Personas Component with scroll-driven carousel
-function VestaGuidingPersonas() {
+// Persona images data - shared between mobile and desktop
+const personaImages = [
+  "/Work/Vesta/Vesta/UserPersona-1.png",
+  "/Work/Vesta/Vesta/UserPersona-2.png",
+  "/Work/Vesta/Vesta/UserPersona-3.png",
+];
+
+// Mobile Guiding Personas - simple swipe carousel
+function MobileVestaGuidingPersonas() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const x = useMotionValue(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const cardWidth = containerWidth * 0.85;
+  const gap = 12;
+  const totalWidth = personaImages.length * (cardWidth + gap) - gap;
+  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
+
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const currentX = x.get();
+    const velocity = info.velocity.x;
+
+    const cardWithGap = cardWidth + gap;
+    let targetIndex = Math.round(-currentX / cardWithGap);
+
+    if (Math.abs(velocity) > 500) {
+      targetIndex += velocity > 0 ? -1 : 1;
+    }
+
+    targetIndex = Math.max(0, Math.min(personaImages.length - 1, targetIndex));
+    const targetX = -targetIndex * cardWithGap;
+    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
+  };
+
+  return (
+    <div className="relative z-20 bg-black px-4 pt-8 pb-8">
+      {/* Header */}
+      <motion.div
+        className="text-center mb-6"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      >
+        <h2
+          className="text-2xl tracking-tight mb-4"
+          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+        >
+          Guiding Personas
+        </h2>
+        <p
+          className="text-sm text-white/60 leading-relaxed max-w-sm mx-auto"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Three personas representing different relationship challenges shaped Vesta&apos;s gentle tone and calendar integration.
+        </p>
+      </motion.div>
+
+      {/* Simple Carousel */}
+      <div ref={containerRef} className="overflow-hidden">
+        <motion.div
+          className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
+          style={{ x }}
+          drag="x"
+          dragConstraints={{ left: -maxDrag, right: 0 }}
+          onDragEnd={handleDragEnd}
+          dragElastic={0.1}
+        >
+          {personaImages.map((image, index) => (
+            <motion.div
+              key={index}
+              className="flex-shrink-0"
+              style={{ width: cardWidth }}
+            >
+              <Image
+                src={image}
+                alt={`User Persona ${index + 1}`}
+                width={1200}
+                height={800}
+                className="w-full h-auto rounded-2xl"
+                draggable={false}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// Desktop Guiding Personas - scroll-based animation
+function DesktopVestaGuidingPersonas() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -723,7 +908,6 @@ function VestaGuidingPersonas() {
   const carouselX = useTransform(scrollYProgress, [0.45, 0.92], ["0%", "-200%"]);
 
   // Intro text animations - elegant entrance with longer visibility
-  // Fades in 5-15%, stays visible 15-35%, fades out 35-45%
   const introOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [0, 1, 1, 0]);
   const introY = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [60, 0, 0, -40]);
   const introBlur = useTransform(scrollYProgress, [0.05, 0.15, 0.35, 0.45], [12, 0, 0, 6]);
@@ -739,30 +923,20 @@ function VestaGuidingPersonas() {
   const persona2Opacity = useTransform(scrollYProgress, [0.58, 0.65, 0.72, 0.78], [0.4, 1, 1, 0.4]);
   const persona3Opacity = useTransform(scrollYProgress, [0.72, 0.80, 0.88, 0.95], [0.4, 1, 1, 1]);
 
-  // Progress indicator opacities (defined at top level to follow rules of hooks)
+  // Progress indicator opacities
   const dot1Opacity = useTransform(scrollYProgress, [0.45, 0.52, 0.58, 0.64], [0.3, 1, 1, 0.3]);
   const dot2Opacity = useTransform(scrollYProgress, [0.58, 0.65, 0.72, 0.78], [0.3, 1, 1, 0.3]);
   const dot3Opacity = useTransform(scrollYProgress, [0.72, 0.80, 0.88, 0.95], [0.3, 1, 1, 1]);
   const dotOpacities = [dot1Opacity, dot2Opacity, dot3Opacity];
 
   const personas = [
-    {
-      image: "/Work/Vesta/Vesta/UserPersona-1.png",
-      opacity: persona1Opacity,
-    },
-    {
-      image: "/Work/Vesta/Vesta/UserPersona-2.png",
-      opacity: persona2Opacity,
-    },
-    {
-      image: "/Work/Vesta/Vesta/UserPersona-3.png",
-      opacity: persona3Opacity,
-    },
+    { image: personaImages[0], opacity: persona1Opacity },
+    { image: personaImages[1], opacity: persona2Opacity },
+    { image: personaImages[2], opacity: persona3Opacity },
   ];
 
   return (
     <div ref={scrollContainerRef} className="relative z-20 bg-black" style={{ height: "500vh" }}>
-      {/* Card that slides up */}
       <motion.div
         className="sticky top-0 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 md:pt-20 pb-32"
         style={{ y: cardY, opacity: cardOpacity }}
@@ -791,7 +965,7 @@ function VestaGuidingPersonas() {
           </p>
         </motion.div>
 
-        {/* Progress Indicators - above carousel */}
+        {/* Progress Indicators */}
         <motion.div
           className="flex gap-3 mb-8"
           style={{ opacity: carouselOpacity }}
@@ -805,7 +979,7 @@ function VestaGuidingPersonas() {
           ))}
         </motion.div>
 
-        {/* Carousel Container - mask only affects overflow edges, not the centered image */}
+        {/* Carousel Container */}
         <motion.div
           className="w-full max-w-6xl mx-auto overflow-hidden"
           style={{
@@ -842,8 +1016,212 @@ function VestaGuidingPersonas() {
   );
 }
 
+// Wrapper that switches between mobile and desktop
+function VestaGuidingPersonas() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  if (isMobile === null) {
+    return null;
+  }
+
+  if (isMobile) {
+    return <MobileVestaGuidingPersonas />;
+  }
+
+  return <DesktopVestaGuidingPersonas />;
+}
+
 // Vesta Brand System Component with animated annotations
-function VestaBrandSystem() {
+// Brand System symbols data - shared between mobile and desktop
+const brandSymbols = [
+  {
+    name: "Daily Flame",
+    description: "Symbol for Vesta, goddess of the hearth, home, and family.",
+    subDescription: "Revered for maintaining the sacred and eternal flame that symbolized domestic harmony.",
+    icon: "/Work/Vesta/Vesta/VestaIcons_DailyFlame_Icon.svg",
+    horizontalPercent: 15.2,
+    verticalPosition: "above" as const,
+  },
+  {
+    name: "Hearth Hub",
+    description: "Adaptation of the Herculean knot, associated with marriage, love and protection.",
+    subDescription: "The tradition of knot symbols represents love and commitment throughout cultures.",
+    icon: "/Work/Vesta/Vesta/VestaIcons_HearthHub_Icon.svg",
+    horizontalPercent: 40.1,
+    verticalPosition: "below" as const,
+  },
+  {
+    name: "Juno",
+    description: "Symbol for Juno, goddess of marriage and communication.",
+    subDescription: "Juno blessed sacred conversations and mediated understanding between individuals.",
+    icon: "/Work/Vesta/Vesta/VestaIcons_Juno_Icon.svg",
+    horizontalPercent: 62.5,
+    verticalPosition: "above" as const,
+  },
+  {
+    name: "Oracle's Mirror",
+    description: "Symbol for the ancient wisdom from the Oracle of Delphi \"Know Thyself\".",
+    subDescription: "The oracle was known for guiding people towards greater self-awareness.",
+    icon: "/Work/Vesta/Vesta/VestaIcons_OraclesMirror_Icon.svg",
+    horizontalPercent: 85.0,
+    verticalPosition: "below" as const,
+  },
+];
+
+// Mobile Brand System - carousel with switching icon
+function MobileVestaBrandSystem() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const x = useMotionValue(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const cardWidth = containerWidth * 0.8;
+  const gap = 12;
+  const totalWidth = brandSymbols.length * (cardWidth + gap) - gap;
+  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
+
+  // Update active index during drag
+  const updateActiveIndex = (currentX: number) => {
+    const cardWithGap = cardWidth + gap;
+    if (cardWithGap > 0) {
+      const newIndex = Math.round(-currentX / cardWithGap);
+      const clampedIndex = Math.max(0, Math.min(brandSymbols.length - 1, newIndex));
+      setActiveIndex(clampedIndex);
+    }
+  };
+
+  const handleDrag = () => {
+    updateActiveIndex(x.get());
+  };
+
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const currentX = x.get();
+    const velocity = info.velocity.x;
+
+    const cardWithGap = cardWidth + gap;
+    let targetIndex = Math.round(-currentX / cardWithGap);
+
+    if (Math.abs(velocity) > 500) {
+      targetIndex += velocity > 0 ? -1 : 1;
+    }
+
+    targetIndex = Math.max(0, Math.min(brandSymbols.length - 1, targetIndex));
+    const targetX = -targetIndex * cardWithGap;
+    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
+    setActiveIndex(targetIndex);
+  };
+
+  return (
+    <div className="relative z-10 bg-black px-4 pt-8 pb-8">
+      {/* Header */}
+      <motion.div
+        className="text-center mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      >
+        <h2
+          className="text-2xl tracking-tight mb-4"
+          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+        >
+          Brand System
+        </h2>
+        <p
+          className="text-sm text-white/60 leading-relaxed max-w-sm mx-auto"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element carries symbolic meaning rooted in ancient wisdom.
+        </p>
+      </motion.div>
+
+      {/* Switching Icon */}
+      <div className="flex justify-center mb-6">
+        <div className="relative w-16 h-16">
+          {brandSymbols.map((symbol, index) => (
+            <motion.img
+              key={symbol.name}
+              src={symbol.icon}
+              alt={symbol.name}
+              className="absolute inset-0 w-full h-full object-contain"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{
+                opacity: activeIndex === index ? 1 : 0,
+                scale: activeIndex === index ? 1 : 0.8,
+              }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              draggable={false}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Carousel */}
+      <div ref={containerRef} className="overflow-hidden">
+        <motion.div
+          className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
+          style={{ x }}
+          drag="x"
+          dragConstraints={{ left: -maxDrag, right: 0 }}
+          onDrag={handleDrag}
+          onDragEnd={handleDragEnd}
+          dragElastic={0.1}
+        >
+          {brandSymbols.map((symbol) => (
+            <motion.div
+              key={symbol.name}
+              className="flex-shrink-0"
+              style={{ width: cardWidth }}
+            >
+              <div className="bg-transparent border border-white/30 rounded-2xl p-5 h-full">
+                <h3
+                  className="text-xs font-bold tracking-wider uppercase mb-3"
+                  style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                >
+                  {symbol.name}
+                </h3>
+                <p
+                  className="text-sm text-white/60 leading-relaxed mb-2"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  {symbol.description}
+                </p>
+                <p
+                  className="text-xs text-white/40 leading-relaxed"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  {symbol.subDescription}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+    </div>
+  );
+}
+
+// Desktop Brand System - scroll-based animation
+function DesktopVestaBrandSystem() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(-1); // -1 = intro, 0-3 = symbols
 
@@ -863,42 +1241,8 @@ function VestaBrandSystem() {
     }
   });
 
-  // Each symbol has explicit positioning calculated from SVG coordinates
-  // Pill spans x=258.93 to x=2171.27 (width=1912.34)
-  // Symbol centers derived from path coordinates
-  const symbols = [
-    {
-      name: "Daily Flame",
-      description: "Symbol for Vesta, goddess of the hearth, home, and family.",
-      subDescription: "Revered for maintaining the sacred and eternal flame that symbolized domestic harmony.",
-      horizontalPercent: 15.2, // Center ~550px → (550-258.93)/1912.34
-      verticalPosition: "above" as const,
-    },
-    {
-      name: "Hearth Hub",
-      description: "Adaptation of the Herculean knot, associated with marriage, love and protection.",
-      subDescription: "The tradition of knot symbols represents love and commitment throughout cultures.",
-      horizontalPercent: 40.1, // Center ~1025px → (1025-258.93)/1912.34
-      verticalPosition: "below" as const,
-    },
-    {
-      name: "Juno",
-      description: "Symbol for Juno, goddess of marriage and communication.",
-      subDescription: "Juno blessed sacred conversations and mediated understanding between individuals.",
-      horizontalPercent: 62.5, // Adjusted for visual alignment
-      verticalPosition: "above" as const,
-    },
-    {
-      name: "Oracle's Mirror",
-      description: "Symbol for the ancient wisdom from the Oracle of Delphi \"Know Thyself\".",
-      subDescription: "The oracle was known for guiding people towards greater self-awareness.",
-      horizontalPercent: 85.0, // Center ~1885px → (1885-258.93)/1912.34
-      verticalPosition: "below" as const,
-    },
-  ];
-
   return (
-    <div ref={scrollContainerRef} className="relative z-10 bg-black mt-32 md:mt-48" style={{ height: "350vh" }}>
+    <div ref={scrollContainerRef} className="relative z-10 bg-black" style={{ height: "350vh" }}>
       <div className="sticky top-0 min-h-screen flex items-center justify-center pb-32 md:pb-48">
         <div className="w-full max-w-6xl mx-auto px-6 md:px-12 lg:px-24">
           {/* Intro - visible when activeIndex is -1 */}
@@ -921,7 +1265,7 @@ function VestaBrandSystem() {
               className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-3xl mx-auto"
               style={{ fontFamily: "var(--font-inter)" }}
             >
-              Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element, from app name to navigation, carries symbolic meaning rooted in ancient wisdom.
+              Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element carries symbolic meaning rooted in ancient wisdom.
             </p>
           </motion.div>
 
@@ -929,10 +1273,10 @@ function VestaBrandSystem() {
           <div className="relative w-full max-w-4xl mx-auto">
             {/* Annotations Above */}
             <div className="relative h-32 mb-8">
-              {symbols
+              {brandSymbols
                 .filter((s) => s.verticalPosition === "above")
                 .map((symbol) => {
-                  const index = symbols.indexOf(symbol);
+                  const index = brandSymbols.indexOf(symbol);
                   const isActive = activeIndex === index;
 
                   return (
@@ -1000,7 +1344,7 @@ function VestaBrandSystem() {
                 draggable={false}
               />
               {/* Icon glow overlays - highlight active icon */}
-              {symbols.map((symbol, index) => (
+              {brandSymbols.map((symbol, index) => (
                 <motion.div
                   key={`glow-${symbol.name}`}
                   className="absolute top-1/2 -translate-y-1/2 pointer-events-none"
@@ -1025,10 +1369,10 @@ function VestaBrandSystem() {
 
             {/* Annotations Below */}
             <div className="relative h-32 mt-8">
-              {symbols
+              {brandSymbols
                 .filter((s) => s.verticalPosition === "below")
                 .map((symbol) => {
-                  const index = symbols.indexOf(symbol);
+                  const index = brandSymbols.indexOf(symbol);
                   const isActive = activeIndex === index;
 
                   return (
@@ -1082,6 +1426,29 @@ function VestaBrandSystem() {
       </div>
     </div>
   );
+}
+
+// Wrapper that switches between mobile and desktop
+function VestaBrandSystem() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Show nothing during SSR/hydration to avoid mismatch
+  if (isMobile === null) {
+    return null;
+  }
+
+  if (isMobile) {
+    return <MobileVestaBrandSystem />;
+  }
+
+  return <DesktopVestaBrandSystem />;
 }
 
 export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
@@ -1406,18 +1773,45 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Vesta Onboarding Image with Container Scroll Animation */}
       {item.slug === "vesta" && (
-        <div className="mx-12">
-          <ContainerScroll>
+        <>
+          {/* Desktop: Onboarding.png */}
+          <div className="hidden md:block mx-12">
+            <ContainerScroll>
+              <Image
+                src="/Work/Vesta/Vesta/Onboarding.png"
+                alt="Vesta Onboarding Flow"
+                width={1920}
+                height={1080}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </ContainerScroll>
+          </div>
+          {/* Mobile: Question2.png with header and intro */}
+          <div className="block md:hidden mx-4">
+            {/* Ember Analysis header and intro text */}
+            <h2
+              className="text-2xl text-white text-center mb-4"
+              style={{ fontFamily: "'Noe Display', serif", fontStyle: "italic" }}
+            >
+              Ember Analysis
+            </h2>
+            <p
+              className="text-base text-white/70 text-center leading-relaxed mb-6"
+              style={{ fontFamily: "var(--font-inter)" }}
+            >
+              Vesta&apos;s onboarding uses reflective prompts to understand how users love and connect. Relationship duration, location, love language, and attachment style personalize every experience that follows.
+            </p>
             <Image
-              src="/Work/Vesta/Vesta/Onboarding.png"
+              src="/Work/Vesta/Mobile/Question2.png"
               alt="Vesta Onboarding Flow"
-              width={1920}
-              height={1080}
-              className="w-full h-auto"
+              width={1080}
+              height={1920}
+              className="w-full h-auto rounded-2xl"
               draggable={false}
             />
-          </ContainerScroll>
-        </div>
+          </div>
+        </>
       )}
 
       {/* Comcast Business Billboard Video with Container Scroll Animation */}
