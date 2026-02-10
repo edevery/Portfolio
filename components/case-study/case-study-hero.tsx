@@ -72,8 +72,9 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
     }
   };
 
-  // Responsive inset and border radius
+  // Responsive inset and border radius (top must clear 58px header)
   const inset = isMobile ? 16 : 48;
+  const topInset = 58;
   const radius = isMobile ? 16 : 24;
 
   return (
@@ -89,7 +90,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           borderRadius: 0,
         }}
         animate={{
-          top: inset,
+          top: topInset,
           left: inset,
           right: inset,
           bottom: inset,

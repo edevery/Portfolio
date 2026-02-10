@@ -15,7 +15,7 @@ interface HomepageLayoutProps {
 
 const HomepageLayout: FC<HomepageLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden">
+    <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden pt-[58px]">
       {/*
         Canvas container with responsive sizing
 
