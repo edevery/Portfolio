@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform, useMotionTemplate, useMotionValue, PanInfo } from "framer-motion";
 import { useSpring, animated } from "@react-spring/web";
 import Image from "next/image";
@@ -191,8 +191,129 @@ function VestaOnboardingContent() {
   );
 }
 
-// Vesta Brand Elements Carousel Component
-function VestaBrandElements() {
+// Mobile Brand Elements data
+const mobileBrandElements = [
+  {
+    image: "/Work/Vesta/Mobile/Moodboard.png",
+    title: "Mood Board",
+    description: "I was inspired by classical murals in the Louvre and Roman sculptures of gods and goddesses, delicate serif typography, and fire-like gradients to express love as both timeless and luminous.",
+  },
+  {
+    image: "/Work/Vesta/Mobile/Colors.png",
+    title: "Color Palette",
+    description: "The warm reds and golds balance the cool blues to convey both passion and ease.",
+  },
+  {
+    image: "/Work/Vesta/Mobile/Gradients.png",
+    title: "Gradients",
+    description: "I created custom CSS mesh gradients for a modern sense of light and warmth. Inspired by flames, designed to feel calm, fluid, and alive within the app experience.",
+  },
+  {
+    image: "/Work/Vesta/Mobile/Typography.png",
+    title: "Typography",
+    description: "I paired Bugari, inspired by Roman engravings to bring a sense of timeless reverence, with Inter for its modern clarity.",
+  },
+  {
+    image: "/Work/Vesta/Mobile/Wordmark.png",
+    title: "Logo",
+    description: "I customized the logotype to overlap the e-s and t-a. A subtle adjustment to make the letters feel close and connected.",
+  },
+];
+
+// Mobile Vesta Brand Elements - swipe carousel
+function MobileVestaBrandElements() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const x = useMotionValue(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const cardWidth = containerWidth * 0.85;
+  const gap = 12;
+  const totalWidth = mobileBrandElements.length * (cardWidth + gap) - gap;
+  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
+
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const currentX = x.get();
+    const velocity = info.velocity.x;
+
+    const cardWithGap = cardWidth + gap;
+    let targetIndex = Math.round(-currentX / cardWithGap);
+
+    if (Math.abs(velocity) > 500) {
+      targetIndex += velocity > 0 ? -1 : 1;
+    }
+
+    targetIndex = Math.max(0, Math.min(mobileBrandElements.length - 1, targetIndex));
+    const targetX = -targetIndex * cardWithGap;
+    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
+  };
+
+  return (
+    <div className="bg-black pt-8 pb-8">
+      {/* Carousel */}
+      <div ref={containerRef} className="overflow-hidden">
+        <motion.div
+          className="flex gap-3 px-4 cursor-grab active:cursor-grabbing items-stretch"
+          style={{ x }}
+          drag="x"
+          dragConstraints={{ left: -maxDrag, right: 0 }}
+          onDragEnd={handleDragEnd}
+          dragElastic={0.1}
+        >
+          {mobileBrandElements.map((item) => (
+            <motion.div
+              key={item.title}
+              className="flex-shrink-0 flex"
+              style={{ width: cardWidth }}
+            >
+              <div className="bg-[#141414] rounded-2xl overflow-hidden flex flex-col w-full">
+                {/* Image with fixed height container */}
+                <div className="relative h-[400px]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-contain"
+                    draggable={false}
+                  />
+                </div>
+
+                {/* Text content at bottom - fixed height */}
+                <div className="p-5 flex-1 flex flex-col">
+                  <h3
+                    className="text-xs font-bold tracking-wider uppercase mb-3"
+                    style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="text-sm text-white/60 leading-relaxed"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// Desktop Vesta Brand Elements Carousel Component
+function DesktopVestaBrandElements() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -268,8 +389,8 @@ function VestaBrandElements() {
   ];
 
   return (
-    <div ref={scrollContainerRef} className="relative z-20 bg-black mt-32 md:mt-48" style={{ height: "600vh" }}>
-      <div className="sticky top-0 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-16 md:pt-20 pb-40">
+    <div ref={scrollContainerRef} className="relative z-20 bg-black mt-48" style={{ height: "600vh" }}>
+      <div className="sticky top-0 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20 pb-40">
         {/* Text Container - above carousel */}
         <div className="relative h-36 mb-10 w-full max-w-3xl mx-auto px-6">
           {slides.map((slide, index) => (
@@ -279,13 +400,13 @@ function VestaBrandElements() {
               style={{ opacity: slide.textOpacity }}
             >
               <h3
-                className="text-sm md:text-base font-bold tracking-wider uppercase mb-3"
+                className="text-base font-bold tracking-wider uppercase mb-3"
                 style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
               >
                 {slide.title}
               </h3>
               <p
-                className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl"
+                className="text-base text-white/60 leading-relaxed max-w-2xl"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
                 {slide.description}
@@ -309,7 +430,7 @@ function VestaBrandElements() {
             {slides.map((slide, index) => (
               <motion.div
                 key={index}
-                className="flex-shrink-0 w-full px-8 md:px-16"
+                className="flex-shrink-0 w-full px-16"
                 style={{ opacity: slide.opacity }}
               >
                 <Image
@@ -340,8 +461,73 @@ function VestaBrandElements() {
   );
 }
 
+// Vesta Brand Elements wrapper - switches between mobile and desktop
+function VestaBrandElements() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Show nothing during SSR/hydration to avoid mismatch
+  if (isMobile === null) {
+    return null;
+  }
+
+  if (isMobile) {
+    return <MobileVestaBrandElements />;
+  }
+
+  return <DesktopVestaBrandElements />;
+}
+
 // Vesta Reflection Component - final section with video
-function VestaReflection() {
+// Mobile Vesta Reflection - text first, then video without animation
+function MobileVestaReflection() {
+  return (
+    <div className="relative z-20 bg-black pt-8 pb-16">
+      {/* Text Container first */}
+      <motion.div
+        className="mx-4 text-center mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+        viewport={{ once: true, margin: "-50px" }}
+      >
+        <h2
+          className="text-2xl tracking-tight mb-4"
+          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
+        >
+          Reflection
+        </h2>
+        <p
+          className="text-sm text-white/60 leading-relaxed"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
+        </p>
+      </motion.div>
+
+      {/* Video after text - same width as Question2.png (mx-4) */}
+      <div className="mx-4">
+        <video
+          src="/Work/Vesta/Vesta/Reflection.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-auto rounded-2xl"
+        />
+      </div>
+    </div>
+  );
+}
+
+// Desktop Vesta Reflection - video with scroll animation, then text
+function DesktopVestaReflection() {
   const videoRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -355,9 +541,9 @@ function VestaReflection() {
   const videoBorderRadius = useTransform(scrollYProgress, [0.3, 0.5], [0, 24]);
 
   return (
-    <div className="relative z-20 bg-black mt-32 md:mt-48 pb-32 md:pb-48">
+    <div className="relative z-20 bg-black mt-48 pb-48">
       {/* Video - starts full screen, settles in with rounded corners */}
-      <div ref={videoRef} className="relative mb-32 md:mb-40">
+      <div ref={videoRef} className="relative mb-40">
         <motion.div
           className="relative overflow-hidden"
           style={{
@@ -379,31 +565,183 @@ function VestaReflection() {
 
       {/* Text Container - animates in after video */}
       <motion.div
-        className="max-w-4xl mx-auto px-6 md:px-12 lg:px-24 text-center"
+        className="max-w-4xl mx-auto px-12 lg:px-24 text-center"
         initial={{ opacity: 0, y: 60, scale: 0.92, filter: "blur(12px)" }}
         whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
         viewport={{ once: true, margin: "-50px" }}
       >
         <h2
-          className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-6"
+          className="text-4xl lg:text-5xl tracking-tight mb-6"
           style={{ fontFamily: "'Noe Display', serif", color: "white" }}
         >
           Reflection
         </h2>
         <p
-          className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed mb-6"
+          className="text-lg lg:text-xl text-white/60 leading-relaxed"
           style={{ fontFamily: "var(--font-inter)" }}
         >
-          Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people.
-        </p>
-        <p
-          className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed"
-          style={{ fontFamily: "var(--font-inter)" }}
-        >
-          Building it solo, with AI as my collaborator, pushed me to think not just as a designer, but as a systems thinker, strategist, and developer. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
+          Vesta is the culmination of years spent designing systems that bridge logic and emotion. At agencies, I&apos;ve helped brands craft stories that connect people to ideas. With Vesta, I wanted to design something that connects people. It reminded me why I design: to make empathy scalable, to turn intention into action, and to build tools that help love last.
         </p>
       </motion.div>
+    </div>
+  );
+}
+
+// Vesta Reflection wrapper - switches between mobile and desktop
+function VestaReflection() {
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Show nothing during SSR/hydration to avoid mismatch
+  if (isMobile === null) {
+    return null;
+  }
+
+  if (isMobile) {
+    return <MobileVestaReflection />;
+  }
+
+  return <DesktopVestaReflection />;
+}
+
+// Mobile Sections Carousel Component
+interface MobileSectionsCarouselProps {
+  item: WorkItem;
+  renderWithItalics: (text: string) => React.ReactNode;
+}
+
+function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarouselProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const x = useMotionValue(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const cardWidth = containerWidth * 0.85;
+  const gap = 12;
+  const totalWidth = item.sections.length * (cardWidth + gap) - gap;
+  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
+
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const currentX = x.get();
+    const velocity = info.velocity.x;
+
+    const cardWithGap = cardWidth + gap;
+    let targetIndex = Math.round(-currentX / cardWithGap);
+
+    if (Math.abs(velocity) > 500) {
+      targetIndex += velocity > 0 ? -1 : 1;
+    }
+
+    targetIndex = Math.max(0, Math.min(item.sections.length - 1, targetIndex));
+    const targetX = -targetIndex * cardWithGap;
+    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
+  };
+
+  return (
+    <div className="block md:hidden bg-black py-8">
+      <div ref={containerRef} className="overflow-hidden">
+        <motion.div
+          className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
+          style={{ x }}
+          drag="x"
+          dragConstraints={{ left: -maxDrag, right: 0 }}
+          onDragEnd={handleDragEnd}
+          dragElastic={0.1}
+        >
+          {item.sections.map((section) => {
+            const content = section.content || "";
+            const paragraphs = content.split("\n\n");
+            const firstParagraph = paragraphs[0];
+            const restParagraphs = paragraphs.slice(1).join("\n\n");
+
+            return (
+              <motion.div
+                key={section.id}
+                className="flex-shrink-0"
+                style={{ width: cardWidth }}
+              >
+                <div className="bg-[#141414] rounded-2xl p-5 border border-white/5 h-full flex flex-col">
+                  {/* Section Label */}
+                  <h3
+                    className="text-xs font-bold tracking-wider uppercase mb-4"
+                    style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                  >
+                    {section.label}
+                  </h3>
+
+                  {/* Divider line */}
+                  <div
+                    className="w-full h-px mb-4"
+                    style={{
+                      background: "linear-gradient(to right, rgba(255,255,255,0.2), rgba(255,255,255,0.1))",
+                    }}
+                  />
+
+                  {/* Section Content */}
+                  <p
+                    className="text-base text-white/70 leading-relaxed whitespace-pre-line flex-1"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {renderWithItalics(firstParagraph)}
+                  </p>
+
+                  {restParagraphs && (
+                    <p
+                      className="mt-4 text-base text-white/70 leading-relaxed whitespace-pre-line"
+                      style={{ fontFamily: "var(--font-inter)" }}
+                    >
+                      {renderWithItalics(restParagraphs)}
+                    </p>
+                  )}
+
+                  {/* Link button if present */}
+                  {section.link && (
+                    <a
+                      href={section.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 mt-4 px-3 py-1.5 bg-white/10 hover:bg-[#16588E] rounded-full text-white text-sm font-medium transition-colors duration-200 self-start"
+                      style={{ fontFamily: "var(--font-inter)" }}
+                    >
+                      {section.linkLabel || "Learn More"}
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -1533,14 +1871,14 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
   return (
     <section className="relative z-10 bg-black">
       {/* Description Section - Full screen centered */}
-      <div className="min-h-screen flex items-center justify-center py-20">
-        <div className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
+      <div className="flex items-center justify-center py-8 md:py-20 md:min-h-screen">
+        <div className="flex flex-col items-center justify-center text-center px-4 md:px-12 lg:px-24 max-w-5xl mx-auto">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-            className="mb-12"
+            className="mb-6 md:mb-12"
           >
             {item.logo ? (
               item.slug === "vesta" ? (
@@ -1614,7 +1952,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
-            className="mt-12 flex gap-3 justify-center"
+            className="mt-6 md:mt-12 flex gap-3 justify-center"
           >
             {item.categories.map((category) => (
               <span
@@ -1629,8 +1967,11 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       </div>
 
-      {/* Sections - Side navigation with content */}
-      <div className="px-4 md:mx-12 py-16 md:py-24">
+      {/* Sections - Mobile Carousel */}
+      <MobileSectionsCarousel item={item} renderWithItalics={renderWithItalics} />
+
+      {/* Sections - Desktop Side navigation with content */}
+      <div className="hidden md:block px-4 md:mx-12 py-16 md:py-24">
         <div className="bg-[#141414] rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-12 border border-white/5">
           <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-16 lg:gap-24">
           {/* Left: Section Navigation */}
@@ -2229,18 +2570,32 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Vesta User Flow Section */}
       {item.slug === "vesta" && (
-        <div className="mx-12 mt-32 md:mt-48">
-          <ContainerScroll>
+        <>
+          {/* Desktop: UserFlow with ContainerScroll */}
+          <div className="hidden md:block mx-12 mt-48">
+            <ContainerScroll>
+              <Image
+                src="/Work/Vesta/Vesta/UserFlow.png"
+                alt="Vesta User Flow"
+                width={1920}
+                height={1080}
+                className="w-full h-auto"
+                draggable={false}
+              />
+            </ContainerScroll>
+          </div>
+          {/* Mobile: UserFlow without ContainerScroll, same width as Question2.png */}
+          <div className="block md:hidden mx-4 mt-8">
             <Image
               src="/Work/Vesta/Vesta/UserFlow.png"
               alt="Vesta User Flow"
               width={1920}
               height={1080}
-              className="w-full h-auto"
+              className="w-full h-auto rounded-2xl"
               draggable={false}
             />
-          </ContainerScroll>
-        </div>
+          </div>
+        </>
       )}
 
       {/* Vesta Brand Elements Carousel */}
