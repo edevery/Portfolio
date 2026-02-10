@@ -102,7 +102,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           delay: 0.4,
         }}
       >
-        {item.heroMedia.type === "video" || (isMobile && item.slug === "it-all-starts-here") ? (
+        {item.heroMedia.type === "video" || item.slug === "it-all-starts-here" ? (
           !(isMobile && item.slug === "merit-systems") ? (
             <>
               <motion.video
@@ -112,7 +112,9 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                     ? "/Work/Instacart/GIF_IndianSpice_1080x1920.mp4"
                     : isMobile && item.slug === "it-all-starts-here"
                       ? "/Work/ItAllStartsHere/MobileHero.mp4"
-                      : item.heroMedia.src
+                      : !isMobile && item.slug === "it-all-starts-here"
+                        ? "/Work/ItAllStartsHere/DesktopHero.MP4"
+                        : item.heroMedia.src
                 }
                 autoPlay
                 muted
