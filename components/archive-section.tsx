@@ -428,7 +428,7 @@ function ActiveCard({
           radius={0.3}
           position={[0, 1.5, 0]}
           scale={[FEATURED_SIZE * FEATURED_ASPECT, FEATURED_SIZE, 1] as unknown as number}
-          url={hovered ? getThumbnailPath(hovered.item.image) : "/Thumbnails/Vesta.png"}
+          url={hovered ? getThumbnailPath(hovered.item.image) : "/Thumbnails/Desktop/Vesta.png"}
         />
         {hovered && (
           <>

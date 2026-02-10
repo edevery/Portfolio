@@ -43,7 +43,7 @@ export function WorkSection() {
           cards={workItems.map((item) => ({
             title: item.title,
             description: item.description,
-            image: item.image,
+            image: item.mobileImage || item.image,
             accentColor: item.accentColor,
             slug: item.slug,
             logo: item.logo,

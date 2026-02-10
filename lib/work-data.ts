@@ -23,6 +23,7 @@ export interface WorkItem {
   description: string;
   categories: Category[];
   image: string;
+  mobileImage?: string;
   heroMedia: {
     type: "image" | "video";
     src: string;
@@ -106,7 +107,7 @@ export const workItems: WorkItem[] = [
     image: "/Thumbnails/ComcastBusiness.png",
     heroMedia: {
       type: "video",
-      src: "/Work/Comcast%20Business/BrandVideo.mp4",
+      src: "/Work/Comcast%20Business/DigitalBoard.mp4",
       poster: "/Thumbnails/ComcastBusiness.png",
     },
     accentColor: "#7eecb4",
@@ -177,9 +178,10 @@ export const workItems: WorkItem[] = [
     description: "Experiential design built around ultimate performance.",
     categories: ["art direction", "experiential", "identity"],
     image: "/Thumbnails/BMWChampionship.png",
+    mobileImage: "/Thumbnails/Mobile/BMW Championship.png",
     heroMedia: {
       type: "image",
-      src: "/work/BMW/BMW Championship/Hero.png",
+      src: "/work/BMW/BMW Championship/course2.png",
     },
     accentColor: "#1a1a1a",
     logo: "/Work/BMW/BMWLogo.png",

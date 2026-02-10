@@ -863,6 +863,7 @@ function InstacartColorPalette() {
                   key={color.name}
                   className="relative aspect-[1/1.2] cursor-pointer rounded-lg overflow-hidden"
                   style={{ backgroundColor: color.hex, willChange: "transform" }}
+                  onClick={() => setHoveredIndex(hoveredIndex === index ? null : index)}
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   animate={{
@@ -871,9 +872,9 @@ function InstacartColorPalette() {
                   }}
                   transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  {/* Hover overlay with name and hex */}
+                  {/* Hover overlay with name and hex - desktop only */}
                   <motion.div
-                    className="absolute inset-0 flex flex-col items-center justify-center p-2"
+                    className="absolute inset-0 hidden md:flex flex-col items-center justify-center p-2"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -908,6 +909,7 @@ function InstacartColorPalette() {
                   key={color.name}
                   className="relative aspect-[1/1.2] cursor-pointer rounded-lg overflow-hidden"
                   style={{ backgroundColor: color.hex, willChange: "transform" }}
+                  onClick={() => setHoveredIndex(hoveredIndex === index + 8 ? null : index + 8)}
                   onMouseEnter={() => setHoveredIndex(index + 8)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   animate={{
@@ -916,9 +918,9 @@ function InstacartColorPalette() {
                   }}
                   transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  {/* Hover overlay with name and hex */}
+                  {/* Hover overlay with name and hex - desktop only */}
                   <motion.div
-                    className="absolute inset-0 flex flex-col items-center justify-center p-2"
+                    className="absolute inset-0 hidden md:flex flex-col items-center justify-center p-2"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: hoveredIndex === index + 8 ? 1 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -949,6 +951,47 @@ function InstacartColorPalette() {
           </div>
         </div>
 
+        {/* Mobile tap overlay */}
+        <AnimatePresence>
+          {hoveredIndex !== null && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setHoveredIndex(null)}
+            >
+              <div className="absolute inset-0 bg-black/80" />
+              <motion.div
+                className="relative flex flex-col items-center gap-4"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <div
+                  className="w-28 h-28 rounded-2xl"
+                  style={{ backgroundColor: colors[hoveredIndex].hex }}
+                />
+                <div className="text-center">
+                  <p
+                    className="text-sm font-medium tracking-wider uppercase text-white"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {colors[hoveredIndex].name}
+                  </p>
+                  <p
+                    className="text-sm font-mono text-white/60 mt-1"
+                  >
+                    {colors[hoveredIndex].hex}
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Header */}
         <h3
           className="text-xs font-bold tracking-wider uppercase mb-3 mt-10"
@@ -961,6 +1004,12 @@ function InstacartColorPalette() {
           style={{ fontFamily: "var(--font-inter)" }}
         >
           Reminiscent of a home-cooked meal
+        </p>
+        <p
+          className="text-[10px] text-white/30 mt-2 uppercase tracking-widest"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          Click around
         </p>
       </div>
     </div>
@@ -1021,6 +1070,7 @@ function LinkLogisticsColorPalette() {
                   borderRadius: color.borderRadius,
                   willChange: "transform",
                 }}
+                onClick={() => setHoveredIndex(hoveredIndex === index ? null : index)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 animate={{
@@ -1029,9 +1079,9 @@ function LinkLogisticsColorPalette() {
                 }}
                 transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
               >
-                {/* Hover overlay with name and hex */}
+                {/* Hover overlay with name and hex - desktop only */}
                 <motion.div
-                  className="absolute inset-0 flex flex-col items-center justify-center p-2"
+                  className="absolute inset-0 hidden md:flex flex-col items-center justify-center p-2"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: hoveredIndex === index ? 1 : 0 }}
                   transition={{ duration: 0.2 }}
@@ -1059,6 +1109,47 @@ function LinkLogisticsColorPalette() {
             ))}
           </div>
         </div>
+
+        {/* Mobile tap overlay */}
+        <AnimatePresence>
+          {hoveredIndex !== null && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setHoveredIndex(null)}
+            >
+              <div className="absolute inset-0 bg-black/80" />
+              <motion.div
+                className="relative flex flex-col items-center gap-4"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <div
+                  className="w-28 h-28 rounded-2xl"
+                  style={{ backgroundColor: colors[hoveredIndex].hex }}
+                />
+                <div className="text-center">
+                  <p
+                    className="text-sm font-medium tracking-wider uppercase text-white"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {colors[hoveredIndex].name}
+                  </p>
+                  <p
+                    className="text-sm font-mono text-white/60 mt-1"
+                  >
+                    {colors[hoveredIndex].hex}
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Header */}
         <h3
@@ -2021,14 +2112,41 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       {item.slug === "comcast-business" && (
         <div className="px-6 md:px-12">
           <ContainerScroll>
-            <video
-              src="/Work/Comcast%20Business/BillboardMotion.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-auto rounded-2xl"
-            />
+            <div className="relative">
+              <video
+                ref={(el) => { videoRefs.current[1] = el; }}
+                src="/Work/Comcast%20Business/BrandVideo.mp4"
+                autoPlay
+                muted={isMuted}
+                loop
+                playsInline
+                className="w-full h-auto rounded-2xl"
+              />
+              {/* Sound Toggle Button */}
+              <motion.button
+                onClick={toggleMute}
+                className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.3 }}
+                viewport={{ once: true }}
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+              >
+                {isMuted ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <line x1="23" y1="9" x2="17" y2="15" />
+                    <line x1="17" y1="9" x2="23" y2="15" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  </svg>
+                )}
+              </motion.button>
+            </div>
           </ContainerScroll>
 
           {/* Comcast Business Bento Grid */}
@@ -2188,7 +2306,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <video
-                src="/Work/Comcast%20Business/DigitalBoard.mp4"
+                src="/Work/Comcast%20Business/BillboardMotion.mp4"
                 autoPlay
                 muted
                 loop
@@ -2488,7 +2606,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Instacart Billboard Image with Container Scroll Animation */}
       {item.slug === "instacart" && (
-        <div className="mx-12">
+        <div className="px-6 md:mx-12">
           <ContainerScroll>
             <Image
               src="/Work/Instacart/SweetPotato_Billboard.png"
@@ -2718,7 +2836,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* BMW Championship X3 with Container Scroll Animation */}
       {item.slug === "bmw-championship" && (
-        <div className="mx-12">
+        <div className="px-6 md:mx-12">
           <ContainerScroll>
             <Image
               src="/work/BMW/BMW Championship/X3.png"
@@ -2798,8 +2916,8 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* course2 full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <Image
-              src="/work/BMW/BMW Championship/course2.png"
-              alt="Castle Pines Golf Course"
+              src="/work/BMW/BMW Championship/UDM.png"
+              alt="BMW Championship UDM"
               width={1920}
               height={1080}
               className="w-full h-auto"

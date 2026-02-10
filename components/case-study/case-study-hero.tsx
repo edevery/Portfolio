@@ -105,7 +105,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           <>
             <motion.video
               ref={videoRef}
-              src={item.heroMedia.src}
+              src={isMobile && item.slug === "instacart" ? "/Work/Instacart/GIF_IndianSpice_1080x1920.mp4" : item.heroMedia.src}
               autoPlay
               muted
               loop
@@ -120,16 +120,18 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
               }}
             />
             {/* Sound toggle button */}
-            <motion.button
-              onClick={toggleMute}
-              className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 0.3 }}
-              aria-label={isMuted ? "Unmute video" : "Mute video"}
-            >
-              <SoundIcon muted={isMuted} />
-            </motion.button>
+            {item.slug !== "comcast-business" && (
+              <motion.button
+                onClick={toggleMute}
+                className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1, duration: 0.3 }}
+                aria-label={isMuted ? "Unmute video" : "Mute video"}
+              >
+                <SoundIcon muted={isMuted} />
+              </motion.button>
+            )}
           </>
         ) : (
           <motion.img
