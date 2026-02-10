@@ -102,41 +102,62 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           delay: 0.4,
         }}
       >
-        {item.heroMedia.type === "video" && !(isMobile && item.slug === "merit-systems") ? (
-          <>
-            <motion.video
-              ref={videoRef}
-              src={isMobile && item.slug === "instacart" ? "/Work/Instacart/GIF_IndianSpice_1080x1920.mp4" : item.heroMedia.src}
-              autoPlay
-              muted
-              loop
-              playsInline
+        {item.heroMedia.type === "video" || (isMobile && item.slug === "it-all-starts-here") ? (
+          !(isMobile && item.slug === "merit-systems") ? (
+            <>
+              <motion.video
+                ref={videoRef}
+                src={
+                  isMobile && item.slug === "instacart"
+                    ? "/Work/Instacart/GIF_IndianSpice_1080x1920.mp4"
+                    : isMobile && item.slug === "it-all-starts-here"
+                      ? "/Work/ItAllStartsHere/MobileHero.mp4"
+                      : item.heroMedia.src
+                }
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.4, 0, 0.2, 1],
+                  delay: 0.2,
+                }}
+              />
+              {/* Sound toggle button */}
+              {item.slug !== "comcast-business" && (
+                <motion.button
+                  onClick={toggleMute}
+                  className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1, duration: 0.3 }}
+                  aria-label={isMuted ? "Unmute video" : "Mute video"}
+                >
+                  <SoundIcon muted={isMuted} />
+                </motion.button>
+              )}
+            </>
+          ) : (
+            <motion.img
+              src="/Work/MeritSystems/BrandBook.png"
+              alt={item.title}
               className="absolute inset-0 w-full h-full object-cover"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{
-                duration: 0.4,
-                ease: [0.4, 0, 0.2, 1],
+                duration: 0.6,
+                ease: [0.4, 0, 0, 1],
                 delay: 0.2,
               }}
             />
-            {/* Sound toggle button */}
-            {item.slug !== "comcast-business" && (
-              <motion.button
-                onClick={toggleMute}
-                className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1, duration: 0.3 }}
-                aria-label={isMuted ? "Unmute video" : "Mute video"}
-              >
-                <SoundIcon muted={isMuted} />
-              </motion.button>
-            )}
-          </>
+          )
         ) : (
           <motion.img
-            src={isMobile && item.slug === "merit-systems" ? "/Work/MeritSystems/BrandBook.png" : item.heroMedia.src}
+            src={item.heroMedia.src}
             alt={item.title}
             className="absolute inset-0 w-full h-full object-cover"
             initial={{ opacity: 0, scale: 1.05 }}
