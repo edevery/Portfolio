@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform, useMotionTemplate, useMotionValue, PanInfo } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, useMotionValue, PanInfo } from "framer-motion";
 import { useSpring, animated } from "@react-spring/web";
 import Image from "next/image";
 import { workItems, type WorkItem } from "@/lib/work-data";
@@ -1384,6 +1384,9 @@ const brandSymbols = [
     description: "Symbol for Vesta, goddess of the hearth, home, and family.",
     subDescription: "Revered for maintaining the sacred and eternal flame that symbolized domestic harmony.",
     icon: "/Work/Vesta/Vesta/VestaIcons_DailyFlame_Icon.svg",
+    iconColor: "#fe9f28",
+    bgColor: "#ffece1",
+    hoverBgColor: "#914b1d",
     horizontalPercent: 15.2,
     verticalPosition: "above" as const,
   },
@@ -1392,6 +1395,9 @@ const brandSymbols = [
     description: "Adaptation of the Herculean knot, associated with marriage, love and protection.",
     subDescription: "The tradition of knot symbols represents love and commitment throughout cultures.",
     icon: "/Work/Vesta/Vesta/VestaIcons_HearthHub_Icon.svg",
+    iconColor: "#b52016",
+    bgColor: "#d8c5c3",
+    hoverBgColor: "#682324",
     horizontalPercent: 40.1,
     verticalPosition: "below" as const,
   },
@@ -1400,6 +1406,9 @@ const brandSymbols = [
     description: "Symbol for Juno, goddess of marriage and communication.",
     subDescription: "Juno blessed sacred conversations and mediated understanding between individuals.",
     icon: "/Work/Vesta/Vesta/VestaIcons_Juno_Icon.svg",
+    iconColor: "#f8ba67",
+    bgColor: "#f2e2d1",
+    hoverBgColor: "#896542",
     horizontalPercent: 62.5,
     verticalPosition: "above" as const,
   },
@@ -1408,6 +1417,9 @@ const brandSymbols = [
     description: "Symbol for the ancient wisdom from the Oracle of Delphi \"Know Thyself\".",
     subDescription: "The oracle was known for guiding people towards greater self-awareness.",
     icon: "/Work/Vesta/Vesta/VestaIcons_OraclesMirror_Icon.svg",
+    iconColor: "#99b0d6",
+    bgColor: "#d1dae5",
+    hoverBgColor: "#404b60",
     horizontalPercent: 85.0,
     verticalPosition: "below" as const,
   },
@@ -1558,208 +1570,118 @@ function MobileVestaBrandSystem() {
   );
 }
 
-// Desktop Brand System - scroll-based animation
-function DesktopVestaBrandSystem() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(-1); // -1 = intro, 0-3 = symbols
+// Brand Icon Card with hover reveal
+function BrandIconCard({ symbol }: { symbol: typeof brandSymbols[0] }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(100);
 
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start start", "end end"],
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    // First 20% is intro, then 4 equal sections for each symbol
-    if (progress < 0.2) {
-      setActiveIndex(-1);
-    } else {
-      const symbolProgress = (progress - 0.2) / 0.8;
-      const index = Math.min(Math.floor(symbolProgress * 4), 3);
-      setActiveIndex(index);
+  useEffect(() => {
+    if (contentRef.current) {
+      const height = contentRef.current.offsetHeight + 20;
+      setContentHeight(Math.max(height, 100));
     }
-  });
+  }, [symbol.name, symbol.description]);
 
   return (
-    <div ref={scrollContainerRef} className="relative z-10 bg-black" style={{ height: "350vh" }}>
-      <div className="sticky top-0 min-h-screen flex items-center justify-center pb-32 md:pb-48">
-        <div className="w-full max-w-6xl mx-auto px-6 md:px-12 lg:px-24">
-          {/* Intro - visible when activeIndex is -1 */}
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{
-              opacity: activeIndex === -1 ? 1 : 0,
-              y: activeIndex === -1 ? 0 : -20,
-            }}
-            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+    <motion.div
+      className="relative overflow-hidden rounded-2xl cursor-pointer aspect-square"
+      style={{
+        backgroundColor: isHovered ? symbol.hoverBgColor : symbol.bgColor,
+        transition: "background-color 0.3s ease",
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+    >
+      {/* Icon container - contracts on hover */}
+      <motion.div
+        className="absolute flex items-center justify-center overflow-hidden rounded-xl"
+        style={{ backgroundColor: symbol.bgColor }}
+        animate={{
+          top: isHovered ? 12 : 0,
+          left: isHovered ? 12 : 0,
+          right: isHovered ? 12 : 0,
+          bottom: isHovered ? contentHeight : 0,
+        }}
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+      >
+        {/* Icon colored via CSS mask */}
+        <div
+          className="w-1/2 h-1/2"
+          style={{
+            backgroundColor: symbol.iconColor,
+            maskImage: `url(${symbol.icon})`,
+            maskSize: "contain",
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+            WebkitMaskImage: `url(${symbol.icon})`,
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+          }}
+        />
+      </motion.div>
+
+      {/* Content - reveals on hover */}
+      <motion.div
+        ref={contentRef}
+        className="absolute bottom-0 left-0 right-0 px-4 pb-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{
+          opacity: isHovered ? 1 : 0,
+          y: isHovered ? 0 : 20,
+        }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <h3
+          className="text-xs font-bold tracking-wider uppercase mb-2 text-white"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          {symbol.name}
+        </h3>
+        <p
+          className="text-sm leading-relaxed text-white/80 max-w-xs"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          {symbol.description}
+        </p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Desktop Brand System - row of 4 icon cards with hover reveal
+function DesktopVestaBrandSystem() {
+  return (
+    <div className="relative z-10 bg-black">
+      {/* Icon Grid - row of 4 */}
+      <div className="mx-12 py-12">
+        <div className="grid grid-cols-4 gap-4">
+          {brandSymbols.map((symbol) => (
+            <BrandIconCard key={symbol.name} symbol={symbol} />
+          ))}
+        </div>
+      </div>
+
+      {/* Brand System description card - like Juno section */}
+      <div className="bg-black mx-12 pb-6">
+        <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+          <h3
+            className="text-xs font-bold tracking-wider uppercase mb-3"
+            style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
           >
-            <h2
-              className="text-3xl md:text-4xl lg:text-5xl tracking-tight mb-6"
-              style={{ fontFamily: "'Noe Display', serif", color: "white" }}
-            >
-              Brand System
-            </h2>
-            <p
-              className="text-base md:text-lg lg:text-xl text-white/60 leading-relaxed max-w-3xl mx-auto"
-              style={{ fontFamily: "var(--font-inter)" }}
-            >
-              Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element carries symbolic meaning rooted in ancient wisdom.
-            </p>
-          </motion.div>
-
-          {/* Central Image with Annotations */}
-          <div className="relative w-full max-w-4xl mx-auto">
-            {/* Annotations Above */}
-            <div className="relative h-32 mb-8">
-              {brandSymbols
-                .filter((s) => s.verticalPosition === "above")
-                .map((symbol) => {
-                  const index = brandSymbols.indexOf(symbol);
-                  const isActive = activeIndex === index;
-
-                  return (
-                    <motion.div
-                      key={symbol.name}
-                      className="absolute text-left"
-                      style={{
-                        left: `${symbol.horizontalPercent}%`,
-                        bottom: 0,
-                        width: "200px",
-                      }}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{
-                        opacity: isActive ? 1 : 0,
-                        y: isActive ? 0 : 10,
-                      }}
-                      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                    >
-                      <h4
-                        className="text-sm md:text-base font-bold tracking-wider uppercase mb-2"
-                        style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
-                      >
-                        {symbol.name}
-                      </h4>
-                      <p
-                        className="text-sm text-white/80 leading-relaxed mb-1"
-                        style={{ fontFamily: "var(--font-inter)" }}
-                      >
-                        {symbol.description}
-                      </p>
-                      <p
-                        className="text-xs text-white/50 leading-relaxed"
-                        style={{ fontFamily: "var(--font-inter)" }}
-                      >
-                        {symbol.subDescription}
-                      </p>
-                      {/* Connecting Line */}
-                      <motion.div
-                        className="absolute w-px h-8 bg-white/30"
-                        style={{ left: 0, top: "calc(100% + 12px)" }}
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: isActive ? 1 : 0 }}
-                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                      />
-                    </motion.div>
-                  );
-                })}
-            </div>
-
-            {/* Navigation Dock Image */}
-            <motion.div
-              className="relative z-10"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{
-                opacity: activeIndex >= 0 ? 1 : 0.3,
-                scale: activeIndex >= 0 ? 1 : 0.95,
-              }}
-              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/Work/Vesta/Vesta/BrandNavigationDock.svg"
-                alt="Vesta Brand Navigation Dock"
-                className="w-full h-auto"
-                draggable={false}
-              />
-              {/* Icon glow overlays - highlight active icon */}
-              {brandSymbols.map((symbol, index) => (
-                <motion.div
-                  key={`glow-${symbol.name}`}
-                  className="absolute top-1/2 -translate-y-1/2 pointer-events-none"
-                  style={{
-                    left: `${symbol.horizontalPercent}%`,
-                    width: "60px",
-                    height: "60px",
-                    marginLeft: "-30px",
-                    borderRadius: "50%",
-                    background: "radial-gradient(circle, rgba(133, 195, 237, 0.4) 0%, rgba(133, 195, 237, 0) 70%)",
-                    filter: "blur(8px)",
-                  }}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{
-                    opacity: activeIndex === index ? 1 : 0,
-                    scale: activeIndex === index ? 1.2 : 0.5,
-                  }}
-                  transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                />
-              ))}
-            </motion.div>
-
-            {/* Annotations Below */}
-            <div className="relative h-32 mt-8">
-              {brandSymbols
-                .filter((s) => s.verticalPosition === "below")
-                .map((symbol) => {
-                  const index = brandSymbols.indexOf(symbol);
-                  const isActive = activeIndex === index;
-
-                  return (
-                    <motion.div
-                      key={symbol.name}
-                      className="absolute text-left"
-                      style={{
-                        left: `${symbol.horizontalPercent}%`,
-                        top: 0,
-                        width: "200px",
-                      }}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{
-                        opacity: isActive ? 1 : 0,
-                        y: isActive ? 0 : -10,
-                      }}
-                      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                    >
-                      {/* Connecting Line */}
-                      <motion.div
-                        className="absolute w-px h-8 bg-white/30"
-                        style={{ left: 0, bottom: "calc(100% + 12px)" }}
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: isActive ? 1 : 0 }}
-                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                      />
-                      <h4
-                        className="text-sm md:text-base font-bold tracking-wider uppercase mb-2 mt-4"
-                        style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
-                      >
-                        {symbol.name}
-                      </h4>
-                      <p
-                        className="text-sm text-white/80 leading-relaxed mb-1"
-                        style={{ fontFamily: "var(--font-inter)" }}
-                      >
-                        {symbol.description}
-                      </p>
-                      <p
-                        className="text-xs text-white/50 leading-relaxed"
-                        style={{ fontFamily: "var(--font-inter)" }}
-                      >
-                        {symbol.subDescription}
-                      </p>
-                    </motion.div>
-                  );
-                })}
-            </div>
-          </div>
+            Brand System
+          </h3>
+          <p
+            className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element carries symbolic meaning rooted in ancient wisdom.
+          </p>
         </div>
       </div>
     </div>
@@ -1941,7 +1863,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
           {/* Description */}
           <p
-            className="text-3xl md:text-4xl lg:text-5xl text-white/60 italic max-w-4xl text-center leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl text-white italic max-w-4xl text-center leading-tight"
             style={{ fontFamily: "'Noe Display', serif" }}
           >
             {item.description}
@@ -2531,31 +2453,53 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Vesta Features Sticky Scroll Section */}
       {item.slug === "vesta" && (
-        <StickyScroll
-          content={[
-            {
-              title: "Daily Flame + Notifications",
-              description: "A simple daily check-in that turns awareness into thoughtful actions with ember alerts tailored to each user's relationship.",
-              image: "/Work/Vesta/Vesta/DailyFlame.png",
-            },
-            {
-              title: "Connection Compass",
-              description: "A guide to how your partner loves, helping you deepen your relationship with intention.",
-              image: "/Work/Vesta/Vesta/PartnerLens.png",
-            },
-            {
-              title: "Spark some Romance",
-              description: "Smart suggestions tailored to your time and place, helping shake things up and make time together more memorable.",
-              image: "/Work/Vesta/Vesta/LoveArsenal.png",
-            },
-            {
-              title: "Wisdom for Love",
-              description: "A companion that listens, remembers, and helps you deepen your connection with care.",
-              subDescription: "Juno speaks as a third presence in the relationship: calm, curious, and attuned. Through deliberate prompt engineering, it uses fire as its central metaphor to reinforce the brand verbally. Rather than prescriptive solutions, Juno asks reflective questions and speaks poetically yet accessibly in lowercase text, creating conversations that feel less like app advice and more like journaling with a trusted confidant.",
-              image: "/Work/Vesta/Vesta/Juno.png",
-            },
-          ]}
-        />
+        <>
+          <StickyScroll
+            content={[
+              {
+                title: "Daily Flame + Notifications",
+                description: "A simple daily check-in that turns awareness into thoughtful actions with ember alerts tailored to each user's relationship.",
+                image: "/Work/Vesta/Vesta/DailyFlame.png",
+                hoverBgColor: "#914b1d",
+              },
+              {
+                title: "Connection Compass",
+                description: "A guide to how your partner loves, helping you deepen your relationship with intention.",
+                image: "/Work/Vesta/Vesta/PartnerLens.png",
+                hoverBgColor: "#404b60",
+              },
+              {
+                title: "Spark some Romance",
+                description: "Smart suggestions tailored to your time and place, helping shake things up and make time together more memorable.",
+                image: "/Work/Vesta/Vesta/LoveArsenal.png",
+                hoverBgColor: "#682324",
+              },
+              {
+                title: "Wisdom for Love",
+                description: "A companion that listens, remembers, and helps you deepen your connection with care.",
+                image: "/Work/Vesta/Vesta/Juno.png",
+                hoverBgColor: "#896542",
+              },
+            ]}
+          />
+          {/* Juno description card */}
+          <div className="hidden md:block bg-black mx-12 pb-6">
+            <div className="bg-[#141414] rounded-3xl p-10 lg:p-12 border border-white/5">
+              <h3
+                className="text-xs font-bold tracking-wider uppercase mb-3"
+                style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+              >
+                Juno
+              </h3>
+              <p
+                className="text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-4xl"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                Through deliberate prompt engineering, Juno acts as a third presence in the relationship: calm, curious, and attuned. It avoids prescriptions in favor of reflective questions, creating conversations that feel closer to journaling with a trusted confidant than using an app.
+              </p>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Vesta Brand System Section */}
