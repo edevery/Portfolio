@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect, useRef, useCallback } from "react";
+
 // ─── Geometry ────────────────────────────────────────────────────────
 const R = 120; // circle radius
 const VB_W = 800;
@@ -34,6 +36,10 @@ const CONVERGE_END = 0.5;
 const FILL_START = 0.52;
 const FILL_END = 0.62;
 
+// ─── Mobile timing (ms) ─────────────────────────────────────────────
+const MOBILE_CONVERGE_MS = 1200;
+const MOBILE_FILL_MS = 800;
+
 // ─── Helpers ─────────────────────────────────────────────────────────
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -49,6 +55,43 @@ function easeInOutCubic(t: number) {
 
 function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
+}
+
+// ─── Mobile timed animation hook ────────────────────────────────────
+function useMobileAnimation(visible: boolean, isMobile: boolean) {
+  const [converge, setConverge] = useState(0);
+  const [fill, setFill] = useState(0);
+  const rafRef = useRef<number>(0);
+  const startRef = useRef<number>(0);
+
+  const animate = useCallback((timestamp: number) => {
+    if (!startRef.current) startRef.current = timestamp;
+    const elapsed = timestamp - startRef.current;
+
+    // Phase 1: converge
+    const rawConverge = clamp(elapsed / MOBILE_CONVERGE_MS, 0, 1);
+    setConverge(easeInOutCubic(rawConverge));
+
+    // Phase 2: fill (starts after converge finishes)
+    const fillElapsed = elapsed - MOBILE_CONVERGE_MS;
+    if (fillElapsed > 0) {
+      const rawFill = clamp(fillElapsed / MOBILE_FILL_MS, 0, 1);
+      setFill(easeOutCubic(rawFill));
+    }
+
+    if (elapsed < MOBILE_CONVERGE_MS + MOBILE_FILL_MS) {
+      rafRef.current = requestAnimationFrame(animate);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile || !visible) return;
+    startRef.current = 0;
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isMobile, visible, animate]);
+
+  return { converge, fill };
 }
 
 // ─── Component ───────────────────────────────────────────────────────
@@ -70,8 +113,10 @@ export function VennDiagram({
     clamp((progress - FILL_START) / (FILL_END - FILL_START), 0, 1),
   );
 
-  const t = isMobile ? 1 : convergeT;
-  const f = isMobile ? 1 : fillT;
+  const mobile = useMobileAnimation(visible, isMobile);
+
+  const t = isMobile ? mobile.converge : convergeT;
+  const f = isMobile ? mobile.fill : fillT;
 
   const circles = INITIAL.map((init, i) => ({
     cx: lerp(init.cx, FINAL[i].cx, t),
@@ -81,8 +126,8 @@ export function VennDiagram({
   return (
     <svg
       style={{
-        opacity: visible || isMobile ? 1 : 0,
-        filter: visible || isMobile ? "blur(0px)" : "blur(8px)",
+        opacity: visible ? 1 : 0,
+        filter: visible ? "blur(0px)" : "blur(8px)",
         transition: "opacity 1.2s ease, filter 1.2s ease",
       }}
       viewBox={`0 ${VB_Y} ${VB_W} ${VB_H}`}
