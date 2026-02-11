@@ -68,7 +68,7 @@ export function TaglineReveal({ onComplete }: TaglineRevealProps) {
   return (
     <div
       ref={containerRef}
-      className="description-container bg-black pb-6 flex items-center justify-center"
+      className="description-container pb-6 flex items-center justify-center"
     >
       <p
         className="text-center max-w-4xl text-2xl md:text-4xl lg:text-5xl font-normal leading-tight tracking-tight text-[#efefef]"

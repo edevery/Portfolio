@@ -303,6 +303,8 @@ interface WConfig {
   maxVelocity: number;
   controlSphere0?: boolean;
   followCursor?: boolean;
+  explode?: boolean;
+  explodeForce?: number;
 }
 
 class W {
@@ -311,6 +313,7 @@ class W {
   velocityData: Float32Array;
   sizeData: Float32Array;
   center: Vector3 = new Vector3();
+  #explodeFrames: number = 0;
 
   constructor(config: WConfig) {
     this.config = config;
@@ -323,13 +326,31 @@ class W {
   }
 
   #initializePositions() {
-    const { config, positionData } = this;
+    const { config, positionData, velocityData } = this;
     this.center.toArray(positionData, 0);
-    for (let i = 1; i < config.count; i++) {
-      const idx = 3 * i;
-      positionData[idx] = MathUtils.randFloatSpread(2 * config.maxX);
-      positionData[idx + 1] = MathUtils.randFloatSpread(2 * config.maxY);
-      positionData[idx + 2] = MathUtils.randFloatSpread(2 * config.maxZ);
+
+    if (config.explode) {
+      const force = config.explodeForce ?? 0.8;
+      this.#explodeFrames = 120; // allow high velocity for ~2s at 60fps
+      for (let i = 1; i < config.count; i++) {
+        const idx = 3 * i;
+        // cluster near center with tiny random offset to avoid zero-length collision vectors
+        positionData[idx] = MathUtils.randFloatSpread(1.0);
+        positionData[idx + 1] = MathUtils.randFloatSpread(1.0);
+        positionData[idx + 2] = MathUtils.randFloatSpread(0.5);
+        // random outward velocity — mostly horizontal, minimal upward
+        const angle = Math.random() * Math.PI * 2;
+        velocityData[idx] = Math.cos(angle) * force * MathUtils.randFloat(0.5, 1);
+        velocityData[idx + 1] = MathUtils.randFloat(-0.05, 0.15) * force;
+        velocityData[idx + 2] = MathUtils.randFloatSpread(force * 0.3);
+      }
+    } else {
+      for (let i = 1; i < config.count; i++) {
+        const idx = 3 * i;
+        positionData[idx] = MathUtils.randFloatSpread(2 * config.maxX);
+        positionData[idx + 1] = MathUtils.randFloatSpread(2 * config.maxY);
+        positionData[idx + 2] = MathUtils.randFloatSpread(2 * config.maxZ);
+      }
     }
   }
 
@@ -356,7 +377,8 @@ class W {
       const vel = new Vector3().fromArray(velocityData, base);
       vel.y -= deltaInfo.delta * config.gravity * sizeData[idx];
       vel.multiplyScalar(config.friction);
-      vel.clampLength(0, config.maxVelocity);
+      const effectiveMaxVel = this.#explodeFrames > 0 ? config.maxVelocity * 8 : config.maxVelocity;
+      vel.clampLength(0, effectiveMaxVel);
       pos.add(vel);
       pos.toArray(positionData, base);
       vel.toArray(velocityData, base);
@@ -419,6 +441,7 @@ class W {
       pos.toArray(positionData, base);
       vel.toArray(velocityData, base);
     }
+    if (this.#explodeFrames > 0) this.#explodeFrames--;
   }
 }
 
@@ -498,7 +521,9 @@ const XConfig = {
   maxY: 5,
   maxZ: 2,
   controlSphere0: false,
-  followCursor: true
+  followCursor: true,
+  explode: false,
+  explodeForce: 0.8
 };
 
 const U = new Object3D();

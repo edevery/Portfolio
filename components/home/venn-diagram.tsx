@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 // ─── Geometry ────────────────────────────────────────────────────────
 const R = 120; // circle radius
@@ -99,13 +99,16 @@ interface VennDiagramProps {
   progress: number;
   visible?: boolean;
   isMobile?: boolean;
+  onFillComplete?: () => void;
 }
 
 export function VennDiagram({
   progress,
   visible = false,
   isMobile = false,
+  onFillComplete,
 }: VennDiagramProps) {
+  const fillCompletedRef = useRef(false);
   const convergeT = easeInOutCubic(
     clamp((progress - CONVERGE_START) / (CONVERGE_END - CONVERGE_START), 0, 1),
   );
@@ -117,6 +120,15 @@ export function VennDiagram({
 
   const t = isMobile ? mobile.converge : convergeT;
   const f = isMobile ? mobile.fill : fillT;
+
+  // Fire onFillComplete once when fill reaches 1
+  const stableOnFillComplete = useMemo(() => onFillComplete, [onFillComplete]);
+  useEffect(() => {
+    if (f >= 1 && !fillCompletedRef.current) {
+      fillCompletedRef.current = true;
+      stableOnFillComplete?.();
+    }
+  }, [f, stableOnFillComplete]);
 
   const circles = INITIAL.map((init, i) => ({
     cx: lerp(init.cx, FINAL[i].cx, t),

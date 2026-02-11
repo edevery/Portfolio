@@ -1,9 +1,12 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { TaglineReveal } from "./tagline-reveal";
 import { VennDiagram } from "./venn-diagram";
+
+const Ballpit = dynamic(() => import("@/components/Ballpit"), { ssr: false });
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -32,6 +35,7 @@ export function IntersectionSection({
 
   const [progress, setProgress] = useState(0);
   const [taglineDone, setTaglineDone] = useState(false);
+  const [vennFillDone, setVennFillDone] = useState(false);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     setProgress(v);
@@ -41,6 +45,10 @@ export function IntersectionSection({
     setTaglineDone(true);
     onComplete?.();
   };
+
+  const handleFillComplete = useCallback(() => {
+    setVennFillDone(true);
+  }, []);
 
   const hydrated = isMobile !== null;
 
@@ -56,16 +64,35 @@ export function IntersectionSection({
       <div
         className={
           isMobile
-            ? "bg-black px-6 py-16"
+            ? "relative bg-black px-6 py-16"
             : "sticky top-0 h-screen flex flex-col items-center justify-center px-6"
         }
       >
-        <div className="max-w-5xl w-full mx-auto">
+        {/* Ballpit canvas — behind the Venn content */}
+        {vennFillDone && (
+          <div className="absolute inset-0 z-0">
+            <Ballpit
+              count={150}
+              gravity={1.8}
+              minSize={0.4}
+              maxSize={0.8}
+              size0={0.3}
+              lightIntensity={100}
+              friction={0.956}
+              wallBounce={0.95}
+              followCursor
+              explode
+              colors={["#b2d6f7", "#9ebcdd", "#738ba0", "#5f7d99"]}
+            />
+          </div>
+        )}
+        <div className="relative z-10 max-w-5xl w-full mx-auto">
           <TaglineReveal onComplete={handleTaglineDone} />
           <VennDiagram
             progress={progress}
             visible={taglineDone}
             isMobile={isMobile ?? false}
+            onFillComplete={handleFillComplete}
           />
         </div>
       </div>
