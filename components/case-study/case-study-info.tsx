@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, us
 import { useSpring, animated } from "@react-spring/web";
 import Image from "next/image";
 import { workItems, type WorkItem } from "@/lib/work-data";
+import { BLOB_BASE } from "@/lib/utils";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
@@ -30,7 +31,7 @@ function ItAllStartsHereVideo() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect -- hydration-safe mount guard
   }, []);
 
   const toggleMute = () => {
@@ -47,7 +48,7 @@ function ItAllStartsHereVideo() {
           <>
             <video
               ref={videoRef}
-              src="/Work/ItAllStartsHere/Video_optimized.mp4"
+              src={`${BLOB_BASE}/Work/ItAllStartsHere/Video_optimized.mp4`}
               autoPlay
               muted
               loop
@@ -567,7 +568,7 @@ function MobileVestaReflection() {
       {/* Video below card */}
       <div className="mx-4">
         <video
-          src="/Work/Vesta/Vesta/Reflection.mp4"
+          src={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection.mp4`}
           autoPlay
           muted
           loop
@@ -586,7 +587,7 @@ function DesktopVestaReflection() {
       {/* Video - same width as card below (mx-12) */}
       <div className="mx-12 mb-16">
         <video
-          src="/Work/Vesta/Vesta/Reflection.mp4"
+          src={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection.mp4`}
           autoPlay
           muted
           loop
@@ -2172,7 +2173,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             <div className="relative">
               <video
                 ref={(el) => { videoRefs.current[1] = el; }}
-                src="/Work/Comcast%20Business/BrandVideo.mp4"
+                src={`${BLOB_BASE}/Work/Comcast%20Business/BrandVideo.mp4`}
                 autoPlay
                 muted={isMuted}
                 loop
@@ -2246,7 +2247,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <video
-                src="/Work/Comcast%20Business/CBSystemAnimation_Layout.mp4"
+                src={`${BLOB_BASE}/Work/Comcast%20Business/CBSystemAnimation_Layout.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2275,7 +2276,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <video
-                src="/Work/Comcast%20Business/Speed_EndCard.mp4"
+                src={`${BLOB_BASE}/Work/Comcast%20Business/Speed_EndCard.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2291,7 +2292,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <video
-                src="/Work/Comcast%20Business/TaggingSequence.mp4"
+                src={`${BLOB_BASE}/Work/Comcast%20Business/TaggingSequence.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2323,7 +2324,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             >
               <video
                 ref={(el) => { videoRefs.current[0] = el; }}
-                src="/Work/Comcast%20Business/MarchPromo.mp4"
+                src={`${BLOB_BASE}/Work/Comcast%20Business/MarchPromo.mp4`}
                 autoPlay
                 muted={isMuted}
                 loop
@@ -2363,7 +2364,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <video
-                src="/Work/Comcast%20Business/BillboardMotion.mp4"
+                src={`${BLOB_BASE}/Work/Comcast%20Business/BillboardMotion.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2407,7 +2408,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             viewport={{ once: true }}
           >
             <video
-              src="/Work/LinkLogistics/SpacetoGrow.mp4"
+              src={`${BLOB_BASE}/Work/LinkLogistics/SpacetoGrow.mp4`}
               autoPlay
               muted
               loop
@@ -2468,7 +2469,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <video
-                src="/Work/LinkLogistics/Icons.mp4"
+                src={`${BLOB_BASE}/Work/LinkLogistics/Icons.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2487,7 +2488,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             viewport={{ once: true }}
           >
             <video
-              src="/Work/LinkLogistics/LowerThirds.mp4"
+              src={`${BLOB_BASE}/Work/LinkLogistics/LowerThirds.mp4`}
               autoPlay
               muted
               loop
@@ -2522,7 +2523,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <video
-                src="/Work/LinkLogistics/Website.mp4"
+                src={`${BLOB_BASE}/Work/LinkLogistics/Website.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2715,7 +2716,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             viewport={{ once: true }}
           >
             <video
-              src="/Work/Instacart/BoozyBrunch.mp4"
+              src={`${BLOB_BASE}/Work/Instacart/BoozyBrunch.mp4`}
               autoPlay
               muted
               loop
@@ -3051,7 +3052,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             <div className="relative">
               <video
                 ref={(el) => { videoRefs.current[2] = el; }}
-                src="/Work/BMW/BMW Tennis/HeroVideo.mp4"
+                src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/HeroVideo.mp4`}
                 autoPlay
                 muted={isMuted}
                 loop
@@ -3121,7 +3122,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* RacingCars video full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <video
-              src="/Work/BMW/BMW Tennis/RacingCars.mp4"
+              src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/RacingCars.mp4`}
               autoPlay
               muted
               loop
@@ -3157,7 +3158,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* Racket video full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <video
-              src="/Work/BMW/BMW Tennis/Racket.mp4"
+              src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Racket.mp4`}
               autoPlay
               muted
               loop
@@ -3329,7 +3330,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* Stadium video */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <video
-              src="/Work/BMW/BMW Tennis/Stadium.mov"
+              src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Stadium.mov`}
               autoPlay
               muted
               loop
@@ -3435,7 +3436,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* DeconstructedIcon video */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <video
-              src="/Work/MeritSystems/DeconstructedIcon.mp4"
+              src={`${BLOB_BASE}/Work/MeritSystems/DeconstructedIcon.mp4`}
               autoPlay
               muted
               loop

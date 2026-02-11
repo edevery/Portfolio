@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# video files (hosted on Vercel Blob Storage)
+*.mp4
+*.MP4
+*.mov
+*.webm
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env*.local

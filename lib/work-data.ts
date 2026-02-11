@@ -1,3 +1,5 @@
+import { BLOB_BASE } from "./utils";
+
 export type Category =
   | "all"
   | "product"
@@ -60,7 +62,7 @@ export const workItems: WorkItem[] = [
     mobileImage: "/Thumbnails/Mobile/Vesta.png",
     heroMedia: {
       type: "video",
-      src: "/Work/Vesta/Vesta/VestaVideo1920x1080.mp4",
+      src: `${BLOB_BASE}/Work/Vesta/Vesta/VestaVideo1920x1080.mp4`,
       poster: "/Thumbnails/Desktop/Vesta.png",
     },
     accentColor: "#fe9f28",
@@ -109,7 +111,7 @@ export const workItems: WorkItem[] = [
     mobileImage: "/Thumbnails/Mobile/Comcast Business.png",
     heroMedia: {
       type: "video",
-      src: "/Work/Comcast%20Business/DigitalBoard.mp4",
+      src: `${BLOB_BASE}/Work/Comcast%20Business/DigitalBoard.mp4`,
       poster: "/Thumbnails/Desktop/Comcast Business.png",
     },
     accentColor: "#7eecb4",
@@ -133,7 +135,7 @@ export const workItems: WorkItem[] = [
     mobileImage: "/Thumbnails/Mobile/LinkLogistics.png",
     heroMedia: {
       type: "video",
-      src: "/Work/LinkLogistics/LogoAnimation.mp4",
+      src: `${BLOB_BASE}/Work/LinkLogistics/LogoAnimation.mp4`,
       poster: "/Thumbnails/Desktop/LinkLogistics.png",
     },
     accentColor: "#f97316",
@@ -184,7 +186,7 @@ export const workItems: WorkItem[] = [
     mobileImage: "/Thumbnails/Mobile/Instacart.png",
     heroMedia: {
       type: "video",
-      src: "/Work/Instacart/Hero_IndianSpice.mp4",
+      src: `${BLOB_BASE}/Work/Instacart/Hero_IndianSpice.mp4`,
       poster: "/Thumbnails/Desktop/Instacart.png",
     },
     accentColor: "#16a34a",
@@ -210,7 +212,7 @@ export const workItems: WorkItem[] = [
     mobileImage: "/Thumbnails/Mobile/MeritSystems.png",
     heroMedia: {
       type: "video",
-      src: "/Work/MeritSystems/TerminalVideo.mp4",
+      src: `${BLOB_BASE}/Work/MeritSystems/TerminalVideo.mp4`,
       poster: "/Thumbnails/Desktop/MeritSystems.png",
     },
     accentColor: "#7c3aed",

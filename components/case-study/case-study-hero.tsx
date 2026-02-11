@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import type { WorkItem } from "@/lib/work-data";
+import { BLOB_BASE } from "@/lib/utils";
 import { VestaLogoAnimated } from "./vesta-logo-animated";
 
 // Hook to detect mobile screen
@@ -109,11 +110,11 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                 ref={videoRef}
                 src={
                   isMobile && item.slug === "instacart"
-                    ? "/Work/Instacart/GIF_IndianSpice_1080x1920.mp4"
+                    ? `${BLOB_BASE}/Work/Instacart/GIF_IndianSpice_1080x1920.mp4`
                     : isMobile && item.slug === "it-all-starts-here"
-                      ? "/Work/ItAllStartsHere/MobileHero.mp4"
+                      ? `${BLOB_BASE}/Work/ItAllStartsHere/MobileHero.mp4`
                       : !isMobile && item.slug === "it-all-starts-here"
-                        ? "/Work/ItAllStartsHere/DesktopHero.MP4"
+                        ? `${BLOB_BASE}/Work/ItAllStartsHere/DesktopHero.MP4`
                         : item.heroMedia.src
                 }
                 autoPlay
