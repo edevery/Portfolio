@@ -4,22 +4,22 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── Geometry ────────────────────────────────────────────────────────
 const R = 120; // circle radius
-const VB_W = 800;
+const VB_W = 1000;
 const VB_Y = 80;
 const VB_H = 400;
 
 // Initial positions: spread apart in a horizontal row
 const INITIAL = [
-  { cx: 120, cy: 300 }, // Brand
-  { cx: 400, cy: 300 }, // Product
-  { cx: 680, cy: 300 }, // Tech
+  { cx: 140, cy: 300 }, // Brand
+  { cx: 500, cy: 300 }, // Product
+  { cx: 860, cy: 300 }, // Tech
 ];
 
 // Final positions: equilateral-triangle Venn arrangement
 const FINAL = [
-  { cx: 335, cy: 338 }, // Brand  (bottom-left)
-  { cx: 400, cy: 225 }, // Product (top-center)
-  { cx: 465, cy: 338 }, // Tech   (bottom-right)
+  { cx: 435, cy: 338 }, // Brand  (bottom-left)
+  { cx: 500, cy: 225 }, // Product (top-center)
+  { cx: 565, cy: 338 }, // Tech   (bottom-right)
 ];
 
 const LABELS = ["Brand", "Product", "Tech"];

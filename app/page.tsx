@@ -13,6 +13,8 @@ const EmilyMsdfCanvasV5 = dynamic(
   }
 );
 
+const Ballpit = dynamic(() => import("@/components/Ballpit"), { ssr: false });
+
 function ScrollIndicator() {
   const [visible, setVisible] = useState(true);
 
@@ -56,6 +58,16 @@ export default function Home() {
         <EmilyMsdfCanvasV5 circleSize={0.25} circleEdge={0.3} borderSize={0.45} />
       </HomepageLayout>
       <IntersectionSection />
+      <div className="relative w-full h-[100vh] bg-black">
+        <Ballpit
+          count={150}
+          gravity={1.6}
+          friction={0.956}
+          wallBounce={0.95}
+          followCursor
+          colors={["#b2d6f7", "#9ebcdd", "#738ba0", "#5f7d99"]}
+        />
+      </div>
     </>
   );
 }

@@ -18,7 +18,11 @@ function useIsMobile() {
   return isMobile;
 }
 
-export function IntersectionSection() {
+export function IntersectionSection({
+  onComplete,
+}: {
+  onComplete?: () => void;
+}) {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -32,6 +36,11 @@ export function IntersectionSection() {
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     setProgress(v);
   });
+
+  const handleTaglineDone = () => {
+    setTaglineDone(true);
+    onComplete?.();
+  };
 
   const hydrated = isMobile !== null;
 
@@ -52,7 +61,7 @@ export function IntersectionSection() {
         }
       >
         <div className="max-w-5xl w-full mx-auto">
-          <TaglineReveal onComplete={() => setTaglineDone(true)} />
+          <TaglineReveal onComplete={handleTaglineDone} />
           <VennDiagram
             progress={progress}
             visible={taglineDone}
