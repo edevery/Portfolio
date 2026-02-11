@@ -242,7 +242,7 @@ export const workItems: WorkItem[] = [
       src: "/Thumbnails/Desktop/Zaxbys.png",
     },
     accentColor: "#ea580c",
-    logo: "/Work/Zaxby's/ZaxbysLogo.png",
+    logo: "/Work/Zaxby's/ZaxbysLogoWhite.png",
     logoClassName: "h-16 md:h-24 lg:h-32",
     role: "Art Director",
     context: "Brand guidelines and asset system for a fast-casual restaurant chain.",

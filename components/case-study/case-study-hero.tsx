@@ -160,7 +160,11 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           )
         ) : (
           <motion.img
-            src={item.heroMedia.src}
+            src={
+              !isMobile && item.slug === "zaxbys"
+                ? "/Work/Zaxby's/MilkshakesCore.jpg"
+                : item.heroMedia.src
+            }
             alt={item.title}
             className="absolute inset-0 w-full h-full object-cover"
             initial={{ opacity: 0, scale: 1.05 }}
