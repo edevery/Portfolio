@@ -131,7 +131,7 @@ export function VennDiagram({
         transition: "opacity 1.2s ease, filter 1.2s ease",
       }}
       viewBox={`0 ${VB_Y} ${VB_W} ${VB_H}`}
-      className="w-full max-w-2xl mx-auto"
+      className="w-full max-w-2xl mx-auto mt-20"
       aria-label="Venn diagram of Brand, Product, and Tech"
     >
       <defs>
