@@ -41,6 +41,13 @@ export function IntersectionSection({
     setProgress(v);
   });
 
+  // Preload Ballpit chunk as soon as tagline finishes (before Venn fill completes)
+  useEffect(() => {
+    if (taglineDone) {
+      import("@/components/Ballpit");
+    }
+  }, [taglineDone]);
+
   const handleTaglineDone = () => {
     setTaglineDone(true);
     onComplete?.();
@@ -75,7 +82,7 @@ export function IntersectionSection({
               count={150}
               gravity={1.8}
               minSize={0.4}
-              maxSize={0.8}
+              maxSize={0.7}
               size0={0.3}
               lightIntensity={100}
               friction={0.956}

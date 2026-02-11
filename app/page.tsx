@@ -34,7 +34,7 @@ function ScrollIndicator() {
       }}
     >
       <svg
-        className="w-3 h-3 animate-bounce"
+        className="w-6 h-6 animate-bounce"
         viewBox="0 0 12 12"
         fill="none"
         stroke="currentColor"
@@ -44,7 +44,6 @@ function ScrollIndicator() {
       >
         <path d="M2 4.5L6 8.5L10 4.5" />
       </svg>
-      <span>Scroll</span>
     </div>
   );
 }
