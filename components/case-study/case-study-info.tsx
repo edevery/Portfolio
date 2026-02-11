@@ -317,7 +317,7 @@ function MobileVestaBrandElements() {
   };
 
   return (
-    <div className="bg-black pt-8 pb-8">
+    <div className="bg-black pt-8 pb-0">
       {/* Carousel */}
       <div ref={containerRef} className="overflow-hidden">
         <motion.div
@@ -1273,27 +1273,29 @@ function MobileVestaGuidingPersonas() {
   };
 
   return (
-    <div className="relative z-20 bg-black px-4 pt-8 pb-8">
-      {/* Header */}
+    <div className="relative z-20 bg-black px-4 pt-8 pb-0">
+      {/* Header card - styled to match Reflection card */}
       <motion.div
-        className="text-center mb-6"
+        className="mb-6"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
       >
-        <h2
-          className="text-2xl tracking-tight mb-4"
-          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
-        >
-          Guiding Personas
-        </h2>
-        <p
-          className="text-sm text-white/60 leading-relaxed max-w-sm mx-auto"
-          style={{ fontFamily: "var(--font-inter)" }}
-        >
-          Three personas representing different relationship challenges shaped Vesta&apos;s gentle tone and calendar integration.
-        </p>
+        <div className="bg-[#141414] rounded-3xl p-10 border border-white/5">
+          <h3
+            className="text-xs font-bold tracking-wider uppercase mb-3"
+            style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+          >
+            Guiding Personas
+          </h3>
+          <p
+            className="text-2xl text-white/80 leading-relaxed"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Three personas representing different relationship challenges shaped Vesta&apos;s gentle tone and calendar integration.
+          </p>
+        </div>
       </motion.div>
 
       {/* Simple Carousel */}
@@ -1568,51 +1570,32 @@ function MobileVestaBrandSystem() {
   };
 
   return (
-    <div className="relative z-10 bg-black px-4 pt-8 pb-8">
-      {/* Header */}
+    <div className="relative z-10 bg-black px-4 pt-8 pb-0">
+      {/* Header card - styled to match Reflection card */}
       <motion.div
-        className="text-center mb-8"
+        className="mb-8"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
       >
-        <h2
-          className="text-2xl tracking-tight mb-4"
-          style={{ fontFamily: "'Noe Display', serif", color: "white" }}
-        >
-          Brand System
-        </h2>
-        <p
-          className="text-sm text-white/60 leading-relaxed max-w-sm mx-auto"
-          style={{ fontFamily: "var(--font-inter)" }}
-        >
-          Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element carries symbolic meaning rooted in ancient wisdom.
-        </p>
+        <div className="bg-[#141414] rounded-3xl p-10 border border-white/5">
+          <h3
+            className="text-xs font-bold tracking-wider uppercase mb-3"
+            style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+          >
+            Brand System
+          </h3>
+          <p
+            className="text-2xl text-white/80 leading-relaxed"
+            style={{ fontFamily: "var(--font-inter)" }}
+          >
+            Vesta draws from Roman mythology to create a cohesive world where tending relationships becomes a sacred ritual. Every element carries symbolic meaning rooted in ancient wisdom.
+          </p>
+        </div>
       </motion.div>
 
-      {/* Switching Icon */}
-      <div className="flex justify-center mb-6">
-        <div className="relative w-16 h-16">
-          {brandSymbols.map((symbol, index) => (
-            <motion.img
-              key={symbol.name}
-              src={symbol.icon}
-              alt={symbol.name}
-              className="absolute inset-0 w-full h-full object-contain"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: activeIndex === index ? 1 : 0,
-                scale: activeIndex === index ? 1 : 0.8,
-              }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              draggable={false}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Carousel */}
+      {/* Carousel of icon cards - same as desktop BrandIconCard but in hover state by default */}
       <div ref={containerRef} className="overflow-hidden">
         <motion.div
           className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
@@ -1629,25 +1612,53 @@ function MobileVestaBrandSystem() {
               className="flex-shrink-0"
               style={{ width: cardWidth }}
             >
-              <div className="bg-transparent border border-white/30 rounded-2xl p-5 h-full">
-                <h3
-                  className="text-xs font-bold tracking-wider uppercase mb-3"
-                  style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+              <div
+                className="relative overflow-hidden rounded-2xl aspect-square"
+                style={{ backgroundColor: symbol.hoverBgColor }}
+              >
+                {/* Icon container - permanently contracted (hover state) */}
+                <div
+                  className="absolute flex items-center justify-center overflow-hidden rounded-xl"
+                  style={{
+                    backgroundColor: symbol.bgColor,
+                    top: 12,
+                    left: 12,
+                    right: 12,
+                    bottom: 100,
+                  }}
                 >
-                  {symbol.name}
-                </h3>
-                <p
-                  className="text-sm text-white/60 leading-relaxed mb-2"
-                  style={{ fontFamily: "var(--font-inter)" }}
-                >
-                  {symbol.description}
-                </p>
-                <p
-                  className="text-xs text-white/40 leading-relaxed"
-                  style={{ fontFamily: "var(--font-inter)" }}
-                >
-                  {symbol.subDescription}
-                </p>
+                  <div
+                    className="w-1/2 h-1/2"
+                    style={{
+                      backgroundColor: symbol.iconColor,
+                      maskImage: `url(${symbol.icon})`,
+                      maskSize: "contain",
+                      maskRepeat: "no-repeat",
+                      maskPosition: "center",
+                      WebkitMaskImage: `url(${symbol.icon})`,
+                      WebkitMaskSize: "contain",
+                      WebkitMaskRepeat: "no-repeat",
+                      WebkitMaskPosition: "center",
+                    }}
+                  />
+                </div>
+                {/* Content - always visible */}
+                <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
+                  <h3
+                    className="text-xs font-bold tracking-wider uppercase mb-2 text-white"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {symbol.name}
+                  </h3>
+                  <p
+                    className="text-sm leading-relaxed text-white/80"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {symbol.name === "Hearth Hub"
+                      ? "Adaptation of the Herculean knot, associated with marriage and love."
+                      : symbol.description}
+                  </p>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -2140,19 +2151,29 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           </div>
           {/* Mobile: Question2.png with header and intro */}
           <div className="block md:hidden mx-4">
-            {/* Ember Analysis header and intro text */}
-            <h2
-              className="text-2xl text-white text-center mb-4"
-              style={{ fontFamily: "'Noe Display', serif", fontStyle: "italic" }}
+            {/* Ember Analysis card - styled to match Reflection card */}
+            <motion.div
+              className="mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+              viewport={{ once: true, margin: "-50px" }}
             >
-              Ember Analysis
-            </h2>
-            <p
-              className="text-base text-white/70 text-center leading-relaxed mb-6"
-              style={{ fontFamily: "var(--font-inter)" }}
-            >
-              Vesta&apos;s onboarding uses reflective prompts to understand how users love and connect. Relationship duration, location, love language, and attachment style personalize every experience that follows.
-            </p>
+              <div className="bg-[#141414] rounded-3xl p-10 border border-white/5">
+                <h3
+                  className="text-xs font-bold tracking-wider uppercase mb-3"
+                  style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+                >
+                  Ember Analysis
+                </h3>
+                <p
+                  className="text-2xl text-white/80 leading-relaxed"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  Vesta&apos;s onboarding uses reflective prompts to understand how users love and connect. Relationship duration, location, love language, and attachment style personalize every experience that follows.
+                </p>
+              </div>
+            </motion.div>
             <Image
               src="/Work/Vesta/Mobile/Question2.png"
               alt="Vesta Onboarding Flow"
@@ -2648,6 +2669,29 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             className="w-full h-auto rounded-2xl"
             draggable={false}
           />
+          {/* Personalized Nudges card - styled to match Reflection card */}
+          <motion.div
+            className="mt-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            viewport={{ once: true, margin: "-50px" }}
+          >
+            <div className="bg-[#141414] rounded-3xl p-10 border border-white/5">
+              <h3
+                className="text-xs font-bold tracking-wider uppercase mb-3"
+                style={{ fontFamily: "var(--font-heading)", color: "#85c3ed" }}
+              >
+                Personalized Nudges
+              </h3>
+              <p
+                className="text-2xl text-white/80 leading-relaxed"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                I built a system that considers love languages, attachment patterns, mood, partner preferences, and the shifting context of your day. Those signals flow through Claude&apos;s API to create simple, personalized nudges that stay relevant as your relationship evolves.
+              </p>
+            </div>
+          </motion.div>
         </div>
       )}
 

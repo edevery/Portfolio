@@ -74,7 +74,7 @@ export const workItems: WorkItem[] = [
       {
         id: "role",
         label: "Role",
-        content: "Founder & Designer.\nI designed and built Vesta end-to-end: product strategy, brand identity, UI/UX, and development using AI tools like Claude Code and Cursor. A true passion project, built outside my full-time agency role.",
+        content: "I designed and built Vesta: product strategy, brand identity, UX/UI, and development using Claude Code. A passion project built outside of my full-time agency role",
       },
       {
         id: "background",
