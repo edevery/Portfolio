@@ -12,8 +12,8 @@ const WORDS_2 = LINE_2.split(" ");
 // Total character count across both lines (for stagger limit)
 const TOTAL_CHARS = (LINE_1 + LINE_2).replace(/ /g, "").length;
 
-const STAGGER_MS = 35;
-const INITIAL_DELAY_MS = 400;
+const STAGGER_MS = 20;
+const INITIAL_DELAY_MS = 200;
 
 // Build a global char index offset for each word
 function charOffsets(words: string[]) {

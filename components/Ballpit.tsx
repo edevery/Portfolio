@@ -701,7 +701,7 @@ class Z extends InstancedMesh {
   #setupLights() {
     this.ambientLight = new AmbientLight(this.config.ambientColor, this.config.ambientIntensity);
     this.add(this.ambientLight);
-    this.light = new PointLight(this.config.colors[0], this.config.lightIntensity);
+    this.light = new PointLight(this.config.colors[0], this.config.lightIntensity, 8);
     this.add(this.light);
   }
 
@@ -785,7 +785,11 @@ function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallp
   threeInstance.camera.lookAt(0, 0, 0);
   threeInstance.cameraMaxAspect = 1.5;
   threeInstance.resize();
-  initialize(config);
+  initialize({
+    ...config,
+    maxX: threeInstance.size.wWidth / 2,
+    maxY: threeInstance.size.wHeight / 2,
+  });
   const raycaster = new Raycaster();
   const plane = new Plane(new Vector3(0, 0, 1), 0);
   const intersectionPoint = new Vector3();

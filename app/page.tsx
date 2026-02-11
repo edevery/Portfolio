@@ -61,7 +61,9 @@ export default function Home() {
       <div className="relative w-full h-[100vh] bg-black">
         <Ballpit
           count={150}
-          gravity={1.6}
+          gravity={1.0}
+          size0={0.5}
+          lightIntensity={100}
           friction={0.956}
           wallBounce={0.95}
           followCursor
