@@ -90,7 +90,7 @@ export function ProjectCard({
             {categories.map((cat) => (
               <span
                 key={cat}
-                className="px-2 py-1 text-xs rounded-full bg-white/20 text-white/90"
+                className="px-2 py-1 text-xs rounded-full bg-transparent border border-white/20 text-white/90"
               >
                 {cat}
               </span>
