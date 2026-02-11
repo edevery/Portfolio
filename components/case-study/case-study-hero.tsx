@@ -161,12 +161,19 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
         ) : (
           <motion.img
             src={
-              !isMobile && item.slug === "zaxbys"
-                ? "/Work/Zaxby's/MilkshakesCore.jpg"
+              item.slug === "zaxbys"
+                ? isMobile
+                  ? "/Work/Zaxby's/ChocolateMilkshake.jpg"
+                  : "/Work/Zaxby's/MilkshakesCore.jpg"
                 : item.heroMedia.src
             }
             alt={item.title}
             className="absolute inset-0 w-full h-full object-cover"
+            style={
+              isMobile && item.slug === "zaxbys"
+                ? { objectPosition: "48% center" }
+                : undefined
+            }
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
