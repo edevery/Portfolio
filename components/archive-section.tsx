@@ -218,7 +218,7 @@ export function ArchiveSection() {
     totalMoveRef.current += Math.abs(touch.clientX - touchStartRef.current.x);
 
     // Convert pixel delta to rotation
-    const deltaAngle = (dx / window.innerWidth) * SWIPE_SENSITIVITY;
+    const deltaAngle = -(dx / window.innerWidth) * SWIPE_SENSITIVITY;
     rotationRef.current.angle += deltaAngle;
 
     // Instant velocity from this frame
