@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useMotionValue, useSpring, PanInfo } from "framer-motion";
+import { motion, useMotionValue, animate, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { TransitionLink } from "@/components/case-study/transition-link";
 
 const CAROUSEL_CONFIG = {
   stiffness: 550,
   damping: 42,
-  dragElastic: 0.04,
+  dragElastic: 0.1,
   velocityThreshold: 250,
   sidePadding: 32,
   gap: 16,
@@ -35,10 +35,6 @@ export function MobileCarousel({ cards, className }: MobileCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const x = useMotionValue(0);
-  const springX = useSpring(x, {
-    damping: CAROUSEL_CONFIG.damping,
-    stiffness: CAROUSEL_CONFIG.stiffness,
-  });
 
   const updateDimensions = useCallback(() => {
     if (containerRef.current) {
@@ -79,7 +75,14 @@ export function MobileCarousel({ cards, className }: MobileCarouselProps) {
     targetIndex = Math.max(0, Math.min(cards.length - 1, targetIndex));
 
     const targetX = -targetIndex * cardWithGap;
-    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
+    const clampedX = Math.max(-maxDrag, Math.min(0, targetX));
+
+    animate(x, clampedX, {
+      type: "spring",
+      stiffness: CAROUSEL_CONFIG.stiffness,
+      damping: CAROUSEL_CONFIG.damping,
+    });
+
     setActiveIndex(targetIndex);
   };
 
@@ -89,7 +92,7 @@ export function MobileCarousel({ cards, className }: MobileCarouselProps) {
         <motion.div
           className="flex cursor-grab active:cursor-grabbing"
           style={{
-            x: springX,
+            x,
             gap: CAROUSEL_CONFIG.gap,
             paddingLeft: CAROUSEL_CONFIG.sidePadding,
             paddingRight: CAROUSEL_CONFIG.sidePadding,
