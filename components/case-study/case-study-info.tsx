@@ -872,9 +872,52 @@ function ExploreMoreWork({ currentItem }: { currentItem: WorkItem }) {
   );
 }
 
+// Shared hook for color swatch press-and-hold (mobile) / hover (desktop)
+function useColorSwatchInteraction() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+  const lastTouchTimeRef = useRef(0);
+
+  const getSwatchProps = (index: number) => ({
+    onTouchStart: (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+      setActiveIndex(index);
+    },
+    onTouchMove: (e: React.TouchEvent) => {
+      if (!touchStartPos.current) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - touchStartPos.current.x;
+      const dy = touch.clientY - touchStartPos.current.y;
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+        setActiveIndex(null);
+        touchStartPos.current = null;
+      }
+    },
+    onTouchEnd: () => {
+      setActiveIndex(null);
+      touchStartPos.current = null;
+      lastTouchTimeRef.current = Date.now();
+    },
+    onTouchCancel: () => {
+      setActiveIndex(null);
+      touchStartPos.current = null;
+      lastTouchTimeRef.current = Date.now();
+    },
+    onMouseEnter: () => {
+      if (Date.now() - lastTouchTimeRef.current > 500) setActiveIndex(index);
+    },
+    onMouseLeave: () => {
+      if (Date.now() - lastTouchTimeRef.current > 500) setActiveIndex(null);
+    },
+  });
+
+  return { activeIndex, getSwatchProps };
+}
+
 // Instacart Color Palette Component
 function InstacartColorPalette() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { activeIndex: hoveredIndex, getSwatchProps } = useColorSwatchInteraction();
 
   const colors = [
     // Top row
@@ -920,9 +963,7 @@ function InstacartColorPalette() {
                   key={color.name}
                   className="relative aspect-[1/1.2] cursor-pointer rounded-lg overflow-hidden"
                   style={{ backgroundColor: color.hex, willChange: "transform" }}
-                  onClick={() => setHoveredIndex(hoveredIndex === index ? null : index)}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
+                  {...getSwatchProps(index)}
                   animate={{
                     scale: hoveredIndex === index ? 1.15 : 1,
                     zIndex: hoveredIndex === index ? 10 : 1,
@@ -966,9 +1007,7 @@ function InstacartColorPalette() {
                   key={color.name}
                   className="relative aspect-[1/1.2] cursor-pointer rounded-lg overflow-hidden"
                   style={{ backgroundColor: color.hex, willChange: "transform" }}
-                  onClick={() => setHoveredIndex(hoveredIndex === index + 8 ? null : index + 8)}
-                  onMouseEnter={() => setHoveredIndex(index + 8)}
-                  onMouseLeave={() => setHoveredIndex(null)}
+                  {...getSwatchProps(index + 8)}
                   animate={{
                     scale: hoveredIndex === index + 8 ? 1.15 : 1,
                     zIndex: hoveredIndex === index + 8 ? 10 : 1,
@@ -1012,12 +1051,11 @@ function InstacartColorPalette() {
         <AnimatePresence>
           {hoveredIndex !== null && (
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center md:hidden"
+              className="fixed inset-0 z-50 flex items-center justify-center md:hidden pointer-events-none"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={() => setHoveredIndex(null)}
             >
               <div className="absolute inset-0 bg-black/80" />
               <motion.div
@@ -1063,10 +1101,10 @@ function InstacartColorPalette() {
           Reminiscent of a home-cooked meal
         </p>
         <p
-          className="text-[10px] text-white/30 mt-2 uppercase tracking-widest"
+          className="text-[10px] text-white/30 mt-2 uppercase tracking-widest md:hidden"
           style={{ fontFamily: "var(--font-inter)" }}
         >
-          Click around
+          Press and hold
         </p>
       </div>
     </div>
@@ -1075,7 +1113,7 @@ function InstacartColorPalette() {
 
 // Link Logistics Color Palette Component
 function LinkLogisticsColorPalette() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { activeIndex: hoveredIndex, getSwatchProps } = useColorSwatchInteraction();
 
   // Colors eyedropped from reference image
   // borderRadius: each swatch has one curved corner
@@ -1127,9 +1165,7 @@ function LinkLogisticsColorPalette() {
                   borderRadius: color.borderRadius,
                   willChange: "transform",
                 }}
-                onClick={() => setHoveredIndex(hoveredIndex === index ? null : index)}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
+                {...getSwatchProps(index)}
                 animate={{
                   scale: hoveredIndex === index ? 1.18 : 1,
                   zIndex: hoveredIndex === index ? 10 : 1,
@@ -1171,12 +1207,11 @@ function LinkLogisticsColorPalette() {
         <AnimatePresence>
           {hoveredIndex !== null && (
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center md:hidden"
+              className="fixed inset-0 z-50 flex items-center justify-center md:hidden pointer-events-none"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={() => setHoveredIndex(null)}
             >
               <div className="absolute inset-0 bg-black/80" />
               <motion.div
