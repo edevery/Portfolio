@@ -16,7 +16,7 @@ export function WorkSection() {
       : workItems.filter((item) => item.categories.includes(activeCategory));
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-12">
+    <div className="w-full max-w-7xl mx-auto px-4 py-12 max-md:py-4 max-md:h-full max-md:flex max-md:flex-col">
       {/* Category Filter Tags - hidden on mobile */}
       <div className="hidden md:flex flex-wrap gap-3 mb-10 justify-center">
         {categories.map((category) => (
@@ -38,7 +38,7 @@ export function WorkSection() {
       </div>
 
       {/* Mobile Carousel - visible only on mobile */}
-      <div className="md:hidden flex items-center min-h-[65vh]">
+      <div className="md:hidden flex items-center flex-1">
         <MobileCarousel
           cards={workItems.map((item) => ({
             title: item.title,
