@@ -2708,7 +2708,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               viewport={{ once: true }}
             >
               <Image
-                src="/Work/Instacart/Tamales_Layflat.png"
+                src="/Work/Instacart/Tamales_LayFlat.png"
                 alt="Instacart Tamales Layflat"
                 width={1200}
                 height={800}
