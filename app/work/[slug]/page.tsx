@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getWorkItemBySlug, getAllSlugs } from "@/lib/work-data";
 import { CaseStudyContent } from "./case-study-content";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://edevery.com";
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
@@ -22,6 +24,16 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${item.title} — Emily Devery`,
     description: item.description,
+    openGraph: {
+      title: `${item.title} — Emily Devery`,
+      description: item.description,
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+    },
+    alternates: {
+      canonical: `/work/${slug}`,
+    },
   };
 }
 
@@ -33,5 +45,26 @@ export default async function CaseStudyPage({ params }: PageProps) {
     notFound();
   }
 
-  return <CaseStudyContent item={item} />;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: item.title,
+    description: item.description,
+    image: `${siteUrl}${item.image}`,
+    url: `${siteUrl}/work/${slug}`,
+    creator: {
+      "@type": "Person",
+      name: "Emily Devery",
+    },
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <CaseStudyContent item={item} />
+    </>
+  );
 }

@@ -1,3 +1,13 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Play — Emily Devery",
+  description: "Creative experiments and explorations.",
+  alternates: {
+    canonical: "/play",
+  },
+};
+
 export default function Play() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">

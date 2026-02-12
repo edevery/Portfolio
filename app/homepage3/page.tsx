@@ -1,17 +1,10 @@
-"use client";
+import type { Metadata } from "next";
+import Homepage3Content from "./homepage3-content";
 
-import dynamic from "next/dynamic";
-import HomepageLayout from "@/components/layout/homepage-layout";
-
-const EmilyMsdfCanvas = dynamic(
-  () => import("@/components/canvas/emily-msdf-canvas"),
-  { ssr: false }
-);
+export const metadata: Metadata = {
+  robots: "noindex, nofollow",
+};
 
 export default function Homepage3() {
-  return (
-    <HomepageLayout>
-      <EmilyMsdfCanvas circleSize={0.3} circleEdge={0.5} borderSize={0.45} />
-    </HomepageLayout>
-  );
+  return <Homepage3Content />;
 }
