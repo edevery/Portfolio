@@ -24,10 +24,6 @@ import {
   Plane
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { Observer } from 'gsap/Observer';
-import { gsap } from 'gsap';
-
-gsap.registerPlugin(Observer);
 
 interface XConfig {
   canvas?: HTMLCanvasElement;
@@ -315,6 +311,17 @@ class W {
   center: Vector3 = new Vector3();
   #explodeFrames: number = 0;
 
+  // scratch vectors — reused every frame to avoid GC pressure
+  #tmpPos = new Vector3();
+  #tmpVel = new Vector3();
+  #tmpOtherPos = new Vector3();
+  #tmpOtherVel = new Vector3();
+  #tmpDiff = new Vector3();
+  #tmpCorrection = new Vector3();
+  #tmpVelCorrection = new Vector3();
+  #tmpFirst = new Vector3();
+  #tmpS0Pos = new Vector3();
+
   constructor(config: WConfig) {
     this.config = config;
     this.positionData = new Float32Array(3 * config.count).fill(0);
@@ -364,17 +371,27 @@ class W {
 
   update(deltaInfo: { delta: number }) {
     const { config, center, positionData, sizeData, velocityData } = this;
+    const pos = this.#tmpPos;
+    const vel = this.#tmpVel;
+    const otherPos = this.#tmpOtherPos;
+    const otherVel = this.#tmpOtherVel;
+    const diff = this.#tmpDiff;
+    const correction = this.#tmpCorrection;
+    const velCorrection = this.#tmpVelCorrection;
+
     let startIdx = 0;
     if (config.controlSphere0) {
       startIdx = 1;
-      const firstVec = new Vector3().fromArray(positionData, 0);
-      firstVec.lerp(center, 0.1).toArray(positionData, 0);
-      new Vector3(0, 0, 0).toArray(velocityData, 0);
+      this.#tmpFirst.fromArray(positionData, 0);
+      this.#tmpFirst.lerp(center, 0.1).toArray(positionData, 0);
+      velocityData[0] = 0;
+      velocityData[1] = 0;
+      velocityData[2] = 0;
     }
     for (let idx = startIdx; idx < config.count; idx++) {
       const base = 3 * idx;
-      const pos = new Vector3().fromArray(positionData, base);
-      const vel = new Vector3().fromArray(velocityData, base);
+      pos.fromArray(positionData, base);
+      vel.fromArray(velocityData, base);
       vel.y -= deltaInfo.delta * config.gravity * sizeData[idx];
       vel.multiplyScalar(config.friction);
       const effectiveMaxVel = this.#explodeFrames > 0 ? config.maxVelocity * 8 : config.maxVelocity;
@@ -385,37 +402,39 @@ class W {
     }
     for (let idx = startIdx; idx < config.count; idx++) {
       const base = 3 * idx;
-      const pos = new Vector3().fromArray(positionData, base);
-      const vel = new Vector3().fromArray(velocityData, base);
+      pos.fromArray(positionData, base);
+      vel.fromArray(velocityData, base);
       const radius = sizeData[idx];
       for (let jdx = idx + 1; jdx < config.count; jdx++) {
         const otherBase = 3 * jdx;
-        const otherPos = new Vector3().fromArray(positionData, otherBase);
-        const otherVel = new Vector3().fromArray(velocityData, otherBase);
-        const diff = new Vector3().copy(otherPos).sub(pos);
+        otherPos.fromArray(positionData, otherBase);
+        otherVel.fromArray(velocityData, otherBase);
+        diff.copy(otherPos).sub(pos);
         const dist = diff.length();
         const sumRadius = radius + sizeData[jdx];
         if (dist < sumRadius) {
           const overlap = sumRadius - dist;
-          const correction = diff.normalize().multiplyScalar(0.5 * overlap);
-          const velCorrection = correction.clone().multiplyScalar(Math.max(vel.length(), 1));
+          correction.copy(diff).normalize().multiplyScalar(0.5 * overlap);
+          velCorrection.copy(correction).multiplyScalar(Math.max(vel.length(), 1));
           pos.sub(correction);
           vel.sub(velCorrection);
           pos.toArray(positionData, base);
           vel.toArray(velocityData, base);
           otherPos.add(correction);
-          otherVel.add(correction.clone().multiplyScalar(Math.max(otherVel.length(), 1)));
+          velCorrection.copy(correction).multiplyScalar(Math.max(otherVel.length(), 1));
+          otherVel.add(velCorrection);
           otherPos.toArray(positionData, otherBase);
           otherVel.toArray(velocityData, otherBase);
         }
       }
       if (config.controlSphere0) {
-        const diff = new Vector3().copy(new Vector3().fromArray(positionData, 0)).sub(pos);
+        this.#tmpS0Pos.fromArray(positionData, 0);
+        diff.copy(this.#tmpS0Pos).sub(pos);
         const d = diff.length();
         const sumRadius0 = radius + sizeData[0];
         if (d < sumRadius0) {
-          const correction = diff.normalize().multiplyScalar(sumRadius0 - d);
-          const velCorrection = correction.clone().multiplyScalar(Math.max(vel.length(), 2));
+          correction.copy(diff).normalize().multiplyScalar(sumRadius0 - d);
+          velCorrection.copy(correction).multiplyScalar(Math.max(vel.length(), 2));
           pos.sub(correction);
           vel.sub(velCorrection);
         }
@@ -563,19 +582,10 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
       document.body.addEventListener('pointermove', onPointerMove as EventListener);
       document.body.addEventListener('pointerleave', onPointerLeave as EventListener);
       document.body.addEventListener('click', onPointerClick as EventListener);
-
-      document.body.addEventListener('touchstart', onTouchStart as EventListener, {
-        passive: false
-      });
-      document.body.addEventListener('touchmove', onTouchMove as EventListener, {
-        passive: false
-      });
-      document.body.addEventListener('touchend', onTouchEnd as EventListener, {
-        passive: false
-      });
-      document.body.addEventListener('touchcancel', onTouchEnd as EventListener, {
-        passive: false
-      });
+      document.body.addEventListener('touchstart', onTouchStart as EventListener);
+      document.body.addEventListener('touchmove', onTouchMove as EventListener);
+      document.body.addEventListener('touchend', onTouchEnd as EventListener);
+      document.body.addEventListener('touchcancel', onTouchEnd as EventListener);
       globalPointerActive = true;
     }
   }
@@ -585,7 +595,6 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
       document.body.removeEventListener('pointermove', onPointerMove as EventListener);
       document.body.removeEventListener('pointerleave', onPointerLeave as EventListener);
       document.body.removeEventListener('click', onPointerClick as EventListener);
-
       document.body.removeEventListener('touchstart', onTouchStart as EventListener);
       document.body.removeEventListener('touchmove', onTouchMove as EventListener);
       document.body.removeEventListener('touchend', onTouchEnd as EventListener);
@@ -620,7 +629,6 @@ function processPointerInteraction() {
 
 function onTouchStart(e: TouchEvent) {
   if (e.touches.length > 0) {
-    e.preventDefault();
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();
@@ -639,7 +647,6 @@ function onTouchStart(e: TouchEvent) {
 
 function onTouchMove(e: TouchEvent) {
   if (e.touches.length > 0) {
-    e.preventDefault();
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();
@@ -777,8 +784,8 @@ class Z extends InstancedMesh {
     this.physics.update(deltaInfo);
     for (let idx = 0; idx < this.count; idx++) {
       U.position.fromArray(this.physics.positionData, 3 * idx);
-      if (idx === 0 && this.config.followCursor === false) {
-        U.scale.setScalar(0);
+      if (idx === 0) {
+        U.scale.setScalar(0); // always invisible — collision body only
       } else {
         U.scale.setScalar(this.physics.sizeData[idx]);
       }
@@ -820,7 +827,7 @@ function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallp
   const intersectionPoint = new Vector3();
   let isPaused = false;
 
-  canvas.style.touchAction = 'none';
+  canvas.style.touchAction = config.followCursor ? 'none' : 'auto';
   canvas.style.userSelect = 'none';
   (canvas.style as any).webkitUserSelect = 'none';
 

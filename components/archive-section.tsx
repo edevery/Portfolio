@@ -1,7 +1,7 @@
 "use client";
 
 import * as THREE from "three";
-import { Suspense, useLayoutEffect, useRef, useState, useCallback, useEffect } from "react";
+import { Suspense, useLayoutEffect, useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Canvas, useFrame, ThreeEvent } from "@react-three/fiber";
 import {
   Image,
@@ -105,10 +105,43 @@ const FEATURED_ASPECT = 9 / 16; // 0.5625 - portrait for featured card
 const CAROUSEL_SIZE = 0.7; // smaller cards in carousel
 const FEATURED_SIZE = 6.5; // larger featured card for hero presence
 
+// Mobile touch scroll constants
+const FRICTION = 0.95; // momentum decay per frame
+const SWIPE_SENSITIVITY = Math.PI / 2; // radians per full screen-width swipe
+const TAP_THRESHOLD_PX = 10; // movement beyond this = swipe, not tap
+const VELOCITY_HISTORY = 0.7; // EMA blend: history weight
+const VELOCITY_INSTANT = 0.3; // EMA blend: instant weight
+
+// Shared rotation state for mobile touch / desktop scroll bridge
+interface RotationState {
+  angle: number;
+  velocity: number;
+  isDragging: boolean;
+  wasSwiping: boolean;
+}
+
+// Pre-computed expand button ring points (Phase 3A)
+const EXPAND_RING_POINTS: [number, number, number][] = Array.from({ length: 33 }, (_, i) => {
+  const angle = (i / 32) * Math.PI * 2;
+  return [Math.cos(angle) * 0.22, Math.sin(angle) * 0.22, 0.01] as [number, number, number];
+});
+
 export function ArchiveSection() {
   const isMobile = useIsMobile();
   const [keyboardIndex, setKeyboardIndex] = useState<number | null>(0);
   const [expandedItem, setExpandedItem] = useState<ArchiveItem | null>(null);
+
+  // Shared rotation state for mobile touch / desktop scroll bridge
+  const rotationRef = useRef<RotationState>({
+    angle: 0,
+    velocity: 0,
+    isDragging: false,
+    wasSwiping: false,
+  });
+
+  // Touch tracking refs (mobile only)
+  const touchStartRef = useRef<{ x: number; time: number } | null>(null);
+  const totalMoveRef = useRef(0);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -168,19 +201,85 @@ export function ArchiveSection() {
     setExpandedItem(null);
   }, []);
 
+  // Mobile touch handlers (Phase 2D)
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, time: Date.now() };
+    totalMoveRef.current = 0;
+    rotationRef.current.isDragging = true;
+    rotationRef.current.velocity = 0;
+    rotationRef.current.wasSwiping = false;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - touchStartRef.current.x;
+    totalMoveRef.current += Math.abs(touch.clientX - touchStartRef.current.x);
+
+    // Convert pixel delta to rotation
+    const deltaAngle = -(dx / window.innerWidth) * SWIPE_SENSITIVITY;
+    rotationRef.current.angle += deltaAngle;
+
+    // Instant velocity from this frame
+    const instantVelocity = deltaAngle;
+    // EMA smoothing
+    rotationRef.current.velocity =
+      VELOCITY_HISTORY * rotationRef.current.velocity +
+      VELOCITY_INSTANT * instantVelocity;
+
+    // Mark as swiping if total movement exceeds threshold
+    if (totalMoveRef.current > TAP_THRESHOLD_PX) {
+      rotationRef.current.wasSwiping = true;
+    }
+
+    // Reset start position for next move delta
+    touchStartRef.current = { x: touch.clientX, time: Date.now() };
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    touchStartRef.current = null;
+    rotationRef.current.isDragging = false;
+    // velocity persists for momentum decay in useFrame
+  }, []);
+
   return (
-    <div className="w-full h-screen bg-black" tabIndex={0}>
-      <Canvas dpr={[1, 1.5]} gl={{ alpha: false }} onCreated={({ gl }) => gl.setClearColor('#000000')}>
+    <div
+      className="w-full h-screen bg-black"
+      tabIndex={0}
+      style={isMobile ? { touchAction: "pan-y" } : undefined}
+      onTouchStart={isMobile ? handleTouchStart : undefined}
+      onTouchMove={isMobile ? handleTouchMove : undefined}
+      onTouchEnd={isMobile ? handleTouchEnd : undefined}
+    >
+      <Canvas
+        dpr={isMobile ? [1, 1] : [1, 1.5]}
+        gl={{ alpha: false }}
+        onCreated={({ gl }) => gl.setClearColor('#000000')}
+      >
         <Suspense fallback={null}>
-          <ScrollControls pages={4} infinite>
+          {isMobile ? (
             <Scene
               position={[0, 0.5, 0]}
               keyboardIndex={keyboardIndex}
               setKeyboardIndex={setKeyboardIndex}
               onExpand={handleExpand}
-              isMobile={isMobile}
+              isMobile={true}
+              rotationRef={rotationRef}
             />
-          </ScrollControls>
+          ) : (
+            <ScrollControls pages={4} infinite>
+              <ScrollBridge rotationRef={rotationRef} />
+              <Scene
+                position={[0, 0.5, 0]}
+                keyboardIndex={keyboardIndex}
+                setKeyboardIndex={setKeyboardIndex}
+                onExpand={handleExpand}
+                isMobile={false}
+                rotationRef={rotationRef}
+              />
+            </ScrollControls>
+          )}
         </Suspense>
       </Canvas>
 
@@ -252,11 +351,28 @@ export function ArchiveSection() {
   );
 }
 
+// ScrollBridge: lives inside ScrollControls on desktop, writes scroll offset to rotationRef
+function ScrollBridge({ rotationRef }: { rotationRef: React.RefObject<RotationState> }) {
+  const scroll = useScroll();
+  const prevOffset = useRef(0);
+
+  useFrame(() => {
+    let d = scroll.offset - prevOffset.current;
+    if (d > 0.5) d -= 1;
+    if (d < -0.5) d += 1;
+    prevOffset.current = scroll.offset;
+    rotationRef.current.angle += d * (Math.PI * 2);
+  });
+
+  return null;
+}
+
 function Scene({
   keyboardIndex,
   setKeyboardIndex,
   onExpand,
   isMobile,
+  rotationRef,
   ...props
 }: {
   position?: [number, number, number];
@@ -264,10 +380,9 @@ function Scene({
   setKeyboardIndex: React.Dispatch<React.SetStateAction<number | null>>;
   onExpand: (item: ArchiveItem) => void;
   isMobile: boolean;
+  rotationRef: React.RefObject<RotationState>;
 }) {
   const ref = useRef<THREE.Group>(null);
-  const scroll = useScroll();
-  const prevOffset = useRef(0);
   const [hovered, setHovered] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
   const [tapped, setTapped] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>({
     categories: archiveItems[0].categories,
@@ -287,20 +402,33 @@ function Scene({
 
   useFrame((state, delta) => {
     if (!ref.current) return;
-    // Accumulate rotation from frame-to-frame offset delta
-    // This handles the infinite scroll wrap-around smoothly
-    let d = scroll.offset - prevOffset.current;
-    if (d > 0.5) d -= 1;
-    if (d < -0.5) d += 1;
-    prevOffset.current = scroll.offset;
-    ref.current.rotation.y -= d * (Math.PI * 2);
-    state.events.update?.();
-    easing.damp3(
-      state.camera.position,
-      [-state.pointer.x * 2, state.pointer.y * 2 + 4.5, 9],
-      0.3,
-      delta
-    );
+
+    if (isMobile) {
+      // Mobile: apply momentum decay when not dragging
+      const rot = rotationRef.current;
+      if (!rot.isDragging) {
+        rot.velocity *= FRICTION;
+        rot.angle += rot.velocity;
+        // Stop when velocity is negligible
+        if (Math.abs(rot.velocity) < 0.0001) rot.velocity = 0;
+      }
+      ref.current.rotation.y = -rot.angle;
+
+      // Fixed camera on mobile
+      state.camera.position.set(0, 4.5, 9);
+    } else {
+      // Desktop: read rotation from ScrollBridge
+      ref.current.rotation.y = -rotationRef.current.angle;
+
+      // Camera follows pointer on desktop
+      easing.damp3(
+        state.camera.position,
+        [-state.pointer.x * 2, state.pointer.y * 2 + 4.5, 9],
+        0.3,
+        delta
+      );
+    }
+
     state.camera.lookAt(0, 0, 0);
   });
 
@@ -328,6 +456,7 @@ function Scene({
         keyboardIndex={keyboardIndex}
         isHovering={hovered !== null}
         isMobile={isMobile}
+        rotationRef={rotationRef}
       />
       <ActiveCard hovered={activeSelection} onExpand={onExpand} isMobile={isMobile} />
     </group>
@@ -343,6 +472,7 @@ function Cards({
   keyboardIndex,
   isHovering,
   isMobile,
+  rotationRef,
 }: {
   items: ArchiveItem[];
   radius?: number;
@@ -352,6 +482,7 @@ function Cards({
   keyboardIndex: number | null;
   isHovering: boolean;
   isMobile: boolean;
+  rotationRef: React.RefObject<RotationState>;
 }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const amount = items.length;
@@ -367,7 +498,9 @@ function Cards({
             key={item.id}
             onClick={isMobile ? (e: ThreeEvent<MouseEvent>) => {
               e.stopPropagation();
-              onTap?.(item.categories, i, item);
+              if (!rotationRef.current.wasSwiping) {
+                onTap?.(item.categories, i, item);
+              }
             } : undefined}
             onPointerOver={!isMobile ? (e: ThreeEvent<PointerEvent>) => {
               e.stopPropagation();
@@ -414,8 +547,21 @@ function Card({
   useFrame((_, delta) => {
     if (!ref.current) return;
     const f = isHighlighted ? 1.4 : active ? 1.25 : 1;
-    easing.damp3(ref.current.position, [0, isHighlighted ? 0.25 : 0, 0], 0.1, delta);
-    easing.damp3(ref.current.scale, [CAROUSEL_ASPECT * CAROUSEL_SIZE * f, CAROUSEL_SIZE * f, 1], 0.15, delta);
+    const targetY = isHighlighted ? 0.25 : 0;
+    const targetScaleX = CAROUSEL_ASPECT * CAROUSEL_SIZE * f;
+    const targetScaleY = CAROUSEL_SIZE * f;
+
+    // Early exit if already at target (within epsilon)
+    const pos = ref.current.position;
+    const scl = ref.current.scale;
+    if (
+      Math.abs(pos.y - targetY) < 0.001 &&
+      Math.abs(scl.x - targetScaleX) < 0.001 &&
+      Math.abs(scl.y - targetScaleY) < 0.001
+    ) return;
+
+    easing.damp3(pos, [0, targetY, 0], 0.1, delta);
+    easing.damp3(scl, [targetScaleX, targetScaleY, 1], 0.15, delta);
   });
 
   return (
@@ -544,10 +690,7 @@ function ActiveCard({
               </mesh>
               {/* Button border ring */}
               <Line
-                points={Array.from({ length: 33 }, (_, i) => {
-                  const angle = (i / 32) * Math.PI * 2;
-                  return [Math.cos(angle) * 0.22, Math.sin(angle) * 0.22, 0.01] as [number, number, number];
-                })}
+                points={EXPAND_RING_POINTS}
                 color="#ffffff"
                 lineWidth={1}
                 transparent
@@ -650,15 +793,21 @@ function CategoryPills({
     return acc;
   }, []);
 
+  // Memoize pill outline points per category set
+  const pillPointsMap = useMemo(
+    () => pillData.map((pill) => createPillPoints(pill.width, pillHeight)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [categories.join(",")]
+  );
+
   return (
     <group position={position}>
       {pillsWithPositions.map((pill, i) => {
-        const pillPoints = createPillPoints(pill.width, pillHeight);
         return (
           <group key={i} position={[pill.x, 0, 0]}>
             {/* Pill outline */}
             <Line
-              points={pillPoints}
+              points={pillPointsMap[i]}
               color="white"
               lineWidth={1}
               position={[pill.width / 2, 0, 0]}

@@ -83,7 +83,7 @@ export function IntersectionSection({
               lightIntensity={100}
               friction={0.956}
               wallBounce={0.95}
-              followCursor
+              followCursor={!isMobile}
               explode
               colors={["#b2d6f7", "#9ebcdd", "#738ba0", "#5f7d99"]}
             />
