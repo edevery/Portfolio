@@ -1,15 +1,14 @@
-"use client";
+import type { Metadata } from "next";
+import ArchiveContent from "./archive-content";
 
-import dynamic from "next/dynamic";
-
-const ArchiveSection = dynamic(
-  () => import("@/components/archive-section").then((mod) => mod.ArchiveSection),
-  {
-    ssr: false,
-    loading: () => <div className="w-full h-screen bg-black" />
-  }
-);
+export const metadata: Metadata = {
+  title: "Archive — Emily Devery",
+  description: "Archived projects and explorations.",
+  alternates: {
+    canonical: "/archive",
+  },
+};
 
 export default function ArchivePage() {
-  return <ArchiveSection />;
+  return <ArchiveContent />;
 }

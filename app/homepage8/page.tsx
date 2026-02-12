@@ -1,17 +1,10 @@
-"use client";
+import type { Metadata } from "next";
+import Homepage8Content from "./homepage8-content";
 
-import dynamic from "next/dynamic";
-import HomepageLayout from "@/components/layout/homepage-layout";
-
-const EmilyMsdfCanvasV5 = dynamic(
-  () => import("@/components/canvas/emily-msdf-canvas-v5"),
-  { ssr: false }
-);
+export const metadata: Metadata = {
+  robots: "noindex, nofollow",
+};
 
 export default function Homepage8() {
-  return (
-    <HomepageLayout>
-      <EmilyMsdfCanvasV5 circleSize={0.25} circleEdge={0.3} borderSize={0.45} />
-    </HomepageLayout>
-  );
+  return <Homepage8Content />;
 }

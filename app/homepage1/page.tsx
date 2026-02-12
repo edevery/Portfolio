@@ -1,17 +1,10 @@
-"use client";
+import type { Metadata } from "next";
+import Homepage1Content from "./homepage1-content";
 
-import dynamic from "next/dynamic";
-import HomepageLayout from "@/components/layout/homepage-layout";
-
-const EmilyCanvas = dynamic(
-  () => import("@/components/canvas/emily-canvas"),
-  { ssr: false }
-);
+export const metadata: Metadata = {
+  robots: "noindex, nofollow",
+};
 
 export default function Homepage1() {
-  return (
-    <HomepageLayout>
-      <EmilyCanvas />
-    </HomepageLayout>
-  );
+  return <Homepage1Content />;
 }

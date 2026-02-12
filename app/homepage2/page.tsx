@@ -1,17 +1,10 @@
-"use client";
+import type { Metadata } from "next";
+import Homepage2Content from "./homepage2-content";
 
-import dynamic from "next/dynamic";
-import HomepageLayout from "@/components/layout/homepage-layout";
-
-const EmilySdfCanvas = dynamic(
-  () => import("@/components/canvas/emily-sdf-canvas"),
-  { ssr: false }
-);
+export const metadata: Metadata = {
+  robots: "noindex, nofollow",
+};
 
 export default function Homepage2() {
-  return (
-    <HomepageLayout>
-      <EmilySdfCanvas circleSize={0.3} circleEdge={0.15} borderSize={0.45} />
-    </HomepageLayout>
-  );
+  return <Homepage2Content />;
 }
