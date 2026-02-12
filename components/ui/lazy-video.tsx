@@ -74,6 +74,7 @@ export const LazyVideo = forwardRef<HTMLVideoElement, LazyVideoProps>(
         ref={innerRef}
         src={activeSrc}
         poster={poster}
+        preload="metadata"
         onError={() => setHasError(true)}
         {...props}
       />

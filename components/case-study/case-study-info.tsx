@@ -50,6 +50,7 @@ function ItAllStartsHereVideo() {
             <LazyVideo
               ref={videoRef}
               src={`${BLOB_BASE}/Work/ItAllStartsHere/Video_optimized.mp4`}
+              poster={`${BLOB_BASE}/Work/ItAllStartsHere/Video_optimized-poster.jpg`}
               autoPlay
               muted
               loop
@@ -570,6 +571,7 @@ function MobileVestaReflection() {
       <div className="mx-4">
         <LazyVideo
           src={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection.mp4`}
+          poster={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection-poster.jpg`}
           autoPlay
           muted
           loop
@@ -589,6 +591,7 @@ function DesktopVestaReflection() {
       <div className="mx-12 mb-16">
         <LazyVideo
           src={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection.mp4`}
+          poster={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection-poster.jpg`}
           autoPlay
           muted
           loop
@@ -2236,6 +2239,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               <LazyVideo
                 ref={(el) => { videoRefs.current[1] = el; }}
                 src={`${BLOB_BASE}/Work/Comcast%20Business/BrandVideo.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/BrandVideo-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2310,6 +2314,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             >
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/CBSystemAnimation_Layout.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/CBSystemAnimation_Layout-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2324,9 +2329,11 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
               viewport={{ once: true }}
             >
-              <img
+              <Image
                 src="/Work/Comcast%20Business/BusinessCards.png"
                 alt="Comcast Business Cards"
+                width={1200}
+                height={800}
                 className="w-full h-auto"
               />
             </motion.div>
@@ -2339,6 +2346,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             >
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/Speed_EndCard.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/Speed_EndCard-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2355,6 +2363,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             >
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/TaggingSequence.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/TaggingSequence-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2387,6 +2396,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               <LazyVideo
                 ref={(el) => { videoRefs.current[0] = el; }}
                 src={`${BLOB_BASE}/Work/Comcast%20Business/MarchPromo.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/MarchPromo-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2427,6 +2437,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             >
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/BillboardMotion.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/BillboardMotion-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2471,6 +2482,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           >
             <LazyVideo
               src={`${BLOB_BASE}/Work/LinkLogistics/SpacetoGrow.mp4`}
+              poster={`${BLOB_BASE}/Work/LinkLogistics/SpacetoGrow-poster.jpg`}
               autoPlay
               muted
               loop
@@ -2532,6 +2544,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             >
               <LazyVideo
                 src={`${BLOB_BASE}/Work/LinkLogistics/Icons.mp4`}
+                poster={`${BLOB_BASE}/Work/LinkLogistics/Icons-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2551,6 +2564,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           >
             <LazyVideo
               src={`${BLOB_BASE}/Work/LinkLogistics/LowerThirds.mp4`}
+              poster={`${BLOB_BASE}/Work/LinkLogistics/LowerThirds-poster.jpg`}
               autoPlay
               muted
               loop
@@ -2586,6 +2600,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             >
               <LazyVideo
                 src={`${BLOB_BASE}/Work/LinkLogistics/Website.mp4`}
+                poster={`${BLOB_BASE}/Work/LinkLogistics/Website-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2802,6 +2817,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           >
             <LazyVideo
               src={`${BLOB_BASE}/Work/Instacart/BoozyBrunch.mp4`}
+              poster={`${BLOB_BASE}/Work/Instacart/BoozyBrunch-poster.jpg`}
               autoPlay
               muted
               loop
@@ -3138,6 +3154,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               <LazyVideo
                 ref={(el) => { videoRefs.current[2] = el; }}
                 src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/HeroVideo.mp4`}
+                poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/HeroVideo-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -3208,6 +3225,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <LazyVideo
               src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/RacingCars.mp4`}
+              poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/RacingCars-poster.jpg`}
               autoPlay
               muted
               loop
@@ -3244,6 +3262,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <LazyVideo
               src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Racket.mp4`}
+              poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Racket-poster.jpg`}
               autoPlay
               muted
               loop
@@ -3416,6 +3435,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <LazyVideo
               src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Stadium.mp4`}
+              poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Stadium-poster.jpg`}
               autoPlay
               muted
               loop
@@ -3522,6 +3542,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <LazyVideo
               src={`${BLOB_BASE}/Work/MeritSystems/DeconstructedIcon.mp4`}
+              poster={`${BLOB_BASE}/Work/MeritSystems/DeconstructedIcon-poster.jpg`}
               autoPlay
               muted
               loop
