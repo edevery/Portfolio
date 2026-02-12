@@ -1,18 +1,10 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useMotionValue, animate, PanInfo } from "framer-motion";
+import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useDragSnap } from "@/lib/use-drag-snap";
 import { TransitionLink } from "@/components/case-study/transition-link";
-
-const CAROUSEL_CONFIG = {
-  stiffness: 550,
-  damping: 42,
-  dragElastic: 0.1,
-  velocityThreshold: 250,
-  sidePadding: 32,
-  gap: 16,
-} as const;
 
 interface CarouselCard {
   title: string;
@@ -29,62 +21,15 @@ interface MobileCarouselProps {
 }
 
 export function MobileCarousel({ cards, className }: MobileCarouselProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [cardWidth, setCardWidth] = useState(280);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const x = useMotionValue(0);
-
-  const updateDimensions = useCallback(() => {
-    if (containerRef.current) {
-      const width = containerRef.current.offsetWidth;
-      setContainerWidth(width);
-      setCardWidth(width - CAROUSEL_CONFIG.sidePadding * 2);
-    }
-  }, []);
-
-  useEffect(() => {
-    updateDimensions();
-
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new ResizeObserver(() => {
-      updateDimensions();
-    });
-    observer.observe(el);
-
-    return () => observer.disconnect();
-  }, [updateDimensions]);
-
-  const totalWidth = cards.length * (cardWidth + CAROUSEL_CONFIG.gap) - CAROUSEL_CONFIG.gap;
-  const maxDrag = Math.max(0, totalWidth - containerWidth + CAROUSEL_CONFIG.sidePadding * 2);
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const currentX = x.get();
-    const velocity = info.velocity.x;
-    const cardWithGap = cardWidth + CAROUSEL_CONFIG.gap;
-
-    let targetIndex = Math.round(-currentX / cardWithGap);
-
-    if (Math.abs(velocity) > CAROUSEL_CONFIG.velocityThreshold) {
-      targetIndex += velocity > 0 ? -1 : 1;
-    }
-
-    targetIndex = Math.max(0, Math.min(cards.length - 1, targetIndex));
-
-    const targetX = -targetIndex * cardWithGap;
-    const clampedX = Math.max(-maxDrag, Math.min(0, targetX));
-
-    animate(x, clampedX, {
-      type: "spring",
-      stiffness: CAROUSEL_CONFIG.stiffness,
-      damping: CAROUSEL_CONFIG.damping,
-    });
-
-    setActiveIndex(targetIndex);
-  };
+  const { containerRef, x, cardWidth, dragProps } = useDragSnap({
+    itemCount: cards.length,
+    gap: 16,
+    padding: 32,
+    velocityThreshold: 250,
+    onIndexChange: setActiveIndex,
+  });
 
   return (
     <div className={cn("w-full flex flex-col", className)}>
@@ -93,15 +38,12 @@ export function MobileCarousel({ cards, className }: MobileCarouselProps) {
           className="flex cursor-grab active:cursor-grabbing"
           style={{
             x,
-            gap: CAROUSEL_CONFIG.gap,
-            paddingLeft: CAROUSEL_CONFIG.sidePadding,
-            paddingRight: CAROUSEL_CONFIG.sidePadding,
+            gap: 16,
+            paddingLeft: 32,
+            paddingRight: 32,
             touchAction: "pan-y pinch-zoom",
           }}
-          drag="x"
-          dragConstraints={{ left: -maxDrag, right: 0 }}
-          onDragEnd={handleDragEnd}
-          dragElastic={CAROUSEL_CONFIG.dragElastic}
+          {...dragProps}
         >
           {cards.map((card) => (
             <MobileCarouselCard

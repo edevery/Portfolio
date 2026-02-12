@@ -112,12 +112,19 @@ const TAP_THRESHOLD_PX = 10; // movement beyond this = swipe, not tap
 const VELOCITY_HISTORY = 0.7; // EMA blend: history weight
 const VELOCITY_INSTANT = 0.3; // EMA blend: instant weight
 
+// Mobile snap-to-card constants
+const SNAP_STIFFNESS = 120;    // spring force — snappy 200-300ms settle
+const SNAP_DAMPING = 16;       // ~0.73 damping ratio — slight overshoot for organic feel
+const SETTLE_VELOCITY = 0.003; // velocity threshold to trigger auto-settle
+const CARD_ANGLE = (Math.PI * 2) / archiveItems.length;
+
 // Shared rotation state for mobile touch / desktop scroll bridge
 interface RotationState {
   angle: number;
   velocity: number;
   isDragging: boolean;
   wasSwiping: boolean;
+  snapTarget: number | null;
 }
 
 // Pre-computed expand button ring points (Phase 3A)
@@ -137,6 +144,7 @@ export function ArchiveSection() {
     velocity: 0,
     isDragging: false,
     wasSwiping: false,
+    snapTarget: null,
   });
 
   // Touch tracking refs (mobile only)
@@ -209,6 +217,7 @@ export function ArchiveSection() {
     rotationRef.current.isDragging = true;
     rotationRef.current.velocity = 0;
     rotationRef.current.wasSwiping = false;
+    rotationRef.current.snapTarget = null;
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
@@ -383,6 +392,7 @@ function Scene({
   rotationRef: React.RefObject<RotationState>;
 }) {
   const ref = useRef<THREE.Group>(null);
+  const frontIndexRef = useRef(0);
   const [hovered, setHovered] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
   const [tapped, setTapped] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>({
     categories: archiveItems[0].categories,
@@ -404,15 +414,53 @@ function Scene({
     if (!ref.current) return;
 
     if (isMobile) {
-      // Mobile: apply momentum decay when not dragging
       const rot = rotationRef.current;
+
       if (!rot.isDragging) {
-        rot.velocity *= FRICTION;
-        rot.angle += rot.velocity;
-        // Stop when velocity is negligible
-        if (Math.abs(rot.velocity) < 0.0001) rot.velocity = 0;
+        if (rot.snapTarget !== null) {
+          // Spring-based snap animation
+          let error = rot.snapTarget - rot.angle;
+          // Shortest-path wrapping
+          while (error > Math.PI) error -= Math.PI * 2;
+          while (error < -Math.PI) error += Math.PI * 2;
+
+          rot.velocity += (SNAP_STIFFNESS * error - SNAP_DAMPING * rot.velocity) * delta;
+          rot.angle += rot.velocity * delta;
+
+          // Settle when both error and velocity are negligible
+          if (Math.abs(error) < 0.0005 && Math.abs(rot.velocity) < 0.0005) {
+            rot.angle = rot.snapTarget;
+            rot.velocity = 0;
+            rot.snapTarget = null;
+          }
+        } else {
+          // Friction decay
+          rot.velocity *= FRICTION;
+          rot.angle += rot.velocity;
+
+          // Auto-settle: when velocity decays enough, snap to nearest card
+          if (Math.abs(rot.velocity) > 0.0001 && Math.abs(rot.velocity) < SETTLE_VELOCITY) {
+            const nearestIndex = Math.round(rot.angle / CARD_ANGLE);
+            rot.snapTarget = nearestIndex * CARD_ANGLE;
+          }
+
+          // Stop when velocity is negligible
+          if (Math.abs(rot.velocity) < 0.0001) rot.velocity = 0;
+        }
       }
+
       ref.current.rotation.y = -rot.angle;
+
+      // Auto-select front card
+      const count = archiveItems.length;
+      const normalized = ((rot.angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const newFrontIndex = Math.round(normalized / CARD_ANGLE) % count;
+      if (newFrontIndex !== frontIndexRef.current) {
+        frontIndexRef.current = newFrontIndex;
+        const item = archiveItems[newFrontIndex];
+        setTapped({ categories: item.categories, index: newFrontIndex, item });
+        setKeyboardIndex(newFrontIndex);
+      }
 
       // Fixed camera on mobile
       state.camera.position.set(0, 4.5, 9);
@@ -442,9 +490,23 @@ function Scene({
   }, []);
 
   const handleTap = useCallback((categories: ArchiveCategory[], index: number, item: ArchiveItem) => {
-    setTapped({ categories, index, item });
-    setKeyboardIndex(index);
-  }, [setKeyboardIndex]);
+    if (index === frontIndexRef.current) {
+      // Front card → expand overlay
+      onExpand(item);
+    } else {
+      // Non-front card → snap carousel to center it
+      const targetAngle = index * CARD_ANGLE;
+      const currentAngle = rotationRef.current.angle;
+      // Find closest equivalent in same revolution
+      const revolutions = Math.round(currentAngle / (Math.PI * 2));
+      let snapTarget = revolutions * Math.PI * 2 + targetAngle;
+      // Pick shortest path (within ±π)
+      if (snapTarget - currentAngle > Math.PI) snapTarget -= Math.PI * 2;
+      if (snapTarget - currentAngle < -Math.PI) snapTarget += Math.PI * 2;
+      rotationRef.current.snapTarget = snapTarget;
+      rotationRef.current.velocity = 0;
+    }
+  }, [onExpand, rotationRef]);
 
   return (
     <group ref={ref} {...props}>
@@ -597,11 +659,12 @@ function ActiveCard({
   const size = isMobile ? 4.5 : FEATURED_SIZE;
 
   useLayoutEffect(() => {
-    if (ref.current) {
-      // Reset zoom on hover change
+    if (ref.current && !isMobile) {
+      // Reset zoom on hover change (desktop only — on mobile with rapid
+      // auto-select this causes constant shrink/grow jank)
       ref.current.scale.set(0.8, 0.8, 0.8);
     }
-  }, [hovered]);
+  }, [hovered, isMobile]);
 
   useFrame((_, delta) => {
     if (!ref.current) return;
