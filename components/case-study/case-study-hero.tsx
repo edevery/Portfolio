@@ -129,6 +129,9 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                   ease: [0.4, 0, 0.2, 1],
                   delay: 0.2,
                 }}
+                onError={(e) => {
+                  (e.currentTarget as HTMLVideoElement).style.display = "none";
+                }}
               />
               {/* Sound toggle button */}
               {item.slug !== "comcast-business" && (

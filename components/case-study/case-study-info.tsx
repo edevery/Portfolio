@@ -11,6 +11,7 @@ import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { TransitionLink } from "@/components/case-study/transition-link";
+import { LazyVideo } from "@/components/ui/lazy-video";
 
 interface CaseStudyInfoProps {
   item: WorkItem;
@@ -47,9 +48,10 @@ function ItAllStartsHereVideo() {
       <div className="relative overflow-hidden rounded-2xl aspect-video bg-black">
         {mounted && (
           <>
-            <video
+            <LazyVideo
               ref={videoRef}
               src={`${BLOB_BASE}/Work/ItAllStartsHere/Video_optimized.mp4`}
+              poster={`${BLOB_BASE}/Work/ItAllStartsHere/Video_optimized-poster.jpg`}
               autoPlay
               muted
               loop
@@ -492,8 +494,9 @@ function MobileVestaReflection() {
 
       {/* Video below card */}
       <div className="mx-4">
-        <video
+        <LazyVideo
           src={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection.mp4`}
+          poster={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection-poster.jpg`}
           autoPlay
           muted
           loop
@@ -511,8 +514,9 @@ function DesktopVestaReflection() {
     <div id="vesta-reflection" className="relative z-20 bg-black pb-24">
       {/* Video - same width as card below (mx-12) */}
       <div className="mx-12 mb-16">
-        <video
+        <LazyVideo
           src={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection.mp4`}
+          poster={`${BLOB_BASE}/Work/Vesta/Vesta/Reflection-poster.jpg`}
           autoPlay
           muted
           loop
@@ -1659,13 +1663,19 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
   // Toggle mute for all videos
   const toggleMute = () => {
-    setIsMuted(!isMuted);
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
     videoRefs.current.forEach((video) => {
-      if (video) {
-        video.muted = !isMuted;
-      }
+      if (video) video.muted = newMuted;
     });
   };
+
+  // Sync muted state to video elements (handles hydration + state changes)
+  useEffect(() => {
+    videoRefs.current.forEach((video) => {
+      if (video) video.muted = isMuted;
+    });
+  }, [isMuted]);
 
 
   // React Spring for 3D tilt effect on logos
@@ -2032,11 +2042,12 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         <div className="px-6 md:px-12">
           <ContainerScroll>
             <div className="relative">
-              <video
+              <LazyVideo
                 ref={(el) => { videoRefs.current[1] = el; }}
                 src={`${BLOB_BASE}/Work/Comcast%20Business/BrandVideo.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/BrandVideo-poster.jpg`}
                 autoPlay
-                muted={isMuted}
+                muted
                 loop
                 playsInline
                 className="w-full h-auto rounded-2xl"
@@ -2107,8 +2118,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
               viewport={{ once: true }}
             >
-              <video
+              <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/CBSystemAnimation_Layout.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/CBSystemAnimation_Layout-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2123,9 +2135,11 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
               viewport={{ once: true }}
             >
-              <img
+              <Image
                 src="/Work/Comcast%20Business/BusinessCards.png"
                 alt="Comcast Business Cards"
+                width={1200}
+                height={800}
                 className="w-full h-auto"
               />
             </motion.div>
@@ -2136,8 +2150,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
               viewport={{ once: true }}
             >
-              <video
+              <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/Speed_EndCard.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/Speed_EndCard-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2152,8 +2167,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <video
+              <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/TaggingSequence.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/TaggingSequence-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2183,11 +2199,12 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <video
+              <LazyVideo
                 ref={(el) => { videoRefs.current[0] = el; }}
                 src={`${BLOB_BASE}/Work/Comcast%20Business/MarchPromo.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/MarchPromo-poster.jpg`}
                 autoPlay
-                muted={isMuted}
+                muted
                 loop
                 playsInline
                 className="w-full h-auto"
@@ -2224,8 +2241,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.5 }}
               viewport={{ once: true }}
             >
-              <video
+              <LazyVideo
                 src={`${BLOB_BASE}/Work/Comcast%20Business/BillboardMotion.mp4`}
+                poster={`${BLOB_BASE}/Work/Comcast%20Business/BillboardMotion-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2268,8 +2286,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
             viewport={{ once: true }}
           >
-            <video
+            <LazyVideo
               src={`${BLOB_BASE}/Work/LinkLogistics/SpacetoGrow.mp4`}
+              poster={`${BLOB_BASE}/Work/LinkLogistics/SpacetoGrow-poster.jpg`}
               autoPlay
               muted
               loop
@@ -2329,8 +2348,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
               viewport={{ once: true }}
             >
-              <video
+              <LazyVideo
                 src={`${BLOB_BASE}/Work/LinkLogistics/Icons.mp4`}
+                poster={`${BLOB_BASE}/Work/LinkLogistics/Icons-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2348,8 +2368,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
             viewport={{ once: true }}
           >
-            <video
+            <LazyVideo
               src={`${BLOB_BASE}/Work/LinkLogistics/LowerThirds.mp4`}
+              poster={`${BLOB_BASE}/Work/LinkLogistics/LowerThirds-poster.jpg`}
               autoPlay
               muted
               loop
@@ -2383,8 +2404,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1], delay: 0.1 }}
               viewport={{ once: true }}
             >
-              <video
+              <LazyVideo
                 src={`${BLOB_BASE}/Work/LinkLogistics/Website.mp4`}
+                poster={`${BLOB_BASE}/Work/LinkLogistics/Website-poster.jpg`}
                 autoPlay
                 muted
                 loop
@@ -2599,8 +2621,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
             viewport={{ once: true }}
           >
-            <video
+            <LazyVideo
               src={`${BLOB_BASE}/Work/Instacart/BoozyBrunch.mp4`}
+              poster={`${BLOB_BASE}/Work/Instacart/BoozyBrunch-poster.jpg`}
               autoPlay
               muted
               loop
@@ -2781,7 +2804,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         <div className="px-6 md:mx-12">
           <ContainerScroll>
             <Image
-              src="/work/BMW/BMW Championship/X3.png"
+              src="/Work/BMW/BMW Championship/X3.png"
               alt="BMW X3"
               width={1920}
               height={1080}
@@ -2799,7 +2822,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/Trophy1.png"
+                src="/Work/BMW/BMW Championship/Trophy1.png"
                 alt="BMW Championship Trophy"
                 width={1200}
                 height={800}
@@ -2809,7 +2832,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/course1.png"
+                src="/Work/BMW/BMW Championship/course1.png"
                 alt="Castle Pines Golf Course"
                 width={1200}
                 height={800}
@@ -2822,7 +2845,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* i4 full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <Image
-              src="/work/BMW/BMW Championship/i4.png"
+              src="/Work/BMW/BMW Championship/i4.png"
               alt="BMW i4"
               width={1920}
               height={1080}
@@ -2835,7 +2858,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/Keegan.png"
+                src="/Work/BMW/BMW Championship/Keegan.png"
                 alt="Keegan Bradley"
                 width={1200}
                 height={800}
@@ -2845,7 +2868,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/Trophy2.png"
+                src="/Work/BMW/BMW Championship/Trophy2.png"
                 alt="BMW Championship Trophy"
                 width={1200}
                 height={800}
@@ -2858,7 +2881,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* course2 full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <Image
-              src="/work/BMW/BMW Championship/UDM.png"
+              src="/Work/BMW/BMW Championship/UDM.png"
               alt="BMW Championship UDM"
               width={1920}
               height={1080}
@@ -2871,7 +2894,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/Trophy3.png"
+                src="/Work/BMW/BMW Championship/Trophy3.png"
                 alt="BMW Championship Trophy"
                 width={1200}
                 height={800}
@@ -2881,7 +2904,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/Backwall.png"
+                src="/Work/BMW/BMW Championship/Backwall.png"
                 alt="BMW Championship Backwall"
                 width={1200}
                 height={800}
@@ -2894,7 +2917,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           {/* Rory full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
             <Image
-              src="/work/BMW/BMW Championship/Rory.png"
+              src="/Work/BMW/BMW Championship/Rory.png"
               alt="Rory McIlroy"
               width={1920}
               height={1080}
@@ -2907,7 +2930,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/flag.png"
+                src="/Work/BMW/BMW Championship/flag.png"
                 alt="BMW Championship Flag"
                 width={1200}
                 height={800}
@@ -2917,7 +2940,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
             <div className="relative overflow-hidden rounded-2xl">
               <Image
-                src="/work/BMW/BMW Championship/Trophy4.png"
+                src="/Work/BMW/BMW Championship/Trophy4.png"
                 alt="BMW Championship Trophy"
                 width={1200}
                 height={800}
@@ -2934,11 +2957,12 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         <div className="px-6 md:mx-12">
           <ContainerScroll>
             <div className="relative">
-              <video
+              <LazyVideo
                 ref={(el) => { videoRefs.current[2] = el; }}
                 src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/HeroVideo.mp4`}
+                poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/HeroVideo-poster.jpg`}
                 autoPlay
-                muted={isMuted}
+                muted
                 loop
                 playsInline
                 className="w-full h-auto rounded-2xl"
@@ -3005,8 +3029,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
           {/* RacingCars video full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
-            <video
+            <LazyVideo
               src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/RacingCars.mp4`}
+              poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/RacingCars-poster.jpg`}
               autoPlay
               muted
               loop
@@ -3041,8 +3066,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
           {/* Racket video full width */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
-            <video
+            <LazyVideo
               src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Racket.mp4`}
+              poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Racket-poster.jpg`}
               autoPlay
               muted
               loop
@@ -3213,8 +3239,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
           {/* Stadium video */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
-            <video
-              src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Stadium.mov`}
+            <LazyVideo
+              src={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Stadium.mp4`}
+              poster={`${BLOB_BASE}/Work/BMW/BMW%20Tennis/Stadium-poster.jpg`}
               autoPlay
               muted
               loop
@@ -3319,8 +3346,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
           {/* DeconstructedIcon video */}
           <div className="relative overflow-hidden rounded-2xl mt-4 md:mt-6">
-            <video
+            <LazyVideo
               src={`${BLOB_BASE}/Work/MeritSystems/DeconstructedIcon.mp4`}
+              poster={`${BLOB_BASE}/Work/MeritSystems/DeconstructedIcon-poster.jpg`}
               autoPlay
               muted
               loop
