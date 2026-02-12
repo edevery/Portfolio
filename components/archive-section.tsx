@@ -107,7 +107,7 @@ const FEATURED_SIZE = 6.5; // larger featured card for hero presence
 
 export function ArchiveSection() {
   const isMobile = useIsMobile();
-  const [keyboardIndex, setKeyboardIndex] = useState<number | null>(null);
+  const [keyboardIndex, setKeyboardIndex] = useState<number | null>(0);
   const [expandedItem, setExpandedItem] = useState<ArchiveItem | null>(null);
 
   useEffect(() => {
@@ -267,8 +267,13 @@ function Scene({
 }) {
   const ref = useRef<THREE.Group>(null);
   const scroll = useScroll();
+  const prevOffset = useRef(0);
   const [hovered, setHovered] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
-  const [tapped, setTapped] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>(null);
+  const [tapped, setTapped] = useState<{ categories: ArchiveCategory[]; index: number; item: ArchiveItem } | null>({
+    categories: archiveItems[0].categories,
+    index: 0,
+    item: archiveItems[0],
+  });
 
   // Determine what to show in the featured card
   // Mobile: only show on tap; Desktop: hover takes priority over keyboard
@@ -282,7 +287,13 @@ function Scene({
 
   useFrame((state, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.y = -scroll.offset * (Math.PI * 2);
+    // Accumulate rotation from frame-to-frame offset delta
+    // This handles the infinite scroll wrap-around smoothly
+    let d = scroll.offset - prevOffset.current;
+    if (d > 0.5) d -= 1;
+    if (d < -0.5) d += 1;
+    prevOffset.current = scroll.offset;
+    ref.current.rotation.y -= d * (Math.PI * 2);
     state.events.update?.();
     easing.damp3(
       state.camera.position,
