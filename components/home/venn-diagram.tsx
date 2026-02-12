@@ -50,11 +50,11 @@ const M_CENTER_Y = (M_FINAL[0].cy + M_FINAL[1].cy + M_FINAL[2].cy) / 3;
 const LABELS = ["Brand", "Product", "Tech"];
 const ACCENT = "#85c3ed";
 
-// ─── Scroll mapping ranges (within 0-1 scrollYProgress) ─────────────
-const CONVERGE_START = 0.15;
-const CONVERGE_END = 0.5;
-const FILL_START = 0.52;
-const FILL_END = 0.62;
+// ─── Scroll mapping ranges (relative to when Venn becomes visible) ────
+const CONVERGE_START = 0.02;
+const CONVERGE_END = 0.15;
+const FILL_START = 0.17;
+const FILL_END = 0.23;
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function lerp(a: number, b: number, t: number) {
@@ -88,12 +88,24 @@ export function VennDiagram({
   onFillComplete,
 }: VennDiagramProps) {
   const fillCompletedRef = useRef(false);
+  const baseProgressRef = useRef<number | null>(null);
+
+  // Record scroll progress the first time the Venn becomes visible so the
+  // entire converge → fill animation plays out from that point onward.
+  if (visible && baseProgressRef.current === null) {
+    baseProgressRef.current = progress;
+  }
+
+  const effectiveProgress =
+    baseProgressRef.current !== null
+      ? Math.max(0, progress - baseProgressRef.current)
+      : 0;
 
   const t = easeInOutCubic(
-    clamp((progress - CONVERGE_START) / (CONVERGE_END - CONVERGE_START), 0, 1),
+    clamp((effectiveProgress - CONVERGE_START) / (CONVERGE_END - CONVERGE_START), 0, 1),
   );
   const f = easeOutCubic(
-    clamp((progress - FILL_START) / (FILL_END - FILL_START), 0, 1),
+    clamp((effectiveProgress - FILL_START) / (FILL_END - FILL_START), 0, 1),
   );
 
   // Fire onFillComplete once when fill reaches 1
