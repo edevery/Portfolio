@@ -64,26 +64,22 @@ export function IntersectionSection({
       ref={containerRef}
       className="relative bg-black"
       style={{
-        height: !hydrated ? "250vh" : isMobile ? "auto" : "250vh",
+        height: "250vh",
         opacity: hydrated ? 1 : 0,
       }}
     >
       <div
-        className={
-          isMobile
-            ? "relative bg-black px-6 py-16"
-            : "sticky top-0 h-screen flex flex-col items-center justify-center px-6"
-        }
+        className="sticky top-0 h-screen flex flex-col items-center justify-center px-6"
       >
         {/* Ballpit canvas — behind the Venn content */}
         {vennFillDone && (
           <div className="absolute inset-0 z-0">
             <Ballpit
-              count={150}
+              count={isMobile ? 80 : 150}
               gravity={1.8}
-              minSize={0.4}
-              maxSize={0.7}
-              size0={0.3}
+              minSize={isMobile ? 0.3 : 0.4}
+              maxSize={isMobile ? 0.5 : 0.7}
+              size0={isMobile ? 0.2 : 0.3}
               lightIntensity={100}
               friction={0.956}
               wallBounce={0.95}
