@@ -73,7 +73,7 @@ export function IntersectionSection({
       >
         {/* Ballpit canvas — behind the Venn content */}
         {vennFillDone && (
-          <div className={`absolute inset-0 z-0 ${isMobile ? 'pointer-events-none' : ''}`}>
+          <div className="absolute inset-0 z-0">
             <Ballpit
               count={isMobile ? 80 : 150}
               gravity={1.8}

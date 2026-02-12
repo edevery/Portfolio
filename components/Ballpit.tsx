@@ -564,9 +564,7 @@ interface PointerData {
 
 const pointerMap = new Map<HTMLElement, PointerData>();
 
-let globalTouchActive = false;
-
-function createPointerData(options: Partial<PointerData> & { domElement: HTMLElement; followCursor?: boolean }): PointerData {
+function createPointerData(options: Partial<PointerData> & { domElement: HTMLElement }): PointerData {
   const defaultData: PointerData = {
     position: new Vector2(),
     nPosition: new Vector2(),
@@ -584,22 +582,10 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
       document.body.addEventListener('pointermove', onPointerMove as EventListener);
       document.body.addEventListener('pointerleave', onPointerLeave as EventListener);
       document.body.addEventListener('click', onPointerClick as EventListener);
-
-      if (options.followCursor !== false) {
-        document.body.addEventListener('touchstart', onTouchStart as EventListener, {
-          passive: false
-        });
-        document.body.addEventListener('touchmove', onTouchMove as EventListener, {
-          passive: false
-        });
-        document.body.addEventListener('touchend', onTouchEnd as EventListener, {
-          passive: false
-        });
-        document.body.addEventListener('touchcancel', onTouchEnd as EventListener, {
-          passive: false
-        });
-        globalTouchActive = true;
-      }
+      document.body.addEventListener('touchstart', onTouchStart as EventListener);
+      document.body.addEventListener('touchmove', onTouchMove as EventListener);
+      document.body.addEventListener('touchend', onTouchEnd as EventListener);
+      document.body.addEventListener('touchcancel', onTouchEnd as EventListener);
       globalPointerActive = true;
     }
   }
@@ -609,14 +595,10 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
       document.body.removeEventListener('pointermove', onPointerMove as EventListener);
       document.body.removeEventListener('pointerleave', onPointerLeave as EventListener);
       document.body.removeEventListener('click', onPointerClick as EventListener);
-
-      if (globalTouchActive) {
-        document.body.removeEventListener('touchstart', onTouchStart as EventListener);
-        document.body.removeEventListener('touchmove', onTouchMove as EventListener);
-        document.body.removeEventListener('touchend', onTouchEnd as EventListener);
-        document.body.removeEventListener('touchcancel', onTouchEnd as EventListener);
-        globalTouchActive = false;
-      }
+      document.body.removeEventListener('touchstart', onTouchStart as EventListener);
+      document.body.removeEventListener('touchmove', onTouchMove as EventListener);
+      document.body.removeEventListener('touchend', onTouchEnd as EventListener);
+      document.body.removeEventListener('touchcancel', onTouchEnd as EventListener);
       globalPointerActive = false;
     }
   };
@@ -648,11 +630,9 @@ function processPointerInteraction() {
 function onTouchStart(e: TouchEvent) {
   if (e.touches.length > 0) {
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
-    let consumed = false;
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();
       if (isInside(rect)) {
-        consumed = true;
         data.touching = true;
         updatePointerData(data, rect);
         if (!data.hover) {
@@ -662,19 +642,16 @@ function onTouchStart(e: TouchEvent) {
         data.onMove(data);
       }
     }
-    if (consumed) e.preventDefault();
   }
 }
 
 function onTouchMove(e: TouchEvent) {
   if (e.touches.length > 0) {
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
-    let consumed = false;
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();
       updatePointerData(data, rect);
       if (isInside(rect)) {
-        consumed = true;
         if (!data.hover) {
           data.hover = true;
           data.touching = true;
@@ -685,7 +662,6 @@ function onTouchMove(e: TouchEvent) {
         data.onMove(data);
       }
     }
-    if (consumed) e.preventDefault();
   }
 }
 
@@ -809,7 +785,7 @@ class Z extends InstancedMesh {
     for (let idx = 0; idx < this.count; idx++) {
       U.position.fromArray(this.physics.positionData, 3 * idx);
       if (idx === 0) {
-        U.scale.setScalar(0);  // always invisible — collision body only
+        U.scale.setScalar(0); // always invisible — collision body only
       } else {
         U.scale.setScalar(this.physics.sizeData[idx]);
       }
@@ -857,7 +833,6 @@ function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallp
 
   const pointerData = createPointerData({
     domElement: canvas,
-    followCursor: config.followCursor,
     onMove() {
       raycaster.setFromCamera(pointerData.nPosition, threeInstance.camera);
       threeInstance.camera.getWorldDirection(plane.normal);
