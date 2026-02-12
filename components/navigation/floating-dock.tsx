@@ -9,7 +9,7 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const FloatingDock = ({
   items,
@@ -40,15 +40,29 @@ const FloatingDockMobile = ({
   onNavigate?: (href: string) => void;
 }) => {
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent | TouchEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", handleClick);
+    return () => document.removeEventListener("pointerdown", handleClick);
+  }, [open]);
+
   return (
-    <div className={cn("fixed bottom-8 left-1/2 -translate-x-1/2 md:hidden z-[200]", className)}>
+    <div ref={containerRef} className={cn("fixed bottom-8 left-1/2 -translate-x-1/2 md:hidden z-[200]", className)}>
       <div className="flex flex-col items-center">
       {/* Menu items - centered above button */}
       <AnimatePresence>
         {open && (
           <motion.div
             layoutId="nav"
-            className="flex flex-col items-center gap-2 mb-4"
+            className="flex flex-col items-stretch gap-2 mb-4 w-36"
           >
             {items.map((item, idx) => (
               <motion.div
@@ -72,7 +86,7 @@ const FloatingDockMobile = ({
                   key={item.title}
                   onClick={() => onNavigate?.(item.href)}
                   className={cn(
-                    "flex h-12 items-center justify-center rounded-full px-10 transition-colors duration-300 backdrop-blur-xl border border-white/20",
+                    "flex h-12 items-center justify-center rounded-full transition-colors duration-300 backdrop-blur-xl border border-white/20",
                     item.isActive ? "bg-white/90 text-[#171717]" : "bg-white/10 text-white/90"
                   )}
                 >
