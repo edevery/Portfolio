@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Script from "next/script";
 import { getWorkItemBySlug, getAllSlugs } from "@/lib/work-data";
 import { CaseStudyContent } from "./case-study-content";
 
@@ -28,7 +27,6 @@ export async function generateMetadata({ params }: PageProps) {
     openGraph: {
       title: `${item.title} — Emily Devery`,
       description: item.description,
-      images: [{ url: item.image, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image" as const,
@@ -62,8 +60,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   return (
     <>
-      <Script
-        id={`jsonld-${slug}`}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />

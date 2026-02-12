@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { Navbar } from "@/components/navigation/navbar";
 import { DateDisplay } from "@/components/ui/date-display";
@@ -68,8 +67,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
-        <Script
-          id="person-jsonld"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
