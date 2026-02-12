@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, useMotionValue, PanInfo } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useDragSnap } from "@/lib/use-drag-snap";
 import { useSpring, animated } from "@react-spring/web";
 import Image from "next/image";
 import { workItems, type WorkItem } from "@/lib/work-data";
@@ -83,11 +84,6 @@ function ItAllStartsHereVideo() {
 
 // Vesta Onboarding Content Component with staggered entrance animations
 function VestaOnboardingContent() {
-  const [isMobile, setIsMobile] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-
   const columns = [
     {
       title: "Relationship Context",
@@ -103,44 +99,10 @@ function VestaOnboardingContent() {
     },
   ];
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
-  const cardWidth = containerWidth * 0.8; // 80% width to show glimpse of next card
-  const gap = 12;
-  const totalWidth = columns.length * (cardWidth + gap) - gap;
-  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const currentX = x.get();
-    const velocity = info.velocity.x;
-
-    const cardWithGap = cardWidth + gap;
-    let targetIndex = Math.round(-currentX / cardWithGap);
-
-    if (Math.abs(velocity) > 500) {
-      targetIndex += velocity > 0 ? -1 : 1;
-    }
-
-    targetIndex = Math.max(0, Math.min(columns.length - 1, targetIndex));
-    const targetX = -targetIndex * cardWithGap;
-    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
-  };
+  const { containerRef, x, cardWidth, dragProps } = useDragSnap({
+    itemCount: columns.length,
+    cardWidthFraction: 0.8,
+  });
 
   return (
     <div className="relative z-10 bg-black">
@@ -214,11 +176,8 @@ function VestaOnboardingContent() {
         <div ref={containerRef} className="overflow-hidden">
           <motion.div
             className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
-            style={{ x }}
-            drag="x"
-            dragConstraints={{ left: -maxDrag, right: 0 }}
-            onDragEnd={handleDragEnd}
-            dragElastic={0.1}
+            style={{ x, touchAction: "pan-y pinch-zoom" }}
+            {...dragProps}
           >
             {columns.map((column) => (
               <motion.div
@@ -280,41 +239,10 @@ const mobileBrandElements = [
 
 // Mobile Vesta Brand Elements - swipe carousel
 function MobileVestaBrandElements() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const x = useMotionValue(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
-  const cardWidth = containerWidth * 0.85;
-  const gap = 12;
-  const totalWidth = mobileBrandElements.length * (cardWidth + gap) - gap;
-  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const currentX = x.get();
-    const velocity = info.velocity.x;
-
-    const cardWithGap = cardWidth + gap;
-    let targetIndex = Math.round(-currentX / cardWithGap);
-
-    if (Math.abs(velocity) > 500) {
-      targetIndex += velocity > 0 ? -1 : 1;
-    }
-
-    targetIndex = Math.max(0, Math.min(mobileBrandElements.length - 1, targetIndex));
-    const targetX = -targetIndex * cardWithGap;
-    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
-  };
+  const { containerRef, x, cardWidth, dragProps } = useDragSnap({
+    itemCount: mobileBrandElements.length,
+    cardWidthFraction: 0.85,
+  });
 
   return (
     <div className="bg-black pt-8 pb-0">
@@ -322,11 +250,8 @@ function MobileVestaBrandElements() {
       <div ref={containerRef} className="overflow-hidden">
         <motion.div
           className="flex gap-3 px-4 cursor-grab active:cursor-grabbing items-stretch"
-          style={{ x }}
-          drag="x"
-          dragConstraints={{ left: -maxDrag, right: 0 }}
-          onDragEnd={handleDragEnd}
-          dragElastic={0.1}
+          style={{ x, touchAction: "pan-y pinch-zoom" }}
+          {...dragProps}
         >
           {mobileBrandElements.map((item) => (
             <motion.div
@@ -653,52 +578,18 @@ interface MobileSectionsCarouselProps {
 }
 
 function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarouselProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const x = useMotionValue(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
-  const cardWidth = containerWidth * 0.85;
-  const gap = 12;
-  const totalWidth = item.sections.length * (cardWidth + gap) - gap;
-  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const currentX = x.get();
-    const velocity = info.velocity.x;
-
-    const cardWithGap = cardWidth + gap;
-    let targetIndex = Math.round(-currentX / cardWithGap);
-
-    if (Math.abs(velocity) > 500) {
-      targetIndex += velocity > 0 ? -1 : 1;
-    }
-
-    targetIndex = Math.max(0, Math.min(item.sections.length - 1, targetIndex));
-    const targetX = -targetIndex * cardWithGap;
-    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
-  };
+  const { containerRef, x, cardWidth, dragProps } = useDragSnap({
+    itemCount: item.sections.length,
+    cardWidthFraction: 0.85,
+  });
 
   return (
     <div className="block md:hidden bg-black py-8">
       <div ref={containerRef} className="overflow-hidden">
         <motion.div
           className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
-          style={{ x }}
-          drag="x"
-          dragConstraints={{ left: -maxDrag, right: 0 }}
-          onDragEnd={handleDragEnd}
-          dragElastic={0.1}
+          style={{ x, touchAction: "pan-y pinch-zoom" }}
+          {...dragProps}
         >
           {item.sections.map((section) => {
             const content = section.content || "";
@@ -1236,41 +1127,10 @@ const personaImages = [
 
 // Mobile Guiding Personas - simple swipe carousel
 function MobileVestaGuidingPersonas() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const x = useMotionValue(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
-  const cardWidth = containerWidth * 0.85;
-  const gap = 12;
-  const totalWidth = personaImages.length * (cardWidth + gap) - gap;
-  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const currentX = x.get();
-    const velocity = info.velocity.x;
-
-    const cardWithGap = cardWidth + gap;
-    let targetIndex = Math.round(-currentX / cardWithGap);
-
-    if (Math.abs(velocity) > 500) {
-      targetIndex += velocity > 0 ? -1 : 1;
-    }
-
-    targetIndex = Math.max(0, Math.min(personaImages.length - 1, targetIndex));
-    const targetX = -targetIndex * cardWithGap;
-    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
-  };
+  const { containerRef, x, cardWidth, dragProps } = useDragSnap({
+    itemCount: personaImages.length,
+    cardWidthFraction: 0.85,
+  });
 
   return (
     <div className="relative z-20 bg-black px-4 pt-8 pb-0">
@@ -1302,11 +1162,8 @@ function MobileVestaGuidingPersonas() {
       <div ref={containerRef} className="overflow-hidden">
         <motion.div
           className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
-          style={{ x }}
-          drag="x"
-          dragConstraints={{ left: -maxDrag, right: 0 }}
-          onDragEnd={handleDragEnd}
-          dragElastic={0.1}
+          style={{ x, touchAction: "pan-y pinch-zoom" }}
+          {...dragProps}
         >
           {personaImages.map((image, index) => (
             <motion.div
@@ -1517,57 +1374,10 @@ const brandSymbols = [
 
 // Mobile Brand System - carousel with switching icon
 function MobileVestaBrandSystem() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const x = useMotionValue(0);
-
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    };
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
-  const cardWidth = containerWidth * 0.8;
-  const gap = 12;
-  const totalWidth = brandSymbols.length * (cardWidth + gap) - gap;
-  const maxDrag = Math.max(0, totalWidth - containerWidth + 32);
-
-  // Update active index during drag
-  const updateActiveIndex = (currentX: number) => {
-    const cardWithGap = cardWidth + gap;
-    if (cardWithGap > 0) {
-      const newIndex = Math.round(-currentX / cardWithGap);
-      const clampedIndex = Math.max(0, Math.min(brandSymbols.length - 1, newIndex));
-      setActiveIndex(clampedIndex);
-    }
-  };
-
-  const handleDrag = () => {
-    updateActiveIndex(x.get());
-  };
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const currentX = x.get();
-    const velocity = info.velocity.x;
-
-    const cardWithGap = cardWidth + gap;
-    let targetIndex = Math.round(-currentX / cardWithGap);
-
-    if (Math.abs(velocity) > 500) {
-      targetIndex += velocity > 0 ? -1 : 1;
-    }
-
-    targetIndex = Math.max(0, Math.min(brandSymbols.length - 1, targetIndex));
-    const targetX = -targetIndex * cardWithGap;
-    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
-    setActiveIndex(targetIndex);
-  };
+  const { containerRef, x, cardWidth, dragProps } = useDragSnap({
+    itemCount: brandSymbols.length,
+    cardWidthFraction: 0.8,
+  });
 
   return (
     <div className="relative z-10 bg-black px-4 pt-8 pb-0">
@@ -1599,12 +1409,8 @@ function MobileVestaBrandSystem() {
       <div ref={containerRef} className="overflow-hidden">
         <motion.div
           className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
-          style={{ x }}
-          drag="x"
-          dragConstraints={{ left: -maxDrag, right: 0 }}
-          onDrag={handleDrag}
-          onDragEnd={handleDragEnd}
-          dragElastic={0.1}
+          style={{ x, touchAction: "pan-y pinch-zoom" }}
+          {...dragProps}
         >
           {brandSymbols.map((symbol) => (
             <motion.div

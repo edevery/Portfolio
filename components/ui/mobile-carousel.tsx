@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import { motion, useMotionValue, useSpring, PanInfo } from "framer-motion";
+import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useDragSnap } from "@/lib/use-drag-snap";
 import { TransitionLink } from "@/components/case-study/transition-link";
 
 interface CarouselCard {
@@ -20,71 +21,52 @@ interface MobileCarouselProps {
 }
 
 export function MobileCarousel({ cards, className }: MobileCarouselProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [cardWidth, setCardWidth] = useState(280);
-  const gap = 16;
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const x = useMotionValue(0);
-  const springX = useSpring(x, { damping: 30, stiffness: 300 });
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const width = containerRef.current.offsetWidth;
-        setContainerWidth(width);
-        // Card width is container width minus padding (32px each side)
-        setCardWidth(width - 64);
-      }
-    };
-
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
-
-  const totalWidth = cards.length * (cardWidth + gap) - gap;
-  const maxDrag = Math.max(0, totalWidth - containerWidth + 64);
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const currentX = x.get();
-    const velocity = info.velocity.x;
-
-    // Calculate which card we should snap to
-    const cardWithGap = cardWidth + gap;
-    let targetIndex = Math.round(-currentX / cardWithGap);
-
-    // Add velocity-based adjustment
-    if (Math.abs(velocity) > 500) {
-      targetIndex += velocity > 0 ? -1 : 1;
-    }
-
-    // Clamp to valid range
-    targetIndex = Math.max(0, Math.min(cards.length - 1, targetIndex));
-
-    // Snap to card
-    const targetX = -targetIndex * cardWithGap;
-    x.set(Math.max(-maxDrag, Math.min(0, targetX)));
-  };
+  const { containerRef, x, cardWidth, dragProps } = useDragSnap({
+    itemCount: cards.length,
+    gap: 16,
+    padding: 32,
+    velocityThreshold: 250,
+    onIndexChange: setActiveIndex,
+  });
 
   return (
-    <div ref={containerRef} className={cn("overflow-hidden", className)}>
-      <motion.div
-        className="flex gap-4 px-8 cursor-grab active:cursor-grabbing"
-        style={{ x: springX }}
-        drag="x"
-        dragConstraints={{ left: -maxDrag, right: 0 }}
-        onDragEnd={handleDragEnd}
-        dragElastic={0.1}
-      >
-        {cards.map((card) => (
-          <MobileCarouselCard
+    <div className={cn("w-full flex flex-col", className)}>
+      <div ref={containerRef} className="overflow-hidden flex-1 flex items-center">
+        <motion.div
+          className="flex cursor-grab active:cursor-grabbing"
+          style={{
+            x,
+            gap: 16,
+            paddingLeft: 32,
+            paddingRight: 32,
+            touchAction: "pan-y pinch-zoom",
+          }}
+          {...dragProps}
+        >
+          {cards.map((card) => (
+            <MobileCarouselCard
+              key={card.slug}
+              card={card}
+              width={cardWidth}
+            />
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Pagination dots */}
+      <div className="flex justify-center gap-2 py-4">
+        {cards.map((card, i) => (
+          <span
             key={card.slug}
-            card={card}
-            width={cardWidth}
+            className={cn(
+              "w-1.5 h-1.5 rounded-full transition-colors",
+              i === activeIndex ? "bg-white" : "bg-white/30"
+            )}
           />
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
