@@ -61,7 +61,7 @@ export function MobileCarousel({ cards, className }: MobileCarouselProps) {
           <span
             key={card.slug}
             className={cn(
-              "w-1.5 h-1.5 rounded-full transition-colors",
+              "w-1.5 h-1.5 rounded-full transition-colors duration-200",
               i === activeIndex ? "bg-white" : "bg-white/30"
             )}
           />
@@ -91,7 +91,6 @@ function MobileCarouselCard({ card, width }: MobileCarouselCardProps) {
   };
 
   const handlePointerUp = () => {
-    // Reset dragging state after a short delay to allow click to fire
     setTimeout(() => setIsDragging(false), 0);
   };
 
