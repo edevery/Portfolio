@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/Assets/OGTag.png",
+        url: `${siteUrl}/Assets/OGTag.png`,
         width: 1200,
         height: 630,
         alt: "edevery. — Emily Devery, Designer",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     creator: "@emdevvv",
-    images: ["/Assets/OGTag.png"],
+    images: [`${siteUrl}/Assets/OGTag.png`],
   },
   alternates: {
     canonical: "/",
