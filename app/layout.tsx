@@ -28,7 +28,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "edevery.",
-  description: "Emily Devery - Designer & Art Director",
+  description: "Emily Devery — Designer",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -43,14 +43,23 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "edevery.",
-    description: "Emily Devery - Designer & Art Director",
+    description: "Emily Devery — Designer",
     siteName: "edevery.",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/Assets/OGTag.png",
+        width: 1200,
+        height: 630,
+        alt: "edevery. — Emily Devery, Designer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     creator: "@emdevvv",
+    images: ["/Assets/OGTag.png"],
   },
   alternates: {
     canonical: "/",
