@@ -44,7 +44,8 @@ export function WorkSection({ initialCategory = "all" }: WorkSectionProps = {}) 
       {/* Mobile Carousel - visible only on mobile */}
       <div className="md:hidden flex items-center flex-1">
         <MobileCarousel
-          cards={workItems.map((item) => ({
+          key={activeCategory}
+          cards={filteredItems.map((item) => ({
             title: item.title,
             description: item.description,
             image: item.mobileImage || item.image,

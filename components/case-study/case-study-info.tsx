@@ -2227,7 +2227,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
-            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
+            <div className="col-span-2 md:col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Runway/RivaCloseUp.mp4`}
                 autoPlay
@@ -2237,7 +2237,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
-            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
+            <div className="col-span-2 md:col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Runway/Boat.mp4`}
                 autoPlay
@@ -2247,7 +2247,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
-            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
+            <div className="col-span-2 md:col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Runway/300SL.mp4`}
                 autoPlay

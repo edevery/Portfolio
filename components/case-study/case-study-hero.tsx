@@ -78,11 +78,15 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
   const topInset = 58;
   const radius = isMobile ? 16 : 24;
 
+  // Preserve landscape aspect on mobile for these case studies (text would otherwise be cropped)
+  const preserveAspectOnMobile = ["loewe-runner", "transformer-fest", "poppyland"].includes(item.slug);
+  const objectFitClass = isMobile && preserveAspectOnMobile ? "object-contain" : "object-cover";
+
   return (
     <div className="relative h-screen w-full bg-black">
       {/* Hero container - animates inset from edges */}
       <motion.div
-        className="absolute overflow-hidden"
+        className="absolute overflow-hidden bg-black"
         initial={{
           top: 0,
           left: 0,
@@ -117,11 +121,13 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                         ? `${BLOB_BASE}/Work/ItAllStartsHere/DesktopHero.MP4`
                         : item.heroMedia.src
                 }
+                poster={item.heroMedia.poster}
+                preload="auto"
                 autoPlay
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover"
+                className={`absolute inset-0 w-full h-full ${objectFitClass}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
@@ -171,7 +177,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                 : item.heroMedia.src
             }
             alt={item.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            className={`absolute inset-0 w-full h-full ${objectFitClass}`}
             style={
               isMobile && item.slug === "zaxbys"
                 ? { objectPosition: "48% center" }

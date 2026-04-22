@@ -15,7 +15,7 @@ interface LazyVideoProps
 }
 
 export const LazyVideo = forwardRef<HTMLVideoElement, LazyVideoProps>(
-  function LazyVideo({ src, rootMargin = "200px", poster, ...props }, ref) {
+  function LazyVideo({ src, rootMargin = "800px", poster, ...props }, ref) {
     const innerRef = useRef<HTMLVideoElement>(null);
     const [activeSrc, setActiveSrc] = useState<string | undefined>(undefined);
     const [hasError, setHasError] = useState(false);
