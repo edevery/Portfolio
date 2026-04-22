@@ -1741,7 +1741,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
   };
 
   return (
-    <section className={`relative z-10 bg-black ${item.hideHero ? "pt-[58px]" : ""}`}>
+    <section className={`relative z-10 bg-black ${item.hideHero ? "pt-[58px]" : ["loewe-runner", "poppyland", "transformer-fest"].includes(item.slug) ? "max-md:pt-[58px]" : ""}`}>
       {/* Description Section - Full screen centered */}
       {!item.hideTitleBlock && (
       <div className="flex items-center justify-center py-8 md:py-20 md:min-h-screen">
@@ -1990,8 +1990,20 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Loewe Runner - Hero video already rendered above; bento of 3 images */}
       {item.slug === "loewe-runner" && (
-        <div className="px-4 md:px-12 pb-16 md:pb-24 -mt-1 md:-mt-8">
+        <div className="px-4 md:px-12 pb-16 md:pb-24 md:-mt-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            {/* Mobile-only hero tile */}
+            <div className="md:hidden relative overflow-hidden rounded-xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Loewe/Hero.mp4`}
+                poster="/Work/Loewe/HeroPoster.jpg"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
             <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
               <Image
                 src="/Work/Loewe/ColorStudy.jpg"
@@ -2022,8 +2034,18 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Poppyland - Asset bento grid */}
       {item.slug === "poppyland" && (
-        <div className="px-4 md:px-12 pb-16 md:pb-24 -mt-1 md:-mt-8">
+        <div className="px-4 md:px-12 pb-16 md:pb-24 md:-mt-8">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 grid-flow-row-dense">
+            {/* Mobile-only hero tile */}
+            <div className="md:hidden col-span-2 relative overflow-hidden rounded-xl bg-black aspect-video">
+              <Image
+                src="/Work/Poppyland/Hero.png"
+                alt="Poppyland hero"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
             <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
               <Image
                 src="/Work/Poppyland/GroundLevel.png"
@@ -2104,8 +2126,20 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Transformer Fest - Asset bento grid */}
       {item.slug === "transformer-fest" && (
-        <div className="px-4 md:px-12 pb-16 md:pb-24 -mt-1 md:-mt-8">
+        <div className="px-4 md:px-12 pb-16 md:pb-24 md:-mt-8">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 grid-flow-row-dense">
+            {/* Mobile-only hero tile */}
+            <div className="md:hidden col-span-2 relative overflow-hidden rounded-xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/TransformerFest/CubemanRave.mp4`}
+                poster="/Thumbnails/Desktop/TransformerFest.png"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
             <div className="col-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
               <LazyVideo
                 src={`${BLOB_BASE}/Work/TransformerFest/LogoAnimation.mp4`}

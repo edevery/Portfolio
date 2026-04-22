@@ -8,11 +8,18 @@ interface CaseStudyContentProps {
   item: WorkItem;
 }
 
+const MOBILE_BENTO_HERO_SLUGS = ["loewe-runner", "poppyland", "transformer-fest"];
+
 export function CaseStudyContent({ item }: CaseStudyContentProps) {
+  const hideHeroOnMobile = MOBILE_BENTO_HERO_SLUGS.includes(item.slug);
   return (
     <div className="min-h-screen bg-black" key={item.slug}>
       {/* Full-screen hero that insets on scroll */}
-      {!item.hideHero && <CaseStudyHero item={item} />}
+      {!item.hideHero && (
+        <div className={hideHeroOnMobile ? "hidden md:block" : undefined}>
+          <CaseStudyHero item={item} />
+        </div>
+      )}
 
       {/* Project info section */}
       <CaseStudyInfo item={item} />

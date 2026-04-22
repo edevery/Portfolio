@@ -139,8 +139,8 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                   (e.currentTarget as HTMLVideoElement).style.display = "none";
                 }}
               />
-              {/* Sound toggle button */}
-              {item.slug !== "comcast-business" && (
+              {/* Sound toggle button — hidden on mobile for generative case studies (silent loops) */}
+              {item.slug !== "comcast-business" && !(isMobile && item.categories.includes("generative")) && (
                 <motion.button
                   onClick={toggleMute}
                   className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"

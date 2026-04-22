@@ -323,7 +323,7 @@ export const workItems: WorkItem[] = [
     heroMedia: {
       type: "video",
       src: `${BLOB_BASE}/Work/Loewe/Hero.mp4`,
-      poster: "/Work/Loewe/RearShot.jpg",
+      poster: "/Work/Loewe/HeroPoster.jpg",
     },
     accentColor: "#b8936a",
     role: "Generative Designer",
