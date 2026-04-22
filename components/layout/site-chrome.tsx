@@ -7,7 +7,7 @@ import { TitleDisplay } from "@/components/ui/title-display";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { CustomCursor } from "@/components/ui/custom-cursor";
 
-const CHROMELESS_PREFIXES = ["/edevery"];
+const CHROMELESS_PREFIXES = ["/teaching"];
 
 export function SiteChrome() {
   const pathname = usePathname() ?? "";

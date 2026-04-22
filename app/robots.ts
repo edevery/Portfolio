@@ -17,7 +17,7 @@ export default function robots(): MetadataRoute.Robots {
           "/homepage6",
           "/homepage7",
           "/homepage8",
-          "/edevery",
+          "/teaching",
         ],
       },
     ],
