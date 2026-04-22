@@ -1741,7 +1741,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
   };
 
   return (
-    <section className="relative z-10 bg-black">
+    <section className={`relative z-10 bg-black ${item.hideHero ? "pt-[58px]" : ""}`}>
       {/* Description Section - Full screen centered */}
       {!item.hideTitleBlock && (
       <div className="flex items-center justify-center py-8 md:py-20 md:min-h-screen">
@@ -1988,6 +1988,120 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       </div>
       </>)}
 
+      {/* Loewe Runner - Hero video already rendered above; bento of 3 images */}
+      {item.slug === "loewe-runner" && (
+        <div className="px-4 md:px-12 pb-16 md:pb-24 -mt-1 md:-mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Loewe/ColorStudy.jpg"
+                alt="Loewe sneaker color study"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Loewe/Display.jpg"
+                alt="Loewe sneaker display"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Loewe/RearShot.jpg"
+                alt="Loewe sneaker rear shot"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Poppyland - Asset bento grid */}
+      {item.slug === "poppyland" && (
+        <div className="px-4 md:px-12 pb-16 md:pb-24 -mt-1 md:-mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 grid-flow-row-dense">
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Poppyland/GroundLevel.png"
+                alt="Poppyland ground-level shot"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Poppyland/Gown.jpg"
+                alt="Poppyland gown close-up"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Poppyland/Detail.jpg"
+                alt="Poppyland detail shot"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Poppyland/Concept.png"
+                alt="Poppyland hero concept"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Poppyland/ModelPose.png"
+                alt="Poppyland model pose"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Poppyland/MotionShot.png"
+                alt="Poppyland motion shot"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
+              <Image
+                src="/Work/Poppyland/Thumbnail.png"
+                alt="Poppyland wide shot"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
+                src="/Work/Poppyland/SkyEdit.webp"
+                alt="Poppyland sky study"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 md:col-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3] md:aspect-auto">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Poppyland/TulipTimelapse.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Transformer Fest - Asset bento grid */}
       {item.slug === "transformer-fest" && (
         <div className="px-4 md:px-12 pb-16 md:pb-24 -mt-1 md:-mt-8">
@@ -2058,6 +2172,104 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
               <LazyVideo
                 src={`${BLOB_BASE}/Work/TransformerFest/RobotDJ.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Runway - Riviera Aristocrat Core asset bento grid */}
+      {item.slug === "runway" && (
+        <div className="px-4 md:px-12 pb-16 md:pb-24">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 grid-flow-row-dense">
+            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/RunwayStudioAnimation.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-2 md:row-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/Driving.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/OverheadCar.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/TennisBall.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/Typography.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/RivaCloseUp.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/Boat.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/300SL.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/TennisMan.mp4`}
                 autoPlay
                 muted
                 loop

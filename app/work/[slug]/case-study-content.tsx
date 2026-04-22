@@ -12,7 +12,7 @@ export function CaseStudyContent({ item }: CaseStudyContentProps) {
   return (
     <div className="min-h-screen bg-black" key={item.slug}>
       {/* Full-screen hero that insets on scroll */}
-      <CaseStudyHero item={item} />
+      {!item.hideHero && <CaseStudyHero item={item} />}
 
       {/* Project info section */}
       <CaseStudyInfo item={item} />

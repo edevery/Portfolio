@@ -41,6 +41,7 @@ export interface WorkItem {
   hideFromAll?: boolean;
   hideTitleBlock?: boolean;
   hideSections?: boolean;
+  hideHero?: boolean;
 }
 
 export const categories: { id: Category; label: string }[] = [
@@ -307,6 +308,104 @@ export const workItems: WorkItem[] = [
       { id: "results", label: "Results", content: "Launched during APEC, the campaign sparked global attention and widespread press coverage, earning 2.1+ billion impressions across 445 media placements.\n\nPost-campaign research revealed a significant boost in local sentiment:\n\n90% associated San Francisco with innovation\n82% felt more hopeful about the city\u2019s future\n86% felt increased pride in San Francisco" },
     ],
     className: "md:col-span-2 md:aspect-[11/6]",
+  },
+  {
+    id: "12",
+    slug: "loewe-runner",
+    title: "Loewe Flow Runner",
+    description: "Translating identity into form using Flora.",
+    categories: ["generative"],
+    hideFromAll: true,
+    hideTitleBlock: true,
+    hideSections: true,
+    image: "/Work/Loewe/RearShot.jpg",
+    mobileImage: "/Work/Loewe/RearShot.jpg",
+    heroMedia: {
+      type: "video",
+      src: `${BLOB_BASE}/Work/Loewe/Hero.mp4`,
+      poster: "/Work/Loewe/RearShot.jpg",
+    },
+    accentColor: "#b8936a",
+    role: "Generative Designer",
+    context: "A self-initiated generative exploration, March 2026.",
+    sections: [
+      {
+        id: "tools",
+        label: "Tools",
+        content: "Nano Banana 2, Veo 3.1, and Flora.",
+      },
+      {
+        id: "date",
+        label: "Date",
+        content: "March 2026.",
+      },
+      {
+        id: "brief",
+        label: "Brief",
+        content: "Translate Loewe's identity into a generative sneaker campaign.",
+      },
+    ],
+    className: "md:col-span-1 md:aspect-[9/10]",
+  },
+  {
+    id: "11",
+    slug: "runway",
+    title: "Runway Studio: Riviera Aristocrat Core",
+    description: "Motion design system for product tutorial videos.",
+    categories: ["generative"],
+    hideFromAll: true,
+    hideTitleBlock: true,
+    hideSections: true,
+    hideHero: true,
+    image: "/Thumbnails/Desktop/Runway.png",
+    mobileImage: "/Thumbnails/Mobile/Runway.png",
+    heroMedia: {
+      type: "video",
+      src: `${BLOB_BASE}/Work/Runway/300SL.mp4`,
+      poster: "/Thumbnails/Desktop/Runway.png",
+    },
+    accentColor: "#a89678",
+    role: "Generative Designer",
+    context: "Motion Design System for Runway Studio.",
+    sections: [],
+    className: "md:col-span-2 md:aspect-[11/6]",
+  },
+  {
+    id: "13",
+    slug: "poppyland",
+    title: "Poppyland",
+    description: "Fashion concept explored in Flora.",
+    categories: ["generative"],
+    hideFromAll: true,
+    hideTitleBlock: true,
+    hideSections: true,
+    image: "/Work/Poppyland/Thumbnail.png",
+    mobileImage: "/Work/Poppyland/Thumbnail.png",
+    heroMedia: {
+      type: "image",
+      src: "/Work/Poppyland/Hero.png",
+    },
+    accentColor: "#e8a5a0",
+    role: "Generative Designer",
+    context: "A self-initiated generative exploration, March 2026.",
+    sections: [
+      {
+        id: "tools",
+        label: "Tools",
+        content: "Flora.",
+      },
+      {
+        id: "date",
+        label: "Date",
+        content: "March 2026.",
+      },
+      {
+        id: "brief",
+        label: "Brief",
+        content: "Translate the qualities of an Iceland poppy into a dress.",
+      },
+    ],
+    className: "md:col-span-1 md:aspect-[9/10]",
   },
   {
     id: "10",
