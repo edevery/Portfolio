@@ -12,7 +12,7 @@ export function WorkSection() {
 
   const filteredItems =
     activeCategory === "all"
-      ? workItems
+      ? workItems.filter((item) => !item.hideFromAll)
       : workItems.filter((item) => item.categories.includes(activeCategory));
 
   return (

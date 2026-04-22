@@ -1743,6 +1743,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
   return (
     <section className="relative z-10 bg-black">
       {/* Description Section - Full screen centered */}
+      {!item.hideTitleBlock && (
       <div className="flex items-center justify-center py-8 md:py-20 md:min-h-screen">
         <div className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
           {/* Logo */}
@@ -1838,7 +1839,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           </motion.div>
         </div>
       </div>
+      )}
 
+      {!item.hideSections && (<>
       {/* Sections - Mobile Carousel */}
       <MobileSectionsCarousel item={item} renderWithItalics={renderWithItalics} />
 
@@ -1983,6 +1986,88 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
         </div>
       </div>
+      </>)}
+
+      {/* Transformer Fest - Asset bento grid */}
+      {item.slug === "transformer-fest" && (
+        <div className="px-4 md:px-12 pb-16 md:pb-24 -mt-1 md:-mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 grid-flow-row-dense">
+            <div className="col-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/TransformerFest/LogoAnimation.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[8/9]">
+              <Image
+                src="/Work/TransformerFest/DancingX.gif"
+                alt="Dancing X animation"
+                fill
+                unoptimized
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[4/5]">
+              <Image
+                src="/Work/TransformerFest/HeadphonesPattern.png"
+                alt="Headphones and music note pattern"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[4/5]">
+              <Image
+                src="/Work/TransformerFest/Ticket.png"
+                alt="Transformer Fest ticket"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[4/5]">
+              <Image
+                src="/Work/TransformerFest/Merch.png"
+                alt="Transformer Fest merchandise"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[4/3]">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/TransformerFest/DancingCubes.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/TransformerFest/RoboDog.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/TransformerFest/RobotDJ.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Vesta Onboarding Image with Container Scroll Animation */}
       {item.slug === "vesta" && (

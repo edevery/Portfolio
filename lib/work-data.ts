@@ -38,6 +38,9 @@ export interface WorkItem {
   context: string;
   sections: ProjectSection[];
   className?: string;
+  hideFromAll?: boolean;
+  hideTitleBlock?: boolean;
+  hideSections?: boolean;
 }
 
 export const categories: { id: Category; label: string }[] = [
@@ -57,7 +60,7 @@ export const workItems: WorkItem[] = [
     slug: "vesta",
     title: "Vesta",
     description: "An AI-powered companion to help couples stay close with personalized nudges and insights into how their partner loves.",
-    categories: ["product", "identity", "generative"],
+    categories: ["product", "identity"],
     image: "/Thumbnails/Desktop/Vesta.png",
     mobileImage: "/Thumbnails/Mobile/Vesta.png",
     heroMedia: {
@@ -302,6 +305,44 @@ export const workItems: WorkItem[] = [
       { id: "insight", label: "Insight", content: "San Francisco has always been a place where the future takes shape first. Defined by ideas and invention, its identity as a crossroads of culture, fearlessness, and innovation hadn\u2019t disappeared. It had simply been overshadowed." },
       { id: "solution", label: "Solution", content: "We created It All Starts Here, a campaign rooted in San Francisco\u2019s enduring role as a birthplace of progress.\n\nInspired by the city\u2019s iconic street signs and intersections, the visual system emphasized the convergence of culture, commerce, and innovation through citywide OOH placements and landmark projections.\n\nEach execution paired two Bay Area\u2013born companies, spanning many of the region\u2019s most influential brands, and balanced the campaign system with each company\u2019s distinct visual language and brand guidelines." },
       { id: "results", label: "Results", content: "Launched during APEC, the campaign sparked global attention and widespread press coverage, earning 2.1+ billion impressions across 445 media placements.\n\nPost-campaign research revealed a significant boost in local sentiment:\n\n90% associated San Francisco with innovation\n82% felt more hopeful about the city\u2019s future\n86% felt increased pride in San Francisco" },
+    ],
+    className: "md:col-span-2 md:aspect-[11/6]",
+  },
+  {
+    id: "10",
+    slug: "transformer-fest",
+    title: "Transformer Fest",
+    description: "Visual Identity for an AI Music Festival",
+    categories: ["generative"],
+    hideFromAll: true,
+    hideTitleBlock: true,
+    hideSections: true,
+    image: "/Thumbnails/Desktop/TransformerFest.png",
+    mobileImage: "/Thumbnails/Mobile/TransformerFest.png",
+    heroMedia: {
+      type: "video",
+      src: `${BLOB_BASE}/Work/TransformerFest/CubemanRave.mp4`,
+      poster: "/Thumbnails/Desktop/TransformerFest.png",
+    },
+    accentColor: "#ff6b2b",
+    role: "Generative Designer",
+    context: "A self-initiated generative exploration, May 2025.",
+    sections: [
+      {
+        id: "tools",
+        label: "Tools",
+        content: "Runway, GPT-4, Illustrator, Photoshop, and After Effects.",
+      },
+      {
+        id: "date",
+        label: "Date",
+        content: "May 2025.",
+      },
+      {
+        id: "brief",
+        label: "Brief",
+        content: "Name and create a mood board for an AI music festival.",
+      },
     ],
     className: "md:col-span-2 md:aspect-[11/6]",
   },
