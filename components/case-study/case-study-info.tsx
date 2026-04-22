@@ -2050,6 +2050,32 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
             <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
               <Image
+                src="/Work/Poppyland/SkyEdit.webp"
+                alt="Poppyland sky study"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 md:col-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3] md:aspect-auto">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Poppyland/TulipTimelapse.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
+              <Image
+                src="/Work/Poppyland/Thumbnail.png"
+                alt="Poppyland wide shot"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
+              <Image
                 src="/Work/Poppyland/Concept.png"
                 alt="Poppyland hero concept"
                 fill
@@ -2070,32 +2096,6 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 alt="Poppyland motion shot"
                 fill
                 className="object-cover"
-              />
-            </div>
-            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
-              <Image
-                src="/Work/Poppyland/Thumbnail.png"
-                alt="Poppyland wide shot"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
-              <Image
-                src="/Work/Poppyland/SkyEdit.webp"
-                alt="Poppyland sky study"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="col-span-1 md:col-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3] md:aspect-auto">
-              <LazyVideo
-                src={`${BLOB_BASE}/Work/Poppyland/TulipTimelapse.mp4`}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
           </div>
@@ -2142,11 +2142,13 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               />
             </div>
             <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[4/5]">
-              <Image
-                src="/Work/TransformerFest/Merch.png"
-                alt="Transformer Fest merchandise"
-                fill
-                className="object-cover"
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/TransformerFest/RoboDog.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
             <div className="col-span-2 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[4/3]">
@@ -2160,13 +2162,11 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               />
             </div>
             <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-[2/3]">
-              <LazyVideo
-                src={`${BLOB_BASE}/Work/TransformerFest/RoboDog.mp4`}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
+              <Image
+                src="/Work/TransformerFest/Merch.png"
+                alt="Transformer Fest merchandise"
+                fill
+                className="object-cover"
               />
             </div>
             <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-[#141414] aspect-video">
@@ -2209,7 +2209,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
             <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
               <LazyVideo
-                src={`${BLOB_BASE}/Work/Runway/OverheadCar.mp4`}
+                src={`${BLOB_BASE}/Work/Runway/Typography.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2220,16 +2220,6 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Runway/TennisBall.mp4`}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </div>
-            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
-              <LazyVideo
-                src={`${BLOB_BASE}/Work/Runway/Typography.mp4`}
                 autoPlay
                 muted
                 loop
@@ -2260,6 +2250,16 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             <div className="col-span-1 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-[9/16]">
               <LazyVideo
                 src={`${BLOB_BASE}/Work/Runway/300SL.mp4`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <div className="col-span-2 md:col-span-3 relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+              <LazyVideo
+                src={`${BLOB_BASE}/Work/Runway/OverheadCar.mp4`}
                 autoPlay
                 muted
                 loop
