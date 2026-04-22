@@ -7,8 +7,12 @@ import { ProjectCard } from "./ui/project-card";
 import { MobileCarousel } from "./ui/mobile-carousel";
 import { workItems, categories, type Category } from "@/lib/work-data";
 
-export function WorkSection() {
-  const [activeCategory, setActiveCategory] = useState<Category>("all");
+interface WorkSectionProps {
+  initialCategory?: Category;
+}
+
+export function WorkSection({ initialCategory = "all" }: WorkSectionProps = {}) {
+  const [activeCategory, setActiveCategory] = useState<Category>(initialCategory);
 
   const filteredItems =
     activeCategory === "all"

@@ -1,6 +1,13 @@
 import { notFound } from "next/navigation";
-import { getWorkItemBySlug, getAllSlugs } from "@/lib/work-data";
+import {
+  getWorkItemBySlug,
+  getAllSlugs,
+  getCategoryBySlug,
+  getFilterableCategorySlugs,
+  categories,
+} from "@/lib/work-data";
 import { CaseStudyContent } from "./case-study-content";
+import WorkContent from "../work-content";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://edevery.com";
 
@@ -9,12 +16,27 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const slugs = getAllSlugs();
+  const slugs = [...getAllSlugs(), ...getFilterableCategorySlugs()];
   return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
+
+  const category = getCategoryBySlug(slug);
+  if (category) {
+    const label = categories.find((c) => c.id === category)?.label ?? category;
+    const title = `${label} Work — Emily Devery`;
+    const description = `Selected ${label.toLowerCase()} work by Emily Devery.`;
+    return {
+      title,
+      description,
+      openGraph: { title, description },
+      twitter: { card: "summary_large_image" as const },
+      alternates: { canonical: `/work/${slug}` },
+    };
+  }
+
   const item = getWorkItemBySlug(slug);
 
   if (!item) {
@@ -39,6 +61,12 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function CaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
+
+  const category = getCategoryBySlug(slug);
+  if (category) {
+    return <WorkContent initialCategory={category} />;
+  }
+
   const item = getWorkItemBySlug(slug);
 
   if (!item) {

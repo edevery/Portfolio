@@ -454,3 +454,18 @@ export function getWorkItemBySlug(slug: string): WorkItem | undefined {
 export function getAllSlugs(): string[] {
   return workItems.map((item) => item.slug);
 }
+
+export function categoryToSlug(id: Category): string {
+  return id.replace(/ /g, "-");
+}
+
+export function getCategoryBySlug(slug: string): Category | null {
+  const match = categories.find((c) => categoryToSlug(c.id) === slug);
+  return match ? match.id : null;
+}
+
+export function getFilterableCategorySlugs(): string[] {
+  return categories
+    .filter((c) => c.id !== "all")
+    .map((c) => categoryToSlug(c.id));
+}
