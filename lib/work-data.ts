@@ -110,7 +110,8 @@ export const workItems: WorkItem[] = [
     slug: "oro",
     title: "Oro",
     description: "A video-first restaurant discovery and booking platform launching in San Francisco.",
-    categories: ["product"],
+    categories: [],
+    hideFromAll: true,
     image: "/Thumbnails/Desktop/Oro.png",
     heroMedia: {
       type: "image",
