@@ -119,7 +119,9 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                       ? `${BLOB_BASE}/Work/ItAllStartsHere/MobileHero.mp4`
                       : !isMobile && item.slug === "it-all-starts-here"
                         ? `${BLOB_BASE}/Work/ItAllStartsHere/DesktopHero.MP4`
-                        : item.heroMedia.src
+                        : isMobile && item.slug === "oro"
+                          ? `${BLOB_BASE}/Work/Oro/HeroMobile.mp4`
+                          : item.heroMedia.src
                 }
                 poster={item.heroMedia.poster}
                 preload="auto"
@@ -128,6 +130,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                 loop
                 playsInline
                 className={`absolute inset-0 w-full h-full ${objectFitClass}`}
+                style={item.slug === "oro" ? { objectPosition: "center 35%" } : undefined}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
@@ -140,7 +143,7 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
                 }}
               />
               {/* Sound toggle button — hidden on mobile for generative case studies (silent loops) */}
-              {item.slug !== "comcast-business" && !(isMobile && item.categories.includes("generative")) && (
+              {item.slug !== "comcast-business" && item.slug !== "oro" && !(isMobile && item.categories.includes("generative")) && (
                 <motion.button
                   onClick={toggleMute}
                   className="absolute bottom-6 right-6 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white/90 transition-colors hover:bg-white/20"

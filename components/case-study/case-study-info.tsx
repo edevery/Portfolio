@@ -1731,8 +1731,11 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
   // Helper to render text with *italic* support
   const renderWithItalics = (text: string) => {
-    const parts = text.split(/(\*[^*]+\*)/g);
+    const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
     return parts.map((part, i) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={i}>{part.slice(2, -2)}</strong>;
+      }
       if (part.startsWith("*") && part.endsWith("*")) {
         return <em key={i}>{part.slice(1, -1)}</em>;
       }
@@ -1827,13 +1830,13 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
             className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3 justify-center"
           >
-            {item.categories.map((category) => (
+            {(item.displayTags ?? item.categories).map((tag) => (
               <span
-                key={category}
+                key={tag}
                 className="inline-block px-3 py-1 text-[10px] font-medium tracking-wider uppercase rounded-full border border-white/20"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                {category}
+                {tag}
               </span>
             ))}
           </motion.div>
@@ -1987,6 +1990,22 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       </div>
       </>)}
+
+      {/* Oro - HeroDiscovery video after write-up */}
+      {item.slug === "oro" && (
+        <div className="px-4 md:px-12 pb-16 md:pb-24">
+          <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+            <LazyVideo
+              src={`${BLOB_BASE}/Work/Oro/HeroDiscovery.mp4`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Loewe Runner - Hero video already rendered above; bento of 3 images */}
       {item.slug === "loewe-runner" && (

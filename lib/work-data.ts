@@ -24,6 +24,7 @@ export interface WorkItem {
   title: string;
   description: string;
   categories: Category[];
+  displayTags?: string[];
   image: string;
   mobileImage?: string;
   heroMedia: {
@@ -111,45 +112,47 @@ export const workItems: WorkItem[] = [
     title: "Oro",
     description: "A video-first restaurant discovery and booking platform launching in San Francisco.",
     categories: [],
+    displayTags: ["Strategy", "Identity", "Product"],
     hideFromAll: true,
     image: "/Thumbnails/Desktop/Oro.png",
     heroMedia: {
-      type: "image",
-      src: "/Thumbnails/Desktop/Oro.png",
+      type: "video",
+      src: `${BLOB_BASE}/Work/Oro/Hero.mp4`,
+      poster: `${BLOB_BASE}/Work/Oro/HeroPoster.jpg`,
     },
     accentColor: "#feb146",
-    role: "Brand Strategist & Designer",
+    role: "Brand strategy · Visual identity · Product design & build",
     context: "End-to-end build from brand strategy through working prototype, March to June 2026.",
     sections: [
       {
         id: "background",
         label: "Background",
-        content: "Oro is a video-first way to discover and book restaurants, built around the night that matters.\n\nDiscovery moved to video; booking didn't. Diners decide where to go on TikTok and Instagram, then book on platforms that show a restaurant as a static, empty listing, charge a fee on every cover, and leave restaurants with no control over their narrative and no ownership of their customer data. The creators driving that discovery are paid in views and free meals, rewarded for hot takes over honesty, and left to negotiate with restaurants one deal at a time over Instagram DMs.\n\nOro closes that gap. The video is the review: discovery and booking live in one place, and creators earn a share of the revenue their videos drive, putting diners, restaurants, and creators on the same side of the table.",
+        content: "Restaurant discovery moved to video but booking hasn't caught up. Diners decide where to go on TikTok and Instagram, then book on platforms that show a restaurant as a static, empty listing, charge a fee on every cover, and leave restaurants with no control over their narrative and no ownership of their customer data. The creators driving discovery are paid in views and free meals, rewarded for hot takes over honesty, and often negotiate with restaurants over DMs.\n\nOro was built around the way diners decide where the night should happen. The video is the review: discovery and booking live in one place, and creators earn a share of the revenue their videos drive, putting diners, restaurants, and creators on the same side of the table.",
       },
       {
         id: "role",
-        label: "My Role",
-        content: "Brand strategy, visual identity, and product design, taken end to end from positioning through a working prototype in TestFlight.\n\nThe early work resolved into what Oro stands for and how it sounds. That voice didn't sit in a style guide, it ran the product. It decided how the app speaks (a notification says \"the weekend starts early,\" not \"Thursday, 7pm\"), and created a filter for what got built: if a feature didn't ladder back up to a brand pillar, it didn't make the cut.\n\nI built the front end in Claude Code, with the visual identity and brand strategy embedded directly in the code. Every decision lives in markdown that travels with the work, a brand agent in the making, so the brand stays consistent across sessions and ensures a clean hand off for an engineer to build the back end.",
+        label: "Role",
+        content: "Brand strategy, visual identity, and product design, taken end to end from positioning through a working prototype in TestFlight.\n\nI built the front end in Claude Code, with the visual identity and brand strategy embedded directly in the code. Every decision lives in a markdown file, so the brand stays consistent across sessions and ensures a clean hand off for an engineer to build the back end.",
       },
       {
         id: "process",
-        label: "Process",
-        content: "I pulled a wide field of cultural references and framed them as either/or choices: Aesop over Byredo, Carbone over Via Carota, A24 over Michelin. The pattern of those choices became the positioning: an eight-pillar point of view (Discovery, Curation, Confidence, Tone, Locality, Agency, Equity, Ownership) and one transformation shared across all three audiences, passivity into agency. The tagline came from the sharpest audience truth, that diners fear wasting a meaningful evening more than wasting money: *For nights that matter.*\n\nWith the positioning set, I built the brand outward: A24 as the tone reference (bold, cinematic, confident), a full voice system (vocabulary, an avoidance list, in-product language), and the visual identity to carry it. The positioning and tone aren't just written down, they sit in the system prompt: encoded to drive the product, so every surface speaks in Oro's voice by default.\n\nHospitality was a lens, not just a tone. The model was Four Seasons: warm, anticipatory, never performative. It shaped real product decisions: what the app anticipates and when it chooses to notify. The posture stays welcoming, not gatekeeping. Most tables stay free; paying up for a prime or last-minute seat is an option, not a velvet rope.",
+        label: "Approach",
+        content: "Oro's positioning came from a wide field of cultural references: Aesop over Byredo, Carbone over Via Carota, A24 over Michelin, the anticipation of an Aman with the warmth of a Four Seasons. These became an eight-pillar point of view and one transformation shared across all three audiences: passivity into agency. The tagline came from the sharpest audience truth, that diners fear wasting a meaningful evening more than wasting money: For nights that matter.\n\nThe brand strategy shaped both the identity and product behavior. The voice lives in the system prompt, so every surface speaks in Oro's voice by default: a notification reads \"the weekend starts early,\" not \"Thursday, 7pm.\" It also worked as a filter, a feature that didn't ladder back to a pillar didn't get built, and as a posture, the app stays welcoming rather than gatekeeping. Most tables stay free. Paying up for a premium seat is an option, not a velvet rope.",
       },
       {
         id: "timeline",
         label: "Timeline",
-        content: "Phase 1 (March to April): Brand strategy and visual identity.\n\nPhase 2 (April to June): Product design and build.",
+        content: "**Phase 1:** Brand Strategy & Visual Identity | March – April\n\n**Phase 2:** Product Design & Build | April – June",
       },
       {
         id: "tools",
         label: "Tools",
-        content: "**Claude**: creative and strategic partner.\n\n**Claude Code** (Cursor): front-end build.\n\n**Flora**: additional brand elements.",
+        content: "**Claude:** Creative and Strategic Partner\n**Claude Code:** Front-end build\n**Adobe Illustrator:** Logo & Visual Identity\n**Flora:** Additional brand elements",
       },
       {
         id: "core-output",
-        label: "Core Output",
-        content: "A **brand strategy and voice system**: positioning, an eight-pillar POV, and an in-product language system.\n\nA **visual identity**: typography, palette, and motion.\n\nA **working prototype**: a diner app, a creator experience, and a four-section restaurant dashboard, with several surfaces powered by Claude (Oro Concierge and Oro Voice). Ready for early user testing and fundraising.",
+        label: "Output",
+        content: "**Brand strategy and voice system:** positioning, an eight-pillar POV, and an in-product language system\n\n**Visual identity:** Logo, Typography, Color Palette\n\n**Working prototype:** A diner app, a creator experience, and a restaurant dashboard. Ready for early user testing and fundraising.",
       },
     ],
     className: "md:col-span-1 md:aspect-[9/10]",

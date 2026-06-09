@@ -14,9 +14,10 @@ interface WorkSectionProps {
 export function WorkSection({ initialCategory = "all" }: WorkSectionProps = {}) {
   const [activeCategory, setActiveCategory] = useState<Category>(initialCategory);
 
+  const isDev = process.env.NODE_ENV === "development";
   const filteredItems =
     activeCategory === "all"
-      ? workItems.filter((item) => !item.hideFromAll)
+      ? workItems.filter((item) => isDev || !item.hideFromAll)
       : workItems.filter((item) => item.categories.includes(activeCategory));
 
   return (
