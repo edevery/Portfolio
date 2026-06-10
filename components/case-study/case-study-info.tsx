@@ -11,6 +11,8 @@ import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { TransitionLink } from "@/components/case-study/transition-link";
+import { OroPhoneShowcase } from "@/components/case-study/oro-phone-showcase";
+import { OroTabletShowcase } from "@/components/case-study/oro-tablet-showcase";
 import { LazyVideo } from "@/components/ui/lazy-video";
 
 interface CaseStudyInfoProps {
@@ -588,7 +590,7 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
   });
 
   return (
-    <div className="block md:hidden bg-black py-8">
+    <div className="block md:hidden bg-black pt-0 pb-6">
       <div ref={containerRef} className="overflow-hidden">
         <motion.div
           className="flex gap-3 px-4 cursor-grab active:cursor-grabbing"
@@ -1747,8 +1749,8 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
     <section className={`relative z-10 bg-black ${item.hideHero ? "pt-[58px]" : ["loewe-runner", "poppyland", "transformer-fest"].includes(item.slug) ? "max-md:pt-[58px]" : ""}`}>
       {/* Description Section - Full screen centered */}
       {!item.hideTitleBlock && (
-      <div className="flex items-center justify-center py-8 md:py-20 md:min-h-screen">
-        <div className="flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
+      <div className="px-4 md:px-12 pt-0 pb-6 md:pb-4 mt-2 md:-mt-8">
+        <div className="bg-[#141414] rounded-3xl border border-white/5 p-10 md:p-16 lg:p-20 flex flex-col items-center justify-center text-center w-full">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -1789,7 +1791,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                     onMouseLeave={handleMouseLeave}
                     className={`${item.logoClassName || "h-8 md:h-12 lg:h-16"} w-auto relative cursor-pointer`}
                     style={{
-                      aspectRatio: "3 / 1",
+                      aspectRatio: item.logoAspect || "3 / 1",
                       transform: springProps.rotateX.to(
                         (rx) => `perspective(1000px) rotateX(${rx}deg) rotateY(${springProps.rotateY.get()}deg) scale(${springProps.scale.get()})`
                       ),
@@ -1817,7 +1819,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
           {/* Description */}
           <p
-            className="text-3xl md:text-4xl lg:text-5xl text-white italic max-w-4xl text-center leading-tight"
+            className="text-3xl md:text-4xl lg:text-5xl text-white italic max-w-4xl text-center leading-tight whitespace-pre-line"
             style={{ fontFamily: "'Noe Display', serif" }}
           >
             {item.description}
@@ -1849,7 +1851,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       <MobileSectionsCarousel item={item} renderWithItalics={renderWithItalics} />
 
       {/* Sections - Desktop Side navigation with content */}
-      <div className="hidden md:block mx-12 py-16 md:py-24">
+      <div className="hidden md:block mx-12 pt-0 pb-4">
         <div className="bg-[#141414] rounded-2xl md:rounded-3xl p-6 md:p-10 lg:p-12 border border-white/5">
           <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 md:gap-16 lg:gap-24">
           {/* Left: Section Navigation */}
@@ -1993,7 +1995,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
 
       {/* Oro - HeroDiscovery video after write-up */}
       {item.slug === "oro" && (
-        <div className="px-4 md:px-12 pb-16 md:pb-24">
+        <div className="px-4 md:px-12 pb-6 md:pb-4">
           <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
             <LazyVideo
               src={`${BLOB_BASE}/Work/Oro/HeroDiscovery.mp4`}
@@ -2005,6 +2007,190 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             />
           </div>
         </div>
+      )}
+
+      {/* Oro - Phone showcase: Restaurant Discovery + Creator Videos */}
+      {item.slug === "oro" && (
+        <OroPhoneShowcase
+          cards={[
+            {
+              title: "Restaurant Discovery",
+              description: "A locked map with a scrolling reel of cinematic postcards for each restaurant.",
+              videoSrc: `${BLOB_BASE}/Work/Oro/Postcard_Discovery.mp4`,
+            },
+            {
+              title: "Creator Videos",
+              description: "Discover where the top food influencers are dining, what they're ordering and book directly from your feed.",
+              videoSrc: `${BLOB_BASE}/Work/Oro/CreatorVideos.mp4`,
+            },
+          ]}
+        />
+      )}
+
+      {/* Oro - SET THE SCENE video with overlay */}
+      {item.slug === "oro" && (
+        <div className="px-4 md:px-12 pt-0 pb-6 md:pb-4">
+          <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+            <LazyVideo
+              src={`${BLOB_BASE}/Work/Oro/SetTheScene.mp4`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center px-6">
+              <h2
+                className="text-center uppercase leading-[0.85]"
+                style={{
+                  fontFamily: '"Sohne Schmal", sans-serif',
+                  fontWeight: 600,
+                  fontSize: "clamp(50px, 12.6vw, 198px)",
+                  letterSpacing: "0em",
+                  color: "#feb146",
+                }}
+              >
+                Set the Scene
+              </h2>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Oro - Phone showcase 2: Booking Flow + Group & Private Dining */}
+      {item.slug === "oro" && (
+        <OroPhoneShowcase
+          cards={[
+            {
+              title: "Booking Flow",
+              description: "Booking runs across standard, last-minute, and premium tables. The flow ends on an invitation to invite guests and order ahead.",
+              videoSrc: `${BLOB_BASE}/Work/Oro/BookingFlow.mp4`,
+            },
+            {
+              title: "Group & Private Dining",
+              description: "Coordinating an event runs on email today, a back-and-forth chain for high value bookings. Oro replaces it with one flow: choose party size, dietary needs, room, and menu tier, then hold the date with a deposit and a 24-hour cancellation window.",
+              videoSrc: `${BLOB_BASE}/Work/Oro/Group_BookingFlow.mp4`,
+            },
+          ]}
+        />
+      )}
+
+      {/* Oro - TODAY'S CATCH video with overlay */}
+      {item.slug === "oro" && (
+        <div className="px-4 md:px-12 pt-0 pb-6 md:pb-4">
+          <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+            <LazyVideo
+              src={`${BLOB_BASE}/Work/Oro/TodaysCatch.mp4`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center px-6">
+              <h2
+                className="text-center uppercase leading-[0.85]"
+                style={{
+                  fontFamily: '"Sohne Schmal", sans-serif',
+                  fontWeight: 600,
+                  fontSize: "clamp(50px, 12.6vw, 198px)",
+                  letterSpacing: "0em",
+                  color: "#feb146",
+                }}
+              >
+                Today&apos;s Catch
+              </h2>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Oro - Phone showcase 3: Restaurant Profile + Diner Profile */}
+      {item.slug === "oro" && (
+        <OroPhoneShowcase
+          cards={[
+            {
+              title: "Restaurant Profile",
+              description: "Where the restaurant controls their narrative: the chef, their inspiration, the menu, and what creators have to say. A glimpse of the evening, before you commit.",
+              videoSrc: `${BLOB_BASE}/Work/Oro/RestaurantProfile.mp4`,
+            },
+            {
+              title: "Diner Profile",
+              description: "Save restaurants and sort them into lists for the occasion: date night, out with friends, business dinner. Set your dining preferences, so the restaurant is ready before you arrive.",
+              videoSrc: `${BLOB_BASE}/Work/Oro/DinerProfile.mp4`,
+            },
+          ]}
+        />
+      )}
+
+      {/* Oro - Restaurant Dashboard Mockup */}
+      {item.slug === "oro" && (
+        <div className="px-4 md:px-12 pt-0 pb-6 md:pb-4">
+          <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+            <LazyVideo
+              src={`${BLOB_BASE}/Work/Oro/RestaurantDashboard.mp4`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Oro - Tablet showcase: Creator Requests */}
+      {item.slug === "oro" && (
+        <OroTabletShowcase
+          title="Creator Management"
+          description="Restaurants and creators often negotiate visits in DMs with little transparency around expectations and terms. Creator Management turns this into a structured relationship, enabling restaurants to discover creators, send invitations on shared terms, and rate each visit."
+          videoSrc={`${BLOB_BASE}/Work/Oro/RestaurantCreator.mp4`}
+          mobileVideoSrc={`${BLOB_BASE}/Work/Oro/RestaurantCreatorMobile.mp4`}
+          compact
+        />
+      )}
+
+      {/* Oro - RUN THE ROOM video with overlay */}
+      {item.slug === "oro" && (
+        <div className="px-4 md:px-12 pt-0 pb-6 md:pb-4">
+          <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-black aspect-video">
+            <LazyVideo
+              src={`${BLOB_BASE}/Work/Oro/RunTheRoom.mp4`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 flex items-center justify-center px-6">
+              <h2
+                className="text-center uppercase leading-[0.85]"
+                style={{
+                  fontFamily: '"Sohne Schmal", sans-serif',
+                  fontWeight: 600,
+                  fontSize: "clamp(50px, 12.6vw, 198px)",
+                  letterSpacing: "0em",
+                  color: "#feb146",
+                }}
+              >
+                Run the Room
+              </h2>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Oro - Tablet showcase: Content Management */}
+      {item.slug === "oro" && (
+        <OroTabletShowcase
+          title="Content Management"
+          description="The restaurant's hub for everything Oro produces: it keeps hours, menu, and story current, holds every video shot by Oro and its creators."
+          videoSrc={`${BLOB_BASE}/Work/Oro/ContentManagement.mp4`}
+          mobileVideoSrc={`${BLOB_BASE}/Work/Oro/ContentManagementMobile.mp4`}
+        />
       )}
 
       {/* Loewe Runner - Hero video already rendered above; bento of 3 images */}

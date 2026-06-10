@@ -18,7 +18,15 @@ export function WorkSection({ initialCategory = "all" }: WorkSectionProps = {}) 
   const filteredItems =
     activeCategory === "all"
       ? workItems.filter((item) => isDev || !item.hideFromAll)
-      : workItems.filter((item) => item.categories.includes(activeCategory));
+      : workItems
+          .map((item, i) => ({ item, i }))
+          .filter(({ item }) => item.categories.includes(activeCategory))
+          .sort((a, b) => {
+            const aOrder = a.item.categoryOrder?.[activeCategory] ?? a.i;
+            const bOrder = b.item.categoryOrder?.[activeCategory] ?? b.i;
+            return aOrder - bOrder;
+          })
+          .map(({ item }) => item);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-12 max-md:py-4 max-md:h-full max-md:flex max-md:flex-col">

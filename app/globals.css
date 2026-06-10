@@ -36,6 +36,20 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Sohne Schmal";
+  src: url("/Fonts/Test%20S%C3%B6hne%20Schmal/TestS%C3%B6hneSchmal-Halbfett.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Sohne Schmal";
+  src: url("/Fonts/Test%20S%C3%B6hne%20Schmal/TestS%C3%B6hneSchmal-Fett.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
 html,
 body {
   overflow-x: clip;

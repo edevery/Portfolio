@@ -4,7 +4,6 @@ export type Category =
   | "all"
   | "product"
   | "identity"
-  | "graphic"
   | "illustration"
   | "experiential"
   | "art direction"
@@ -24,6 +23,7 @@ export interface WorkItem {
   title: string;
   description: string;
   categories: Category[];
+  categoryOrder?: Partial<Record<Category, number>>;
   displayTags?: string[];
   image: string;
   mobileImage?: string;
@@ -35,6 +35,7 @@ export interface WorkItem {
   accentColor: string;
   logo?: string; // Path to logo image for case study page
   logoClassName?: string; // Custom class for logo sizing
+  logoAspect?: string; // Override aspectRatio for the title-block logo (default "3 / 1")
   role: string;
   context: string;
   sections: ProjectSection[];
@@ -53,16 +54,70 @@ export const categories: { id: Category; label: string }[] = [
   { id: "art direction", label: "Art Direction" },
   { id: "generative", label: "Generative" },
   { id: "illustration", label: "Illustration" },
-  { id: "graphic", label: "Graphic" },
 ];
 
 export const workItems: WorkItem[] = [
+  {
+    id: "14",
+    slug: "oro",
+    title: "Oro",
+    description: "A video-first restaurant\ndiscovery and booking platform\nlaunching in San Francisco.",
+    categories: ["product"],
+    displayTags: ["Strategy", "Identity", "Product"],
+    hideFromAll: true,
+    image: "/Thumbnails/Desktop/Oro.png",
+    heroMedia: {
+      type: "video",
+      src: `${BLOB_BASE}/Work/Oro/Hero.mp4`,
+      poster: `${BLOB_BASE}/Work/Oro/HeroPoster.jpg`,
+    },
+    accentColor: "#feb146",
+    logo: "/Work/Oro/Oro_Icon.png",
+    logoClassName: "h-16 md:h-24 lg:h-32",
+    logoAspect: "333 / 373",
+    role: "Brand strategy · Visual identity · Product design & build",
+    context: "End-to-end build from brand strategy through working prototype, March to June 2026.",
+    sections: [
+      {
+        id: "background",
+        label: "Background",
+        content: "Restaurant discovery moved to video but booking hasn't caught up. Diners decide where to go on TikTok and Instagram, then book on platforms that show a restaurant as a static, empty listing, charge a fee on every cover, and leave restaurants with no control over their narrative and no ownership of their customer data. The creators driving discovery are paid in views and free meals, rewarded for hot takes over honesty, and often negotiate with restaurants over DMs.\n\nOro was built around the way diners decide where the night should happen. The video is the review: discovery and booking live in one place, and creators earn a share of the revenue their videos drive, putting diners, restaurants, and creators on the same side of the table.",
+      },
+      {
+        id: "role",
+        label: "Role",
+        content: "Brand strategy, visual identity, and product design, taken end to end from positioning through a working prototype in TestFlight.\n\nI built the front end in Claude Code, with the visual identity and brand strategy embedded directly in the code. Every decision lives in a markdown file, so the brand stays consistent across sessions and ensures a clean hand off for an engineer to build the back end.",
+      },
+      {
+        id: "process",
+        label: "Approach",
+        content: "Oro's positioning came from a wide field of cultural references: Aesop over Byredo, Carbone over Via Carota, A24 over Michelin, the anticipation of an Aman with the warmth of a Four Seasons. These became an eight-pillar point of view and one transformation shared across all three audiences: passivity into agency. The tagline came from the sharpest audience truth, that diners fear wasting a meaningful evening more than wasting money: For nights that matter.\n\nThe brand strategy shaped both the identity and product behavior. The voice lives in the system prompt, so every surface speaks in Oro's voice by default: a notification reads \"the weekend starts early,\" not \"Thursday, 7pm.\" It also worked as a filter, a feature that didn't ladder back to a pillar didn't get built, and as a posture, the app stays welcoming rather than gatekeeping. Most tables stay free. Paying up for a premium seat is an option, not a velvet rope.",
+      },
+      {
+        id: "timeline",
+        label: "Timeline",
+        content: "**Phase 1:** Brand Strategy & Visual Identity | March – April\n\n**Phase 2:** Product Design & Build | April – June",
+      },
+      {
+        id: "tools",
+        label: "Tools",
+        content: "**Claude:** Creative and Strategic Partner\n**Claude Code:** Front-end build\n**Adobe Illustrator:** Logo & Visual Identity\n**Flora:** Additional brand elements",
+      },
+      {
+        id: "core-output",
+        label: "Output",
+        content: "**Brand strategy and voice system:** positioning, an eight-pillar POV, and an in-product language system\n\n**Visual identity:** Logo, Typography, Color Palette\n\n**Working prototype:** A diner app, a creator experience, and a restaurant dashboard. Ready for early user testing and fundraising.",
+      },
+    ],
+    className: "md:col-span-1 md:aspect-[9/10]",
+  },
   {
     id: "1",
     slug: "vesta",
     title: "Vesta",
     description: "An AI-powered companion to help couples stay close with personalized nudges and insights into how their partner loves.",
     categories: ["product", "identity"],
+    categoryOrder: { identity: 1 },
     image: "/Thumbnails/Desktop/Vesta.png",
     mobileImage: "/Thumbnails/Mobile/Vesta.png",
     heroMedia: {
@@ -107,62 +162,12 @@ export const workItems: WorkItem[] = [
     className: "md:col-span-2 md:aspect-[11/6]",
   },
   {
-    id: "14",
-    slug: "oro",
-    title: "Oro",
-    description: "A video-first restaurant discovery and booking platform launching in San Francisco.",
-    categories: [],
-    displayTags: ["Strategy", "Identity", "Product"],
-    hideFromAll: true,
-    image: "/Thumbnails/Desktop/Oro.png",
-    heroMedia: {
-      type: "video",
-      src: `${BLOB_BASE}/Work/Oro/Hero.mp4`,
-      poster: `${BLOB_BASE}/Work/Oro/HeroPoster.jpg`,
-    },
-    accentColor: "#feb146",
-    role: "Brand strategy · Visual identity · Product design & build",
-    context: "End-to-end build from brand strategy through working prototype, March to June 2026.",
-    sections: [
-      {
-        id: "background",
-        label: "Background",
-        content: "Restaurant discovery moved to video but booking hasn't caught up. Diners decide where to go on TikTok and Instagram, then book on platforms that show a restaurant as a static, empty listing, charge a fee on every cover, and leave restaurants with no control over their narrative and no ownership of their customer data. The creators driving discovery are paid in views and free meals, rewarded for hot takes over honesty, and often negotiate with restaurants over DMs.\n\nOro was built around the way diners decide where the night should happen. The video is the review: discovery and booking live in one place, and creators earn a share of the revenue their videos drive, putting diners, restaurants, and creators on the same side of the table.",
-      },
-      {
-        id: "role",
-        label: "Role",
-        content: "Brand strategy, visual identity, and product design, taken end to end from positioning through a working prototype in TestFlight.\n\nI built the front end in Claude Code, with the visual identity and brand strategy embedded directly in the code. Every decision lives in a markdown file, so the brand stays consistent across sessions and ensures a clean hand off for an engineer to build the back end.",
-      },
-      {
-        id: "process",
-        label: "Approach",
-        content: "Oro's positioning came from a wide field of cultural references: Aesop over Byredo, Carbone over Via Carota, A24 over Michelin, the anticipation of an Aman with the warmth of a Four Seasons. These became an eight-pillar point of view and one transformation shared across all three audiences: passivity into agency. The tagline came from the sharpest audience truth, that diners fear wasting a meaningful evening more than wasting money: For nights that matter.\n\nThe brand strategy shaped both the identity and product behavior. The voice lives in the system prompt, so every surface speaks in Oro's voice by default: a notification reads \"the weekend starts early,\" not \"Thursday, 7pm.\" It also worked as a filter, a feature that didn't ladder back to a pillar didn't get built, and as a posture, the app stays welcoming rather than gatekeeping. Most tables stay free. Paying up for a premium seat is an option, not a velvet rope.",
-      },
-      {
-        id: "timeline",
-        label: "Timeline",
-        content: "**Phase 1:** Brand Strategy & Visual Identity | March – April\n\n**Phase 2:** Product Design & Build | April – June",
-      },
-      {
-        id: "tools",
-        label: "Tools",
-        content: "**Claude:** Creative and Strategic Partner\n**Claude Code:** Front-end build\n**Adobe Illustrator:** Logo & Visual Identity\n**Flora:** Additional brand elements",
-      },
-      {
-        id: "core-output",
-        label: "Output",
-        content: "**Brand strategy and voice system:** positioning, an eight-pillar POV, and an in-product language system\n\n**Visual identity:** Logo, Typography, Color Palette\n\n**Working prototype:** A diner app, a creator experience, and a restaurant dashboard. Ready for early user testing and fundraising.",
-      },
-    ],
-    className: "md:col-span-1 md:aspect-[9/10]",
-  },
-  {
     id: "4",
     slug: "bmw-indian-wells",
     title: "BMW",
     description: "Tennis-meets-motorsport identity designed for Indian Wells.",
     categories: ["illustration", "identity", "art direction", "experiential"],
+    categoryOrder: { identity: 2, "art direction": 4 },
     image: "/Thumbnails/Desktop/BMW_Tennis.png",
     mobileImage: "/Thumbnails/Mobile/BMW_Tennis.png",
     heroMedia: {
@@ -187,7 +192,8 @@ export const workItems: WorkItem[] = [
     slug: "comcast-business",
     title: "Comcast Business",
     description: "A flexible brand system designed to evolve with business.",
-    categories: ["identity", "art direction", "graphic"],
+    categories: ["identity", "art direction"],
+    categoryOrder: { identity: 0, "art direction": 2 },
     image: "/Thumbnails/Desktop/Comcast Business.png",
     mobileImage: "/Thumbnails/Mobile/Comcast Business.png",
     heroMedia: {
@@ -207,37 +213,12 @@ export const workItems: WorkItem[] = [
     className: "md:col-span-1 md:aspect-[9/10]",
   },
   {
-    id: "5",
-    slug: "instacart",
-    title: "Instacart",
-    description: "Instacart's debut brand campaign revealing the secret ingredient behind home-cooked meals.",
-    categories: ["identity", "art direction"],
-    image: "/Thumbnails/Desktop/Instacart.png",
-    mobileImage: "/Thumbnails/Mobile/Instacart.png",
-    heroMedia: {
-      type: "video",
-      src: `${BLOB_BASE}/Work/Instacart/Hero_IndianSpice.mp4`,
-      poster: "/Thumbnails/Desktop/Instacart.png",
-    },
-    accentColor: "#16a34a",
-    logo: "/Work/Instacart/InstacartLogo.png",
-    logoClassName: "h-[4.4rem] md:h-[7.7rem] lg:h-[8.8rem]",
-    role: "Art Director",
-    context: "Launch campaign for Instacart's refreshed brand positioning.",
-    sections: [
-      { id: "role", label: "Role", content: "Campaign identity and visual system.\nArt direction for photoshoot.\nDesign across digital and out-of-home." },
-      { id: "background", label: "Background", content: "Instacart\u2019s debut brand campaign launched toward the end of the pandemic, as meal delivery services surged and convenience became the dominant narrative.\n\nAt the same time, caregivers were carrying more responsibility than ever, balancing work, family, and the emotional labor of making mealtime happen." },
-      { id: "insight", label: "Insight", content: "You can\u2019t deliver homemade.\n\nWhat people want isn\u2019t just convenience, but connection. Home-cooked meals carry care and culture, yet the work of making them often falls on already-stretched caregivers.\n\nInstacart becomes the unseen ingredient that helps homemade happen." },
-      { id: "solution", label: "Solution", content: "*How Homemade Is Made* reframed Instacart as a partner in the making of home-cooked meals.\n\nEach execution celebrated the effort behind cooking while turning emotion into action through QR-linked, cartable recipes.\n\nThe system consistently showed how Instacart removes friction so people can focus on sharing care through food." },
-    ],
-    className: "md:col-span-2 md:aspect-[11/6]",
-  },
-  {
     id: "3",
     slug: "link-logistics",
     title: "Link Logistics",
     description: "A modular brand system designed to scale with America's largest logistics real estate company.",
-    categories: ["identity", "art direction", "graphic"],
+    categories: ["identity", "art direction"],
+    categoryOrder: { identity: 3, "art direction": 1 },
     image: "/Thumbnails/Desktop/LinkLogistics.png",
     mobileImage: "/Thumbnails/Mobile/LinkLogistics.png",
     heroMedia: {
@@ -259,11 +240,39 @@ export const workItems: WorkItem[] = [
     className: "md:col-span-1 md:aspect-[9/10]",
   },
   {
+    id: "5",
+    slug: "instacart",
+    title: "Instacart",
+    description: "Instacart's debut brand campaign revealing the secret ingredient behind home-cooked meals.",
+    categories: ["art direction"],
+    categoryOrder: { "art direction": 0 },
+    image: "/Thumbnails/Desktop/Instacart.png",
+    mobileImage: "/Thumbnails/Mobile/Instacart.png",
+    heroMedia: {
+      type: "video",
+      src: `${BLOB_BASE}/Work/Instacart/Hero_IndianSpice.mp4`,
+      poster: "/Thumbnails/Desktop/Instacart.png",
+    },
+    accentColor: "#16a34a",
+    logo: "/Work/Instacart/InstacartLogo.png",
+    logoClassName: "h-[4.4rem] md:h-[7.7rem] lg:h-[8.8rem]",
+    role: "Art Director",
+    context: "Launch campaign for Instacart's refreshed brand positioning.",
+    sections: [
+      { id: "role", label: "Role", content: "Campaign identity and visual system.\nArt direction for photoshoot.\nDesign across digital and out-of-home." },
+      { id: "background", label: "Background", content: "Instacart\u2019s debut brand campaign launched toward the end of the pandemic, as meal delivery services surged and convenience became the dominant narrative.\n\nAt the same time, caregivers were carrying more responsibility than ever, balancing work, family, and the emotional labor of making mealtime happen." },
+      { id: "insight", label: "Insight", content: "You can\u2019t deliver homemade.\n\nWhat people want isn\u2019t just convenience, but connection. Home-cooked meals carry care and culture, yet the work of making them often falls on already-stretched caregivers.\n\nInstacart becomes the unseen ingredient that helps homemade happen." },
+      { id: "solution", label: "Solution", content: "*How Homemade Is Made* reframed Instacart as a partner in the making of home-cooked meals.\n\nEach execution celebrated the effort behind cooking while turning emotion into action through QR-linked, cartable recipes.\n\nThe system consistently showed how Instacart removes friction so people can focus on sharing care through food." },
+    ],
+    className: "md:col-span-2 md:aspect-[11/6]",
+  },
+  {
     id: "8",
     slug: "bmw-championship",
     title: "BMW Championship",
     description: "Experiential design built around ultimate performance.",
     categories: ["art direction", "experiential", "identity"],
+    categoryOrder: { identity: 5, experiential: 0 },
     image: "/Thumbnails/Desktop/BMW_Championship.png",
     mobileImage: "/Thumbnails/Mobile/BMW_Championship.png",
     heroMedia: {
@@ -288,7 +297,8 @@ export const workItems: WorkItem[] = [
     slug: "merit-systems",
     title: "Merit Systems",
     description: "Foundational brand identity for an open-source economics platform.",
-    categories: ["identity", "product"],
+    categories: ["identity"],
+    categoryOrder: { identity: 4 },
     image: "/Thumbnails/Desktop/MeritSystems.png",
     mobileImage: "/Thumbnails/Mobile/MeritSystems.png",
     heroMedia: {
@@ -315,7 +325,8 @@ export const workItems: WorkItem[] = [
     slug: "it-all-starts-here",
     title: "It All Starts Here",
     description: "A citywide campaign celebrating San Francisco's enduring influence on innovation.",
-    categories: ["art direction", "experiential"],
+    categories: ["art direction"],
+    categoryOrder: { "art direction": 3 },
     image: "/Thumbnails/Desktop/It all Starts Here.png",
     mobileImage: "/Thumbnails/Mobile/ItAllStartsHere.png",
     heroMedia: {
