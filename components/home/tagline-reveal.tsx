@@ -1,36 +1,38 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { Fragment, useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 
-const LINE_1 = "Designing at the intersection of";
-const LINE_2 = "brand, product, and emerging technology";
+const LINES = [
+  "Creating continuity between brand and product,",
+  "where identity, voice, interface, and behavior",
+  "carry through as one system.",
+];
 
-const WORDS_1 = LINE_1.split(" ");
-const WORDS_2 = LINE_2.split(" ");
-
-// Total character count across both lines (for stagger limit)
-const TOTAL_CHARS = (LINE_1 + LINE_2).replace(/ /g, "").length;
+const WORDS_PER_LINE = LINES.map((l) => l.split(" "));
+const TOTAL_CHARS = LINES.join("").replace(/ /g, "").length;
 
 const STAGGER_MS = 20;
 const INITIAL_DELAY_MS = 200;
 
-// Build a global char index offset for each word
-function charOffsets(words: string[]) {
-  let offset = 0;
-  return words.map((word) => {
-    const o = offset;
-    offset += word.length;
-    return o;
-  });
+// Build a global char index offset for each word, across all lines
+function buildOffsets(lines: string[][]): { wordOffsets: number[][]; lineStarts: number[] } {
+  const wordOffsets: number[][] = [];
+  const lineStarts: number[] = [];
+  let global = 0;
+  for (const words of lines) {
+    lineStarts.push(global);
+    const offsets: number[] = [];
+    for (const word of words) {
+      offsets.push(global);
+      global += word.length;
+    }
+    wordOffsets.push(offsets);
+  }
+  return { wordOffsets, lineStarts };
 }
 
-const OFFSETS_1 = charOffsets(WORDS_1);
-const OFFSETS_2 = charOffsets(WORDS_2);
-const LINE_1_CHAR_COUNT = LINE_1.replace(/ /g, "").length;
-
-// No accent-colored words
-const BLUE_WORDS = new Set<number>();
+const { wordOffsets: WORD_OFFSETS } = buildOffsets(WORDS_PER_LINE);
 
 interface TaglineRevealProps {
   onComplete?: () => void;
@@ -74,60 +76,35 @@ export function TaglineReveal({ onComplete }: TaglineRevealProps) {
         className="text-center max-w-4xl text-2xl md:text-4xl lg:text-5xl font-normal leading-tight tracking-tight text-[#efefef]"
         style={{ fontFamily: "var(--font-display)", fontStyle: "italic" }}
       >
-        {WORDS_1.map((word, wi) => (
-          <span key={wi} className="description-word inline-block mr-[0.15em]">
-            {word.split("").map((char, ci) => {
-              const globalIndex = OFFSETS_1[wi] + ci;
-              return (
-                <motion.span
-                  key={ci}
-                  className="inline-block"
-                  initial={{ opacity: 0, filter: "blur(8px)", x: -6, textShadow: "0 0 0px rgba(133,195,237,0)" }}
-                  animate={
-                    globalIndex <= revealedCount
-                      ? { opacity: 1, filter: "blur(0px)", x: 0, textShadow: "0 0 20px rgba(133,195,237,0.3)" }
-                      : { opacity: 0, filter: "blur(8px)", x: -6, textShadow: "0 0 0px rgba(133,195,237,0)" }
-                  }
-                  transition={{
-                    duration: 1.0,
-                    ease: [0.05, 0.6, 0.3, 0.98],
-                  }}
-                >
-                  {char}
-                </motion.span>
-              );
-            })}
-          </span>
-        ))}
-        <br />
-        {WORDS_2.map((word, wi) => (
-          <span
-            key={wi}
-            className="description-word inline-block mr-[0.15em]"
-            style={BLUE_WORDS.has(wi) ? { color: "var(--color-accent)" } : undefined}
-          >
-            {word.split("").map((char, ci) => {
-              const globalIndex = LINE_1_CHAR_COUNT + OFFSETS_2[wi] + ci;
-              return (
-                <motion.span
-                  key={ci}
-                  className="inline-block"
-                  initial={{ opacity: 0, filter: "blur(8px)", x: -6, textShadow: "0 0 0px rgba(133,195,237,0)" }}
-                  animate={
-                    globalIndex <= revealedCount
-                      ? { opacity: 1, filter: "blur(0px)", x: 0, textShadow: "0 0 20px rgba(133,195,237,0.3)" }
-                      : { opacity: 0, filter: "blur(8px)", x: -6, textShadow: "0 0 0px rgba(133,195,237,0)" }
-                  }
-                  transition={{
-                    duration: 1.0,
-                    ease: [0.05, 0.6, 0.3, 0.98],
-                  }}
-                >
-                  {char}
-                </motion.span>
-              );
-            })}
-          </span>
+        {WORDS_PER_LINE.map((words, li) => (
+          <Fragment key={li}>
+            {li > 0 && <br />}
+            {words.map((word, wi) => (
+              <span key={wi} className="description-word inline-block mr-[0.15em]">
+                {word.split("").map((char, ci) => {
+                  const globalIndex = WORD_OFFSETS[li][wi] + ci;
+                  return (
+                    <motion.span
+                      key={ci}
+                      className="inline-block"
+                      initial={{ opacity: 0, filter: "blur(8px)", x: -6, textShadow: "0 0 0px rgba(133,195,237,0)" }}
+                      animate={
+                        globalIndex <= revealedCount
+                          ? { opacity: 1, filter: "blur(0px)", x: 0, textShadow: "0 0 20px rgba(133,195,237,0.3)" }
+                          : { opacity: 0, filter: "blur(8px)", x: -6, textShadow: "0 0 0px rgba(133,195,237,0)" }
+                      }
+                      transition={{
+                        duration: 1.0,
+                        ease: [0.05, 0.6, 0.3, 0.98],
+                      }}
+                    >
+                      {char}
+                    </motion.span>
+                  );
+                })}
+              </span>
+            ))}
+          </Fragment>
         ))}
       </p>
     </div>

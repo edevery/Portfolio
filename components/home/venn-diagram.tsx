@@ -47,7 +47,7 @@ const M_CENTER_X = (M_FINAL[0].cx + M_FINAL[1].cx + M_FINAL[2].cx) / 3;
 const M_CENTER_Y = (M_FINAL[0].cy + M_FINAL[1].cy + M_FINAL[2].cy) / 3;
 
 // ─── Shared ─────────────────────────────────────────────────────────
-const LABELS = ["Brand", "Product", "Tech"];
+const LABELS = ["Brand", "Product", "AI"];
 const ACCENT = "#85c3ed";
 
 // ─── Scroll mapping ranges (within 0-1 scrollYProgress) ─────────────
@@ -129,7 +129,7 @@ export function VennDiagram({
       }}
       viewBox={`0 ${vbY} ${vbW} ${vbH}`}
       className="w-full max-w-2xl mx-auto mt-20"
-      aria-label="Venn diagram of Brand, Product, and Tech"
+      aria-label="Venn diagram of Brand, Product, and AI"
     >
       <defs>
         <clipPath id="venn-clip-a">
