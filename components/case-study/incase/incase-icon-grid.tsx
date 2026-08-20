@@ -27,7 +27,7 @@ export function IncaseIconGrid() {
               <div
                 key={cat.key}
                 {...getSwatchProps(i)}
-                className="relative aspect-square rounded-2xl overflow-hidden cursor-pointer"
+                className="relative flex aspect-square items-center justify-center rounded-2xl overflow-hidden cursor-pointer"
                 style={{
                   background: INCASE_SURFACE.warmPlate,
                   boxShadow: on
@@ -36,13 +36,19 @@ export function IncaseIconGrid() {
                   transition: "box-shadow .3s ease",
                 }}
               >
+                {/* A 46% square envelope with `contain` inside it — the icons are
+                    not square (cat-health is 338x251), so sizing the background
+                    to 46% 46% directly would stretch them to fit. */}
                 <div
-                  className="absolute inset-0 bg-center bg-no-repeat"
+                  className="bg-center bg-no-repeat bg-contain"
                   style={{
+                    width: "46%",
+                    height: "46%",
                     backgroundImage: `url("/Work/Incase/cat-${cat.key}.png")`,
-                    backgroundSize: "46% 46%",
+                    // -7% of the icon box resolves to the spec'd -14px at the
+                    // design's 427px card, and stays proportional as cards shrink.
                     transform: on
-                      ? "translateY(-14px) scale(.94)"
+                      ? "translateY(-7%) scale(.94)"
                       : "translateY(0) scale(1)",
                     transition: "transform .4s cubic-bezier(.4,0,.2,1)",
                   }}
@@ -50,9 +56,12 @@ export function IncaseIconGrid() {
                   aria-label={`${cat.label} folder icon`}
                 />
                 <div
-                  className="absolute left-0 right-0 text-center text-[11px] font-bold uppercase"
+                  className="absolute left-0 right-0 text-center text-[10px] md:text-[11px] font-bold uppercase"
                   style={{
-                    bottom: 30,
+                    // 7% is the spec'd 30px at the design's 427px card; as a
+                    // percentage the label keeps its distance from the icon
+                    // instead of creeping up on it as cards get narrower.
+                    bottom: "7%",
                     letterSpacing: ".14em",
                     color: INCASE_SURFACE.penInk,
                     fontFamily: "var(--font-inter)",
