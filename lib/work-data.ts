@@ -148,7 +148,7 @@ export const workItems: WorkItem[] = [
       {
         id: "scope",
         label: "Scope",
-        content: "App icon, with exploration across three distinct visual directions.\n\nThe Case and Folder system: form, color, materiality, and hierarchy.\n\nIconography: nine folder category icons, plus UI and supporting graphics.\n\nMotion language, including the app-opening animation.\n\nLanding Page Design for launch.\n\nA social graphic system with nine launch templates, fully editable in Canva.",
+        content: "**App Icon**, with exploration across three distinct visual directions.\n\n**Case and Folder System**: form, color, materiality, and hierarchy.\n\n**Iconography**: nine folder category icons, plus UI and supporting graphics.\n\n**Motion Language**, including the app-opening animation.\n\n**Landing Page Design** for launch.\n\n**Social graphic system** with nine launch templates, fully editable in Canva.",
       },
     ],
     className: "md:col-span-2 md:aspect-[11/6]",
