@@ -610,7 +610,7 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
             const content = section.content || "";
             const paragraphs = content.split("\n\n");
             const firstParagraph = paragraphs[0];
-            const restParagraphs = paragraphs.slice(1).join("\n\n");
+            const restParagraphs = paragraphs.slice(1);
 
             return (
               <motion.div
@@ -644,14 +644,15 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
                       {renderWithItalics(firstParagraph)}
                     </p>
 
-                    {restParagraphs && (
+                    {restParagraphs.map((para, i) => (
                       <p
+                        key={i}
                         className="mt-4 text-base text-white/70 leading-relaxed whitespace-pre-line"
                         style={{ fontFamily: "var(--font-inter)" }}
                       >
-                        {renderWithItalics(restParagraphs)}
+                        {renderWithItalics(para)}
                       </p>
-                    )}
+                    ))}
                   </div>
 
                   {/* Link button if present */}
@@ -1893,7 +1894,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 const content = section.content || "";
                 const paragraphs = content.split("\n\n");
                 const firstParagraph = paragraphs[0];
-                const restParagraphs = paragraphs.slice(1).join("\n\n");
+                const restParagraphs = paragraphs.slice(1);
 
                 return (
                   <motion.div
@@ -1939,17 +1940,18 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                         </svg>
                       </motion.a>
                     )}
-                    {restParagraphs && (
+                    {restParagraphs.map((para, i) => (
                       <motion.p
+                        key={i}
                         className="mt-8 text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed whitespace-pre-line"
                         style={{ fontFamily: "var(--font-inter)" }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
                       >
-                        {renderWithItalics(restParagraphs)}
+                        {renderWithItalics(para)}
                       </motion.p>
-                    )}
+                    ))}
                   </motion.div>
                 );
               })}
