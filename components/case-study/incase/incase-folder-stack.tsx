@@ -69,6 +69,7 @@ export function IncaseFolderStack() {
   // Where inside the thumb the pointer grabbed it, so the thumb follows the
   // cursor from that point rather than jumping its centre under it.
   const grabOffsetRef = useRef(THUMB_H / 2);
+  const releaseRef = useRef<(() => void) | null>(null);
   const [dragging, setDragging] = useState(false);
 
   const applyProgress = useCallback((p: number) => {
@@ -144,7 +145,6 @@ export function IncaseFolderStack() {
 
   const startDrag = (e: React.PointerEvent) => {
     e.preventDefault();
-    e.currentTarget.setPointerCapture(e.pointerId);
 
     // Grabbing the thumb keeps the offset under the cursor; clicking the bare
     // track centres the thumb on the click and drags from there.
@@ -159,19 +159,38 @@ export function IncaseFolderStack() {
     setDragging(true);
     modeRef.current = "manual";
     applyProgress(progressFromPointer(e.clientY));
+
+    // Bind to the window, and bind it here rather than from an effect keyed on
+    // `dragging`: the track is only ~24px wide, so the cursor leaves it almost
+    // immediately, and waiting for a React commit would miss the opening moves.
+    const onMove = (ev: PointerEvent) => {
+      if (!draggingRef.current) return;
+      ev.preventDefault();
+      applyProgress(progressFromPointer(ev.clientY));
+    };
+    const onEnd = () => {
+      draggingRef.current = false;
+      setDragging(false);
+      releaseRef.current?.();
+      releaseRef.current = null;
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: false });
+    window.addEventListener("pointerup", onEnd);
+    window.addEventListener("pointercancel", onEnd);
+    const prevSelect = document.body.style.userSelect;
+    document.body.style.userSelect = "none"; // don't select copy while dragging
+
+    releaseRef.current = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onEnd);
+      window.removeEventListener("pointercancel", onEnd);
+      document.body.style.userSelect = prevSelect;
+    };
   };
 
-  const moveDrag = (e: React.PointerEvent) => {
-    if (!draggingRef.current) return;
-    applyProgress(progressFromPointer(e.clientY));
-  };
-
-  const endDrag = (e: React.PointerEvent) => {
-    if (!draggingRef.current) return;
-    draggingRef.current = false;
-    setDragging(false);
-    e.currentTarget.releasePointerCapture(e.pointerId);
-  };
+  // Drop any in-flight drag listeners if the panel unmounts mid-drag.
+  useEffect(() => () => releaseRef.current?.(), []);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     const step = e.shiftKey ? 0.2 : 0.05;
@@ -201,25 +220,14 @@ export function IncaseFolderStack() {
       <div
         ref={trackRef}
         onPointerDown={startDrag}
-        onPointerMove={moveDrag}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-        className={`absolute right-3 md:right-5 top-1/2 z-30 h-40 md:h-48 w-7 -translate-y-1/2 touch-none ${
+        className={`absolute right-3 md:right-5 top-1/2 z-30 h-40 md:h-48 w-6 -translate-y-1/2 touch-none ${
           dragging ? "cursor-grabbing" : "cursor-grab"
         }`}
       >
-        {/* Frosted track */}
         <div
-          className="absolute left-1/2 top-0 bottom-0 w-2.5 -translate-x-1/2 rounded-full"
-          style={{
-            background: "rgba(255,255,255,.28)",
-            backdropFilter: "blur(10px) saturate(1.3)",
-            WebkitBackdropFilter: "blur(10px) saturate(1.3)",
-            border: "1px solid rgba(255,255,255,.5)",
-            boxShadow: "inset 0 1px 3px rgba(23,36,43,.14)",
-          }}
+          className="absolute left-1/2 top-0 bottom-0 w-1.5 -translate-x-1/2 rounded-full"
+          style={{ background: "rgba(23,36,43,.14)" }}
         />
-        {/* Glass thumb */}
         <div
           ref={thumbRef}
           role="slider"
@@ -230,22 +238,15 @@ export function IncaseFolderStack() {
           aria-valuenow={0}
           aria-orientation="vertical"
           onKeyDown={onKeyDown}
-          className="absolute left-1/2 top-0 w-2.5 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#005679]/50"
+          className="absolute left-1/2 top-0 w-1.5 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#005679]/50"
           style={{
             height: THUMB_H,
-            marginLeft: -5,
-            background: dragging
-              ? "linear-gradient(180deg, rgba(0,86,121,.85), rgba(0,86,121,.68))"
-              : "linear-gradient(180deg, rgba(0,86,121,.62), rgba(0,86,121,.48))",
-            backdropFilter: "blur(6px) saturate(1.6)",
-            WebkitBackdropFilter: "blur(6px) saturate(1.6)",
-            border: "1px solid rgba(255,255,255,.55)",
-            boxShadow: dragging
-              ? "0 4px 14px rgba(23,36,43,.32), inset 0 1px 0 rgba(255,255,255,.65)"
-              : "0 2px 8px rgba(23,36,43,.22), inset 0 1px 0 rgba(255,255,255,.5)",
+            marginLeft: -3,
+            background: "#005679",
+            opacity: dragging ? 1 : 0.75,
             // Transform is written directly on every frame — never transition it,
             // or the thumb lags behind the cursor.
-            transition: "background .2s ease, box-shadow .2s ease",
+            transition: "opacity .2s ease",
             willChange: "transform",
           }}
         />
