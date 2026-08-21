@@ -16,7 +16,6 @@ import { IncasePalette } from "./incase/incase-palette";
 import { IncaseIconGrid } from "./incase/incase-icon-grid";
 import { IncaseLandingEmbed } from "./incase/incase-landing-embed";
 import { IncaseSocialGrid } from "./incase/incase-social-grid";
-import { IncaseNextProjects } from "./incase/incase-next-projects";
 import { IncaseFeatureCard, IncaseImageCard, IncaseThreeUp } from "./incase/incase-cards";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { TransitionLink } from "@/components/case-study/transition-link";
@@ -691,15 +690,28 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
 }
 
 // Explore More Work Component - shows next projects with square thumbnails
-function ExploreMoreWork({ currentItem }: { currentItem: WorkItem }) {
+function ExploreMoreWork({
+  currentItem,
+  slugs,
+}: {
+  currentItem: WorkItem;
+  /** Pin the two projects shown, instead of taking the next two in order. */
+  slugs?: string[];
+}) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Find current item index and get next 2 projects (wrapping to beginning)
   const currentIndex = workItems.findIndex((item) => item.slug === currentItem.slug);
-  const nextProjects = [
-    workItems[(currentIndex + 1) % workItems.length],
-    workItems[(currentIndex + 2) % workItems.length],
-  ];
+  const pinned = slugs
+    ?.map((slug) => workItems.find((item) => item.slug === slug))
+    .filter((item): item is WorkItem => Boolean(item));
+  const nextProjects =
+    pinned && pinned.length
+      ? pinned
+      : [
+          workItems[(currentIndex + 1) % workItems.length],
+          workItems[(currentIndex + 2) % workItems.length],
+        ];
 
   return (
     <div className="relative z-20 bg-black px-6 md:px-12 lg:px-24 pb-32 md:pb-48">
@@ -4159,7 +4171,10 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       {/* Explore More Work Section - shown on all case studies.
           Incase names its two next projects explicitly (handoff §3.13). */}
       {item.slug === "incase" ? (
-        <IncaseNextProjects />
+        // Incase sits between Oro and Vesta in `workItems`, so array order
+        // would surface an unrelated project — name the pair the handoff asked
+        // for (§3.13) while keeping the site's standard thumbnail cards.
+        <ExploreMoreWork currentItem={item} slugs={["vesta", "oro"]} />
       ) : (
         <ExploreMoreWork currentItem={item} />
       )}
