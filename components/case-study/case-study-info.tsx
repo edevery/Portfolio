@@ -1967,7 +1967,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
           Case" run in the reverse of the handoff's order, per art direction. */}
       {item.slug === "incase" && (
         <>
-          {/* §3.5 Home-screen shot */}
+          {/* Home-screen shot (§3.5) */}
           <IncaseImageCard
             src="/Work/Incase/icon-on-homescreen.png"
             alt="The Incase app icon on an iPhone home screen"
@@ -1990,6 +1990,9 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             </div>
           </div>
 
+          {/* Colour palette (§3.9) */}
+          <IncasePalette />
+
           {/* Build a Case for you (§3.6) */}
           <IncaseFeatureCard feature="Build a Case for you and for the people you love.">
             <IncaseThreeUp
@@ -2010,16 +2013,13 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             />
           </IncaseFeatureCard>
 
-          {/* §3.9 Colour palette */}
-          <IncasePalette />
-
-          {/* §3.10 Iconography grid */}
+          {/* Iconography grid (§3.10) */}
           <IncaseIconGrid />
 
-          {/* §3.11 Landing page reskin */}
+          {/* Landing page reskin (§3.11) */}
           <IncaseLandingEmbed />
 
-          {/* §3.12 Social system */}
+          {/* Social system (§3.12) */}
           <IncaseFeatureCard
             eyebrow="Social System"
             feature="A set of composable templates so the team could keep posting: annotated product shots, folder stacks, single-icon statements, quote fields, and photo layouts."
