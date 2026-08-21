@@ -107,7 +107,22 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           delay: 0.4,
         }}
       >
-        {item.heroMedia.type === "video" || item.slug === "it-all-starts-here" ? (
+        {item.slug === "incase" ? (
+          /* The app-open animation runs as a live embed — it loops itself on a
+             10.9s cycle, so there is no video to autoplay here. */
+          <motion.iframe
+            src="/Work/Incase/embeds/app-open.html"
+            title="Incase app opening animation"
+            className="absolute inset-0 w-full h-full border-0"
+            style={{ backgroundColor: "#F3ECE2" }}
+            scrolling="no"
+            tabIndex={-1}
+            aria-hidden
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
+          />
+        ) : item.heroMedia.type === "video" || item.slug === "it-all-starts-here" ? (
           !(isMobile && item.slug === "merit-systems") ? (
             <>
               <motion.video
@@ -196,8 +211,10 @@ export function CaseStudyHero({ item }: CaseStudyHeroProps) {
           />
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        {/* Gradient overlay — skipped for Incase, whose hero plate is paper cream */}
+        {item.slug !== "incase" && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        )}
 
         {/* Vesta animated logo overlay */}
         {item.slug === "vesta" && (

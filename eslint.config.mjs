@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static assets served verbatim — includes vendored third-party runtimes
+    // (e.g. the Incase design-embed support script) that we don't author.
+    "public/**",
   ]),
 ]);
 

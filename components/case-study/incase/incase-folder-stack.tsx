@@ -1,0 +1,167 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { FOLDER_RAMP, INCASE_SURFACE } from "./incase-tokens";
+import { IncaseCalloutPill } from "./incase-case-panel";
+
+/**
+ * §3.7 right — the folder stack, scroll driven.
+ * Folders 2–9 rise 56px and fade in sequentially as the panel moves up the
+ * viewport; folder 1 is always settled.
+ */
+
+const SLANT = 9;
+const GAP = 27;
+const TOP_W = 37;
+const X0 = 42;
+const N = 8;
+const RISE = 56;
+
+const FRONT_RX = X0 + GAP;
+
+const frontPath = `M5 32 Q5 22 15 22 L${FRONT_RX - 5} 22 Q${FRONT_RX} 22 ${(
+  FRONT_RX + 2.6
+).toFixed(1)} 26.3 L${FRONT_RX + SLANT} 37 L265 37 Q275 37 275 47 L275 200 Q275 210 263 210 L17 210 Q5 210 5 200 Z`;
+
+const creamPath =
+  "M5 56 L263 56 Q275 56 275 67 L275 200 Q275 210 263 210 L17 210 Q5 210 5 200 Z";
+
+function behindPath(tabX: number) {
+  const tl = tabX + SLANT;
+  const tr = tabX + SLANT + TOP_W;
+  return `M5 47 Q5 37 15 37 L${tabX} 37 L${(tl - 2.6).toFixed(1)} 26.3 Q${tl} 22 ${
+    tl + 5
+  } 22 L${tr - 5} 22 Q${tr} 22 ${(tr + 2.6).toFixed(1)} 26.3 L${
+    tabX + 2 * SLANT + TOP_W
+  } 37 L265 37 Q275 37 275 47 L275 200 Q275 210 263 210 L17 210 Q5 210 5 200 Z`;
+}
+
+function lastPath(tabX: number) {
+  const tl = tabX + SLANT;
+  return `M5 47 Q5 37 15 37 L${tabX} 37 L${(tl - 2.6).toFixed(1)} 26.3 Q${tl} 22 ${
+    tl + 5
+  } 22 L265 22 Q275 22 275 32 L275 200 Q275 210 263 210 L17 210 Q5 210 5 200 Z`;
+}
+
+const STACK = Array.from({ length: 9 }, (_, idx) => {
+  const k = idx + 1;
+  const tabX = X0 + (k - 2) * GAP;
+  return {
+    k,
+    d: k === 1 ? frontPath : k === 9 ? lastPath(tabX) : behindPath(tabX),
+    col: FOLDER_RAMP[k - 1],
+  };
+});
+
+export function IncaseFolderStack() {
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Two paths per folder (tab shape + cream body) move together.
+  const groupRefs = useRef<(SVGGElement | null)[]>([]);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const apply = () => {
+      frame = 0;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const r = panel.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const span = r.height + vh * 0.75;
+      const p = Math.min(1, Math.max(0, (vh - r.top - vh * 0.2) / span));
+
+      groupRefs.current.forEach((g, idx) => {
+        if (!g) return;
+        const k = idx + 1;
+        if (k === 1) {
+          g.setAttribute("transform", "translate(0, 0)");
+          g.style.opacity = "1";
+          return;
+        }
+        const start = ((k - 2) / N) * 0.9;
+        const dur = (1 / N) * 1.6;
+        const sp = Math.min(1, Math.max(0, (p - start) / dur));
+        const e = 1 - Math.pow(1 - sp, 3);
+        g.setAttribute("transform", `translate(0, ${((1 - e) * RISE).toFixed(2)})`);
+        g.style.opacity = sp > 0.02 ? "1" : "0";
+      });
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(apply);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    frame = requestAnimationFrame(apply);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={panelRef}
+      className="relative flex flex-col overflow-hidden rounded-2xl md:rounded-3xl p-8 md:p-14"
+      style={{ background: INCASE_SURFACE.coolPlate, minHeight: 560 }}
+    >
+      <IncaseCalloutPill label="SCROLL" color="#005679" />
+
+      <div className="flex flex-1 items-center justify-center">
+        <div className="relative w-[80%] md:w-[60%]">
+          {/* Ground shadow */}
+          <div
+            className="absolute"
+            style={{
+              left: "50%",
+              bottom: "4%",
+              transform: "translateX(-50%)",
+              width: "78%",
+              height: 26,
+              background: "rgba(23,36,43,.18)",
+              filter: "blur(15px)",
+              borderRadius: "50%",
+            }}
+          />
+          <svg
+            viewBox="0 12 280 206"
+            width="100%"
+            className="relative block"
+            style={{ overflow: "visible" }}
+            aria-label="Nine Incase folders stacking as you scroll"
+            role="img"
+          >
+            {STACK.map((f, idx) => (
+              <g
+                key={f.k}
+                ref={(el) => {
+                  groupRefs.current[idx] = el;
+                }}
+                style={{ opacity: 0 }}
+              >
+                <path
+                  d={f.d}
+                  fill={f.col}
+                  stroke="#17242B"
+                  strokeWidth={2.5}
+                  strokeLinejoin="round"
+                />
+                <path
+                  d={creamPath}
+                  fill="#F4EDE1"
+                  stroke="#17242B"
+                  strokeWidth={2.5}
+                  strokeLinejoin="round"
+                />
+              </g>
+            ))}
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}

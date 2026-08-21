@@ -9,6 +9,15 @@ import { workItems, type WorkItem } from "@/lib/work-data";
 import { BLOB_BASE } from "@/lib/utils";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
+import { useColorSwatchInteraction } from "./use-color-swatch-interaction";
+import { IncaseCasePanel } from "./incase/incase-case-panel";
+import { IncaseFolderStack } from "./incase/incase-folder-stack";
+import { IncasePalette } from "./incase/incase-palette";
+import { IncaseIconGrid } from "./incase/incase-icon-grid";
+import { IncaseLandingEmbed } from "./incase/incase-landing-embed";
+import { IncaseSocialGrid } from "./incase/incase-social-grid";
+import { IncaseNextProjects } from "./incase/incase-next-projects";
+import { IncaseFeatureCard, IncaseImageCard, IncaseThreeUp } from "./incase/incase-cards";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { TransitionLink } from "@/components/case-study/transition-link";
 import { OroPhoneShowcase } from "@/components/case-study/oro-phone-showcase";
@@ -767,49 +776,6 @@ function ExploreMoreWork({ currentItem }: { currentItem: WorkItem }) {
       </div>
     </div>
   );
-}
-
-// Shared hook for color swatch press-and-hold (mobile) / hover (desktop)
-function useColorSwatchInteraction() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
-  const lastTouchTimeRef = useRef(0);
-
-  const getSwatchProps = (index: number) => ({
-    onTouchStart: (e: React.TouchEvent) => {
-      const touch = e.touches[0];
-      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
-      setActiveIndex(index);
-    },
-    onTouchMove: (e: React.TouchEvent) => {
-      if (!touchStartPos.current) return;
-      const touch = e.touches[0];
-      const dx = touch.clientX - touchStartPos.current.x;
-      const dy = touch.clientY - touchStartPos.current.y;
-      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-        setActiveIndex(null);
-        touchStartPos.current = null;
-      }
-    },
-    onTouchEnd: () => {
-      setActiveIndex(null);
-      touchStartPos.current = null;
-      lastTouchTimeRef.current = Date.now();
-    },
-    onTouchCancel: () => {
-      setActiveIndex(null);
-      touchStartPos.current = null;
-      lastTouchTimeRef.current = Date.now();
-    },
-    onMouseEnter: () => {
-      if (Date.now() - lastTouchTimeRef.current > 500) setActiveIndex(index);
-    },
-    onMouseLeave: () => {
-      if (Date.now() - lastTouchTimeRef.current > 500) setActiveIndex(null);
-    },
-  });
-
-  return { activeIndex, getSwatchProps };
 }
 
 // Instacart Color Palette Component
@@ -1759,7 +1725,8 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             className="mb-6 md:mb-12"
           >
             {item.logo ? (
-              item.slug === "vesta" ? (
+              /* Rounded-square app-icon treatment: tilt, 22% radius, drop shadow */
+              item.slug === "vesta" || item.slug === "incase" ? (
                 <motion.div className="perspective-[1000px]">
                   <animated.div
                     ref={logoRef}
@@ -1992,6 +1959,71 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         </div>
       </div>
       </>)}
+
+
+      {/* Incase — §3.5 through §3.12 of the design handoff */}
+      {item.slug === "incase" && (
+        <>
+          {/* §3.5 Home-screen shot */}
+          <IncaseImageCard
+            src="/Work/Incase/icon-on-homescreen.png"
+            alt="The Incase app icon on an iPhone home screen"
+            background="#DCE6EA"
+            width={1672}
+            height={1254}
+          />
+
+          {/* §3.6 Build a Case for you */}
+          <IncaseFeatureCard feature="Build a Case for you and for the people you love.">
+            <IncaseThreeUp
+              columns={[
+                {
+                  eyebrow: "Nine Folders",
+                  body: "Each Case holds nine folders, each with a corresponding icon: About, Health, Home, Pets, Finances, Passwords, Estate, Wishes, and Keepsakes.",
+                },
+                {
+                  eyebrow: "Sharing",
+                  body: "Access is granted per Folder, not per Case. Each folder is private until shared — Pets with the dog walker, Estate with the kids, Health with a spouse.",
+                },
+                {
+                  eyebrow: "Paper Logic",
+                  body: "The interface borrows from the objects it replaces: tabbed folders, lined paper, sticky notes, push pins. Nostalgic, like the way your mom kept things — in a form you can reach from anywhere.",
+                },
+              ]}
+            />
+          </IncaseFeatureCard>
+
+          {/* §3.7 Two-up animation panels */}
+          <div className="px-4 md:px-12 mb-4 md:mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <IncaseCasePanel />
+              <IncaseFolderStack />
+            </div>
+          </div>
+
+          {/* §3.8 Brand identity intro */}
+          <IncaseFeatureCard
+            eyebrow="Brand Identity"
+            feature="Incase looks like a filing cabinet kept by someone who loves you. Paper cream, Incase blue, and a hand-drawn line for every icon."
+          />
+
+          {/* §3.9 Colour palette */}
+          <IncasePalette />
+
+          {/* §3.10 Iconography grid */}
+          <IncaseIconGrid />
+
+          {/* §3.11 Landing page reskin */}
+          <IncaseLandingEmbed />
+
+          {/* §3.12 Social system */}
+          <IncaseFeatureCard
+            eyebrow="Social System"
+            feature="A set of composable templates so the team could keep posting: annotated product shots, folder stacks, single-icon statements, quote fields, and photo layouts."
+          />
+          <IncaseSocialGrid />
+        </>
+      )}
 
       {/* Oro - HeroDiscovery video after write-up */}
       {item.slug === "oro" && (
@@ -4121,8 +4153,13 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
         }}
       />
 
-      {/* Explore More Work Section - shown on all case studies */}
-      <ExploreMoreWork currentItem={item} />
+      {/* Explore More Work Section - shown on all case studies.
+          Incase names its two next projects explicitly (handoff §3.13). */}
+      {item.slug === "incase" ? (
+        <IncaseNextProjects />
+      ) : (
+        <ExploreMoreWork currentItem={item} />
+      )}
     </section>
   );
 }

@@ -1,0 +1,62 @@
+"use client";
+
+import { useColorSwatchInteraction } from "../use-color-swatch-interaction";
+import { cardClass, INCASE_PALETTE, insetClass, stackGapClass } from "./incase-tokens";
+
+/**
+ * §3.9 — the locked brand palette.
+ * Nothing is shown at rest; name and hex reveal on hover, and the swatch
+ * lifts 6px. Pen Ink carries a hairline ring so it separates from the card.
+ */
+export function IncasePalette() {
+  const { activeIndex, getSwatchProps } = useColorSwatchInteraction();
+
+  return (
+    <div className={`${insetClass} ${stackGapClass}`}>
+      <div className={`${cardClass} p-2 md:p-6`}>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {INCASE_PALETTE.map((swatch, i) => {
+            const on = activeIndex === i;
+            return (
+              <div
+                key={swatch.hex}
+                {...getSwatchProps(i)}
+                className="relative flex items-end rounded-2xl cursor-pointer"
+                style={{
+                  height: 260,
+                  padding: 22,
+                  background: swatch.hex,
+                  boxShadow:
+                    swatch.name === "Pen Ink"
+                      ? "inset 0 0 0 1px rgba(255,255,255,.12)"
+                      : undefined,
+                  transform: on ? "translateY(-6px)" : "translateY(0)",
+                  transition: "transform .35s cubic-bezier(.4,0,.2,1)",
+                }}
+              >
+                <div
+                  style={{
+                    color: swatch.ink,
+                    opacity: on ? 1 : 0,
+                    transform: on ? "translateY(0)" : "translateY(8px)",
+                    transition:
+                      "opacity .35s cubic-bezier(.4,0,.2,1), transform .35s cubic-bezier(.4,0,.2,1)",
+                    fontFamily: "var(--font-inter)",
+                  }}
+                >
+                  <div
+                    className="text-[11px] font-bold uppercase"
+                    style={{ letterSpacing: ".1em" }}
+                  >
+                    {swatch.name}
+                  </div>
+                  <div className="text-xs mt-[5px] opacity-60">{swatch.hex}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
