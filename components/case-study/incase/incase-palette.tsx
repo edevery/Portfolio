@@ -13,49 +13,55 @@ export function IncasePalette() {
 
   return (
     <div className={`${insetClass} ${stackGapClass}`}>
-      <div className={`${cardClass} p-2 md:p-6`}>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {INCASE_PALETTE.map((swatch, i) => {
-            const on = activeIndex === i;
-            return (
+      {/* The swatches bleed to the card edge, so the radius and clipping live on
+          the grid — only the four outer corners round, and the card colour
+          shows through as gutters rather than a frame. Same treatment as the
+          social grid. */}
+      <div
+        className={`grid grid-cols-2 md:grid-cols-5 gap-2 overflow-hidden ${cardClass}`}
+      >
+        {INCASE_PALETTE.map((swatch, i) => {
+          const on = activeIndex === i;
+          return (
+            <div
+              key={swatch.hex}
+              {...getSwatchProps(i)}
+              className={`relative flex items-end cursor-pointer ${
+                i === INCASE_PALETTE.length - 1 ? "max-md:col-span-2" : ""
+              }`}
+              style={{
+                height: 260,
+                padding: 22,
+                background: swatch.hex,
+                boxShadow:
+                  swatch.name === "Pen Ink"
+                    ? "inset 0 0 0 1px rgba(255,255,255,.12)"
+                    : undefined,
+                transform: on ? "translateY(-6px)" : "translateY(0)",
+                transition: "transform .35s cubic-bezier(.4,0,.2,1)",
+              }}
+            >
               <div
-                key={swatch.hex}
-                {...getSwatchProps(i)}
-                className="relative flex items-end rounded-2xl cursor-pointer"
                 style={{
-                  height: 260,
-                  padding: 22,
-                  background: swatch.hex,
-                  boxShadow:
-                    swatch.name === "Pen Ink"
-                      ? "inset 0 0 0 1px rgba(255,255,255,.12)"
-                      : undefined,
-                  transform: on ? "translateY(-6px)" : "translateY(0)",
-                  transition: "transform .35s cubic-bezier(.4,0,.2,1)",
+                  color: swatch.ink,
+                  opacity: on ? 1 : 0,
+                  transform: on ? "translateY(0)" : "translateY(8px)",
+                  transition:
+                    "opacity .35s cubic-bezier(.4,0,.2,1), transform .35s cubic-bezier(.4,0,.2,1)",
+                  fontFamily: "var(--font-inter)",
                 }}
               >
                 <div
-                  style={{
-                    color: swatch.ink,
-                    opacity: on ? 1 : 0,
-                    transform: on ? "translateY(0)" : "translateY(8px)",
-                    transition:
-                      "opacity .35s cubic-bezier(.4,0,.2,1), transform .35s cubic-bezier(.4,0,.2,1)",
-                    fontFamily: "var(--font-inter)",
-                  }}
+                  className="text-[11px] font-bold uppercase"
+                  style={{ letterSpacing: ".1em" }}
                 >
-                  <div
-                    className="text-[11px] font-bold uppercase"
-                    style={{ letterSpacing: ".1em" }}
-                  >
-                    {swatch.name}
-                  </div>
-                  <div className="text-xs mt-[5px] opacity-60">{swatch.hex}</div>
+                  {swatch.name}
                 </div>
+                <div className="text-xs mt-[5px] opacity-60">{swatch.hex}</div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
