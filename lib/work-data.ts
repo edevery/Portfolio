@@ -143,7 +143,7 @@ export const workItems: WorkItem[] = [
       {
         id: "solution",
         label: "Solution",
-        content: "The identity rests on two objects: the Case that holds a life, and the Folders that sort it. They had to feel like one family and still stay distinct enough to carry product hierarchy — the Case as material and structural, the Folders as flat, color-coded, and legible at a glance.\n\nEverything else is drawn from the objects Incase replaces: tabbed folders, lined pages, a pin holding a photo. Familiar form lowers the stakes of a subject nobody wants to open.",
+        content: "The identity is built around two product features: a case that holds important information related to one’s life and the folders that keep everything organized and separate.\n\nThey needed to feel like one family but stay distinct enough to communicate the product hierarchy. Each folder is color coded with a line art icon to make them legible at a glance.\n\nEverything else is drawn from the objects Incase replaces: tabbed folders, lined pages, a pin holding a photo.",
       },
       {
         id: "scope",
