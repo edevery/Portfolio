@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { cardClass, hairline, INCASE_ACCENT, insetClass, stackGapClass } from "./incase-tokens";
+import { cardClass, INCASE_ACCENT, insetClass, stackGapClass } from "./incase-tokens";
 
 /** 11px / 700 / .1em eyebrow in Incase Blue tint (§2). */
 export function IncaseEyebrow({ children }: { children: React.ReactNode }) {
@@ -89,16 +89,13 @@ export function IncaseThreeUp({
       {columns.map((col, i) => (
         <div
           key={col.eyebrow}
-          className="py-6 md:py-0 md:px-14 first:pt-0 md:first:pl-0 last:pb-0 md:last:pr-0"
-          style={
+          // The rule sits on top while the columns are stacked and switches to
+          // the left edge once they sit side by side — never both at once.
+          className={`py-6 md:py-0 md:px-14 first:pt-0 md:first:pl-0 last:pb-0 md:last:pr-0 ${
             i === 0
-              ? undefined
-              : {
-                  // Hairline sits to the left on desktop, on top when stacked.
-                  borderLeft: `1px solid ${hairline}`,
-                  borderTop: `1px solid ${hairline}`,
-                }
-          }
+              ? ""
+              : "border-t md:border-t-0 md:border-l border-[rgba(255,255,255,0.12)]"
+          }`}
         >
           <div className="mb-4">
             <IncaseEyebrow>{col.eyebrow}</IncaseEyebrow>

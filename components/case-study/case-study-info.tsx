@@ -16,7 +16,6 @@ import { IncasePalette } from "./incase/incase-palette";
 import { IncaseIconGrid } from "./incase/incase-icon-grid";
 import { IncaseLandingEmbed } from "./incase/incase-landing-embed";
 import { IncaseSocialGrid } from "./incase/incase-social-grid";
-import { IncaseNextProjects } from "./incase/incase-next-projects";
 import { IncaseFeatureCard, IncaseImageCard, IncaseThreeUp } from "./incase/incase-cards";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { TransitionLink } from "@/components/case-study/transition-link";
@@ -610,7 +609,7 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
             const content = section.content || "";
             const paragraphs = content.split("\n\n");
             const firstParagraph = paragraphs[0];
-            const restParagraphs = paragraphs.slice(1).join("\n\n");
+            const restParagraphs = paragraphs.slice(1);
 
             return (
               <motion.div
@@ -644,14 +643,15 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
                       {renderWithItalics(firstParagraph)}
                     </p>
 
-                    {restParagraphs && (
+                    {restParagraphs.map((para, i) => (
                       <p
+                        key={i}
                         className="mt-4 text-base text-white/70 leading-relaxed whitespace-pre-line"
                         style={{ fontFamily: "var(--font-inter)" }}
                       >
-                        {renderWithItalics(restParagraphs)}
+                        {renderWithItalics(para)}
                       </p>
-                    )}
+                    ))}
                   </div>
 
                   {/* Link button if present */}
@@ -690,15 +690,28 @@ function MobileSectionsCarousel({ item, renderWithItalics }: MobileSectionsCarou
 }
 
 // Explore More Work Component - shows next projects with square thumbnails
-function ExploreMoreWork({ currentItem }: { currentItem: WorkItem }) {
+function ExploreMoreWork({
+  currentItem,
+  slugs,
+}: {
+  currentItem: WorkItem;
+  /** Pin the two projects shown, instead of taking the next two in order. */
+  slugs?: string[];
+}) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Find current item index and get next 2 projects (wrapping to beginning)
   const currentIndex = workItems.findIndex((item) => item.slug === currentItem.slug);
-  const nextProjects = [
-    workItems[(currentIndex + 1) % workItems.length],
-    workItems[(currentIndex + 2) % workItems.length],
-  ];
+  const pinned = slugs
+    ?.map((slug) => workItems.find((item) => item.slug === slug))
+    .filter((item): item is WorkItem => Boolean(item));
+  const nextProjects =
+    pinned && pinned.length
+      ? pinned
+      : [
+          workItems[(currentIndex + 1) % workItems.length],
+          workItems[(currentIndex + 2) % workItems.length],
+        ];
 
   return (
     <div className="relative z-20 bg-black px-6 md:px-12 lg:px-24 pb-32 md:pb-48">
@@ -1893,7 +1906,7 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                 const content = section.content || "";
                 const paragraphs = content.split("\n\n");
                 const firstParagraph = paragraphs[0];
-                const restParagraphs = paragraphs.slice(1).join("\n\n");
+                const restParagraphs = paragraphs.slice(1);
 
                 return (
                   <motion.div
@@ -1939,17 +1952,18 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
                         </svg>
                       </motion.a>
                     )}
-                    {restParagraphs && (
+                    {restParagraphs.map((para, i) => (
                       <motion.p
+                        key={i}
                         className="mt-8 text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed whitespace-pre-line"
                         style={{ fontFamily: "var(--font-inter)" }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
                       >
-                        {renderWithItalics(restParagraphs)}
+                        {renderWithItalics(para)}
                       </motion.p>
-                    )}
+                    ))}
                   </motion.div>
                 );
               })}
@@ -1961,10 +1975,11 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       </>)}
 
 
-      {/* Incase — §3.5 through §3.12 of the design handoff */}
+      {/* Incase — handoff §3.5 through §3.12. Brand identity and "Build a
+          Case" run in the reverse of the handoff's order, per art direction. */}
       {item.slug === "incase" && (
         <>
-          {/* §3.5 Home-screen shot */}
+          {/* Home-screen shot (§3.5) */}
           <IncaseImageCard
             src="/Work/Incase/icon-on-homescreen.png"
             alt="The Incase app icon on an iPhone home screen"
@@ -1973,7 +1988,24 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             height={1254}
           />
 
-          {/* §3.6 Build a Case for you */}
+          {/* Brand identity intro (§3.8) */}
+          <IncaseFeatureCard
+            eyebrow="Brand Identity"
+            feature="Incase looks like a filing cabinet kept by someone who loves you. Paper cream, Incase blue, and a hand-drawn line for every icon."
+          />
+
+          {/* Two-up animation panels (§3.7) */}
+          <div className="px-4 md:px-12 mb-4 md:mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <IncaseCasePanel />
+              <IncaseFolderStack />
+            </div>
+          </div>
+
+          {/* Colour palette (§3.9) */}
+          <IncasePalette />
+
+          {/* Build a Case for you (§3.6) */}
           <IncaseFeatureCard feature="Build a Case for you and for the people you love.">
             <IncaseThreeUp
               columns={[
@@ -1993,30 +2025,13 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             />
           </IncaseFeatureCard>
 
-          {/* §3.7 Two-up animation panels */}
-          <div className="px-4 md:px-12 mb-4 md:mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <IncaseCasePanel />
-              <IncaseFolderStack />
-            </div>
-          </div>
-
-          {/* §3.8 Brand identity intro */}
-          <IncaseFeatureCard
-            eyebrow="Brand Identity"
-            feature="Incase looks like a filing cabinet kept by someone who loves you. Paper cream, Incase blue, and a hand-drawn line for every icon."
-          />
-
-          {/* §3.9 Colour palette */}
-          <IncasePalette />
-
-          {/* §3.10 Iconography grid */}
+          {/* Iconography grid (§3.10) */}
           <IncaseIconGrid />
 
-          {/* §3.11 Landing page reskin */}
+          {/* Landing page reskin (§3.11) */}
           <IncaseLandingEmbed />
 
-          {/* §3.12 Social system */}
+          {/* Social system (§3.12) */}
           <IncaseFeatureCard
             eyebrow="Social System"
             feature="A set of composable templates so the team could keep posting: annotated product shots, folder stacks, single-icon statements, quote fields, and photo layouts."
@@ -4156,7 +4171,10 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       {/* Explore More Work Section - shown on all case studies.
           Incase names its two next projects explicitly (handoff §3.13). */}
       {item.slug === "incase" ? (
-        <IncaseNextProjects />
+        // Incase sits between Oro and Vesta in `workItems`, so array order
+        // would surface an unrelated project — name the pair the handoff asked
+        // for (§3.13) while keeping the site's standard thumbnail cards.
+        <ExploreMoreWork currentItem={item} slugs={["vesta", "oro"]} />
       ) : (
         <ExploreMoreWork currentItem={item} />
       )}

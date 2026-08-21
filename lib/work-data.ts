@@ -133,22 +133,22 @@ export const workItems: WorkItem[] = [
       {
         id: "role",
         label: "Role",
-        content: "Incase brought me on to build the foundational visual language for launch. Over a four week sprint I designed the app icon, the Case and Folder system the product is built on, an iconography set, a motion language including the app-opening animation, a social graphic system, and their landing page.",
+        content: "Incase brought me on to build the foundational visual identity for their public launch.",
       },
       {
         id: "background",
         label: "Background",
-        content: "Incase is building a thoughtful, human-centered way for people to organize and share the information, memories, and documents that matter most with the people they love. What it didn't have yet was a way to look like that.\n\nEverything that matters is written down somewhere — a password manager, a folder in a drawer, a text thread, someone's memory. It works until the moment it's needed, and the moment it's needed is always the worst one. A daughter applying for her first apartment can't find a social security number. A wife in an emergency room can't unlock her husband's phone.",
+        content: "Everything that matters is written down somewhere. A password manager, a folder in a drawer, a text thread, someone’s memory. It’s rarely at hand when you need it, and if it is, only you can access it: a daughter applying for her first apartment who needs her social security number, a dog walker who needs the vet’s number and the feeding schedule, a wife in an emergency room who can’t unlock her husband’s phone to get his doctor’s information.\n\nIncase is building a thoughtful way for people to organize and share the information, memories, and documents that matter most with the people they love. The brand felt like software, not like someone who cared.",
       },
       {
         id: "solution",
         label: "Solution",
-        content: "The identity rests on two objects: the Case that holds a life, and the Folders that sort it. They had to feel like one family and still stay distinct enough to carry product hierarchy — the Case as material and structural, the Folders as flat, color-coded, and legible at a glance.\n\nEverything else is drawn from the objects Incase replaces: tabbed folders, lined pages, a pin holding a photo. Familiar form lowers the stakes of a subject nobody wants to open.",
+        content: "The identity is built around two product features: a case that holds important information related to one’s life and the folders that keep everything organized and separate.\n\nThey needed to feel like one family but stay distinct enough to communicate the product hierarchy. Each folder is color coded with a line art icon to make them legible at a glance.\n\nEverything else is drawn from the objects Incase replaces: tabbed folders, lined pages, a pin holding a photo.",
       },
       {
         id: "scope",
         label: "Scope",
-        content: "App icon, with exploration across fourteen directions and a full export package.\nThe Case and Folder system — form, color, materiality, and hierarchy.\nA nine-icon category set and the motion language, including the app-opening animation.\nA social graphic system with eight launch templates.\nThe landing page for launch.",
+        content: "**App Icon**, with exploration across three distinct visual directions.\n\n**Case and Folder System**: form, color, materiality, and hierarchy.\n\n**Iconography**: nine folder category icons, plus UI and supporting graphics.\n\n**Motion Language**, including the app-opening animation.\n\n**Landing Page Design** for launch.\n\n**Social graphic system** with nine launch templates, fully editable in Canva.",
       },
     ],
     className: "md:col-span-2 md:aspect-[11/6]",
