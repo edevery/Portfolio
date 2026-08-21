@@ -133,12 +133,12 @@ export const workItems: WorkItem[] = [
       {
         id: "role",
         label: "Role",
-        content: "Incase brought me on to build the foundational visual language for launch. Over a four week sprint I designed the app icon, the Case and Folder system the product is built on, an iconography set, a motion language including the app-opening animation, a social graphic system, and their landing page.",
+        content: "Incase brought me on to build the foundational visual identity for their public launch.",
       },
       {
         id: "background",
         label: "Background",
-        content: "Incase is building a thoughtful, human-centered way for people to organize and share the information, memories, and documents that matter most with the people they love. What it didn't have yet was a way to look like that.\n\nEverything that matters is written down somewhere — a password manager, a folder in a drawer, a text thread, someone's memory. It works until the moment it's needed, and the moment it's needed is always the worst one. A daughter applying for her first apartment can't find a social security number. A wife in an emergency room can't unlock her husband's phone.",
+        content: "Everything that matters is written down somewhere. A password manager, a folder in a drawer, a text thread, someone’s memory. It’s rarely at hand when you need it, and if it is, only you can access it: a daughter applying for her first apartment who needs her social security number, a dog walker who needs the vet’s number and the feeding schedule, a wife in an emergency room who can’t unlock her husband’s phone to get his doctor’s information.\n\nIncase is building a thoughtful way for people to organize and share the information, memories, and documents that matter most with the people they love. The brand felt like software, not like someone who cared.",
       },
       {
         id: "solution",
