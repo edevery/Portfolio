@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FOLDER_RAMP, INCASE_SURFACE } from "./incase-tokens";
 import { IncaseCalloutPill } from "./incase-case-panel";
 
@@ -53,41 +53,66 @@ const STACK = Array.from({ length: 9 }, (_, idx) => {
   };
 });
 
+const THUMB_H = 48;
+
 export function IncaseFolderStack() {
   const panelRef = useRef<HTMLDivElement>(null);
   // Two paths per folder (tab shape + cream body) move together.
   const groupRefs = useRef<(SVGGElement | null)[]>([]);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const thumbRef = useRef<HTMLDivElement>(null);
+
+  // Whichever input was used last drives the stack: page scroll by default,
+  // the scrubber once it's grabbed, and back to scroll on the next page scroll.
+  const modeRef = useRef<"scroll" | "manual">("scroll");
+  const draggingRef = useRef(false);
+  const [dragging, setDragging] = useState(false);
+
+  const applyProgress = useCallback((p: number) => {
+    groupRefs.current.forEach((g, idx) => {
+      if (!g) return;
+      const k = idx + 1;
+      if (k === 1) {
+        g.setAttribute("transform", "translate(0, 0)");
+        g.style.opacity = "1";
+        return;
+      }
+      const start = ((k - 2) / N) * 0.9;
+      const dur = (1 / N) * 1.6;
+      const sp = Math.min(1, Math.max(0, (p - start) / dur));
+      const e = 1 - Math.pow(1 - sp, 3);
+      g.setAttribute("transform", `translate(0, ${((1 - e) * RISE).toFixed(2)})`);
+      g.style.opacity = sp > 0.02 ? "1" : "0";
+    });
+
+    const track = trackRef.current;
+    const thumb = thumbRef.current;
+    if (track && thumb) {
+      const travel = Math.max(0, track.clientHeight - THUMB_H);
+      thumb.style.transform = `translateY(${(p * travel).toFixed(2)}px)`;
+      thumb.setAttribute("aria-valuenow", String(Math.round(p * 100)));
+    }
+  }, []);
+
+  /** Progress from the panel's position in the viewport (handoff §3.7). */
+  const scrollProgress = useCallback(() => {
+    const panel = panelRef.current;
+    if (!panel) return 0;
+    const r = panel.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const span = r.height + vh * 0.75;
+    return Math.min(1, Math.max(0, (vh - r.top - vh * 0.2) / span));
+  }, []);
 
   useEffect(() => {
     let frame = 0;
-
     const apply = () => {
       frame = 0;
-      const panel = panelRef.current;
-      if (!panel) return;
-      const r = panel.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const span = r.height + vh * 0.75;
-      const p = Math.min(1, Math.max(0, (vh - r.top - vh * 0.2) / span));
-
-      groupRefs.current.forEach((g, idx) => {
-        if (!g) return;
-        const k = idx + 1;
-        if (k === 1) {
-          g.setAttribute("transform", "translate(0, 0)");
-          g.style.opacity = "1";
-          return;
-        }
-        const start = ((k - 2) / N) * 0.9;
-        const dur = (1 / N) * 1.6;
-        const sp = Math.min(1, Math.max(0, (p - start) / dur));
-        const e = 1 - Math.pow(1 - sp, 3);
-        g.setAttribute("transform", `translate(0, ${((1 - e) * RISE).toFixed(2)})`);
-        g.style.opacity = sp > 0.02 ? "1" : "0";
-      });
+      if (modeRef.current === "scroll") applyProgress(scrollProgress());
     };
-
     const onScroll = () => {
+      if (draggingRef.current) return;
+      modeRef.current = "scroll"; // page scroll reclaims control
       if (frame) return;
       frame = requestAnimationFrame(apply);
     };
@@ -101,7 +126,50 @@ export function IncaseFolderStack() {
       window.removeEventListener("resize", onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
+  }, [applyProgress, scrollProgress]);
+
+  const progressFromPointer = useCallback((clientY: number) => {
+    const track = trackRef.current;
+    if (!track) return 0;
+    const r = track.getBoundingClientRect();
+    const travel = Math.max(1, r.height - THUMB_H);
+    return Math.min(1, Math.max(0, (clientY - r.top - THUMB_H / 2) / travel));
   }, []);
+
+  const startDrag = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    draggingRef.current = true;
+    setDragging(true);
+    modeRef.current = "manual";
+    applyProgress(progressFromPointer(e.clientY));
+  };
+
+  const moveDrag = (e: React.PointerEvent) => {
+    if (!draggingRef.current) return;
+    applyProgress(progressFromPointer(e.clientY));
+  };
+
+  const endDrag = (e: React.PointerEvent) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    setDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const step = e.shiftKey ? 0.2 : 0.05;
+    const current = Number(thumbRef.current?.getAttribute("aria-valuenow") ?? 0) / 100;
+    let next = current;
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") next = current + step;
+    else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = current - step;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = 1;
+    else return;
+    e.preventDefault();
+    modeRef.current = "manual";
+    applyProgress(Math.min(1, Math.max(0, next)));
+  };
 
   return (
     <div
@@ -110,6 +178,44 @@ export function IncaseFolderStack() {
       style={{ background: INCASE_SURFACE.coolPlate, minHeight: 560 }}
     >
       <IncaseCalloutPill label="SCROLL" color="#005679" />
+
+      {/* Scrubber — drag to drive the stack without scrolling the page. The
+          wrapper is wider than the visible rail to give the thumb a real
+          hit area; `touch-none` keeps a drag from scrolling the page. */}
+      <div
+        ref={trackRef}
+        onPointerDown={startDrag}
+        onPointerMove={moveDrag}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        className={`absolute right-2 md:right-4 top-20 bottom-14 z-30 w-6 touch-none ${
+          dragging ? "cursor-grabbing" : "cursor-grab"
+        }`}
+      >
+        <div
+          className="absolute left-1/2 top-0 bottom-0 w-1.5 -translate-x-1/2 rounded-full"
+          style={{ background: "rgba(23,36,43,.14)" }}
+        />
+        <div
+          ref={thumbRef}
+          role="slider"
+          tabIndex={0}
+          aria-label="Scrub the folder stack animation"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={0}
+          aria-orientation="vertical"
+          onKeyDown={onKeyDown}
+          className="absolute left-1/2 top-0 w-1.5 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#005679]/50"
+          style={{
+            height: THUMB_H,
+            marginLeft: -3,
+            background: "#005679",
+            opacity: dragging ? 1 : 0.75,
+            transition: "opacity .2s ease",
+          }}
+        />
+      </div>
 
       <div className="flex flex-1 items-center justify-center">
         <div className="relative w-[80%] md:w-[60%]">
@@ -132,7 +238,7 @@ export function IncaseFolderStack() {
             width="100%"
             className="relative block"
             style={{ overflow: "visible" }}
-            aria-label="Nine Incase folders stacking as you scroll"
+            aria-label="Nine Incase folders stacking as you scroll or drag the scrubber"
             role="img"
           >
             {STACK.map((f, idx) => (
