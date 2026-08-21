@@ -1961,7 +1961,8 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
       </>)}
 
 
-      {/* Incase — §3.5 through §3.12 of the design handoff */}
+      {/* Incase — handoff §3.5 through §3.12. Brand identity and "Build a
+          Case" run in the reverse of the handoff's order, per art direction. */}
       {item.slug === "incase" && (
         <>
           {/* §3.5 Home-screen shot */}
@@ -1973,7 +1974,21 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
             height={1254}
           />
 
-          {/* §3.6 Build a Case for you */}
+          {/* Brand identity intro (§3.8) */}
+          <IncaseFeatureCard
+            eyebrow="Brand Identity"
+            feature="Incase looks like a filing cabinet kept by someone who loves you. Paper cream, Incase blue, and a hand-drawn line for every icon."
+          />
+
+          {/* Two-up animation panels (§3.7) */}
+          <div className="px-4 md:px-12 mb-4 md:mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <IncaseCasePanel />
+              <IncaseFolderStack />
+            </div>
+          </div>
+
+          {/* Build a Case for you (§3.6) */}
           <IncaseFeatureCard feature="Build a Case for you and for the people you love.">
             <IncaseThreeUp
               columns={[
@@ -1992,20 +2007,6 @@ export function CaseStudyInfo({ item }: CaseStudyInfoProps) {
               ]}
             />
           </IncaseFeatureCard>
-
-          {/* §3.7 Two-up animation panels */}
-          <div className="px-4 md:px-12 mb-4 md:mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <IncaseCasePanel />
-              <IncaseFolderStack />
-            </div>
-          </div>
-
-          {/* §3.8 Brand identity intro */}
-          <IncaseFeatureCard
-            eyebrow="Brand Identity"
-            feature="Incase looks like a filing cabinet kept by someone who loves you. Paper cream, Incase blue, and a hand-drawn line for every icon."
-          />
 
           {/* §3.9 Colour palette */}
           <IncasePalette />
