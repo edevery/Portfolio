@@ -64,7 +64,8 @@ export const workItems: WorkItem[] = [
     description: "A video-first restaurant\ndiscovery and booking platform\nlaunching in San Francisco.",
     categories: ["product"],
     displayTags: ["Strategy", "Identity", "Product"],
-    image: "/Thumbnails/Desktop/Oro.png",
+    image: "/Thumbnails/Desktop/Oro.jpg",
+    mobileImage: "/Thumbnails/Mobile/Oro.jpg",
     heroMedia: {
       type: "video",
       src: `${BLOB_BASE}/Work/Oro/Hero.mp4`,
