@@ -53,7 +53,7 @@ const STACK = Array.from({ length: 9 }, (_, idx) => {
   };
 });
 
-const THUMB_H = 48;
+const THUMB_H = 40;
 
 export function IncaseFolderStack() {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -66,6 +66,9 @@ export function IncaseFolderStack() {
   // the scrubber once it's grabbed, and back to scroll on the next page scroll.
   const modeRef = useRef<"scroll" | "manual">("scroll");
   const draggingRef = useRef(false);
+  // Where inside the thumb the pointer grabbed it, so the thumb follows the
+  // cursor from that point rather than jumping its centre under it.
+  const grabOffsetRef = useRef(THUMB_H / 2);
   const [dragging, setDragging] = useState(false);
 
   const applyProgress = useCallback((p: number) => {
@@ -133,12 +136,25 @@ export function IncaseFolderStack() {
     if (!track) return 0;
     const r = track.getBoundingClientRect();
     const travel = Math.max(1, r.height - THUMB_H);
-    return Math.min(1, Math.max(0, (clientY - r.top - THUMB_H / 2) / travel));
+    return Math.min(
+      1,
+      Math.max(0, (clientY - r.top - grabOffsetRef.current) / travel)
+    );
   }, []);
 
   const startDrag = (e: React.PointerEvent) => {
     e.preventDefault();
     e.currentTarget.setPointerCapture(e.pointerId);
+
+    // Grabbing the thumb keeps the offset under the cursor; clicking the bare
+    // track centres the thumb on the click and drags from there.
+    const thumb = thumbRef.current;
+    if (thumb) {
+      const tr = thumb.getBoundingClientRect();
+      const onThumb = e.clientY >= tr.top && e.clientY <= tr.bottom;
+      grabOffsetRef.current = onThumb ? e.clientY - tr.top : THUMB_H / 2;
+    }
+
     draggingRef.current = true;
     setDragging(true);
     modeRef.current = "manual";
@@ -188,14 +204,22 @@ export function IncaseFolderStack() {
         onPointerMove={moveDrag}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        className={`absolute right-2 md:right-4 top-20 bottom-14 z-30 w-6 touch-none ${
+        className={`absolute right-3 md:right-5 top-1/2 z-30 h-40 md:h-48 w-7 -translate-y-1/2 touch-none ${
           dragging ? "cursor-grabbing" : "cursor-grab"
         }`}
       >
+        {/* Frosted track */}
         <div
-          className="absolute left-1/2 top-0 bottom-0 w-1.5 -translate-x-1/2 rounded-full"
-          style={{ background: "rgba(23,36,43,.14)" }}
+          className="absolute left-1/2 top-0 bottom-0 w-2.5 -translate-x-1/2 rounded-full"
+          style={{
+            background: "rgba(255,255,255,.28)",
+            backdropFilter: "blur(10px) saturate(1.3)",
+            WebkitBackdropFilter: "blur(10px) saturate(1.3)",
+            border: "1px solid rgba(255,255,255,.5)",
+            boxShadow: "inset 0 1px 3px rgba(23,36,43,.14)",
+          }}
         />
+        {/* Glass thumb */}
         <div
           ref={thumbRef}
           role="slider"
@@ -206,13 +230,23 @@ export function IncaseFolderStack() {
           aria-valuenow={0}
           aria-orientation="vertical"
           onKeyDown={onKeyDown}
-          className="absolute left-1/2 top-0 w-1.5 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#005679]/50"
+          className="absolute left-1/2 top-0 w-2.5 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[#005679]/50"
           style={{
             height: THUMB_H,
-            marginLeft: -3,
-            background: "#005679",
-            opacity: dragging ? 1 : 0.75,
-            transition: "opacity .2s ease",
+            marginLeft: -5,
+            background: dragging
+              ? "linear-gradient(180deg, rgba(0,86,121,.85), rgba(0,86,121,.68))"
+              : "linear-gradient(180deg, rgba(0,86,121,.62), rgba(0,86,121,.48))",
+            backdropFilter: "blur(6px) saturate(1.6)",
+            WebkitBackdropFilter: "blur(6px) saturate(1.6)",
+            border: "1px solid rgba(255,255,255,.55)",
+            boxShadow: dragging
+              ? "0 4px 14px rgba(23,36,43,.32), inset 0 1px 0 rgba(255,255,255,.65)"
+              : "0 2px 8px rgba(23,36,43,.22), inset 0 1px 0 rgba(255,255,255,.5)",
+            // Transform is written directly on every frame — never transition it,
+            // or the thumb lags behind the cursor.
+            transition: "background .2s ease, box-shadow .2s ease",
+            willChange: "transform",
           }}
         />
       </div>
