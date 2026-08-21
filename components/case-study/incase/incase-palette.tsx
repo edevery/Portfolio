@@ -6,7 +6,7 @@ import { cardClass, INCASE_PALETTE, insetClass, stackGapClass } from "./incase-t
 /**
  * §3.9 — the locked brand palette.
  * Nothing is shown at rest; name and hex reveal on hover, and the swatch
- * lifts 6px. Pen Ink carries a hairline ring so it separates from the card.
+ * lifts 6px.
  */
 export function IncasePalette() {
   const { activeIndex, getSwatchProps } = useColorSwatchInteraction();
@@ -33,10 +33,6 @@ export function IncasePalette() {
                 height: 260,
                 padding: 22,
                 background: swatch.hex,
-                boxShadow:
-                  swatch.name === "Pen Ink"
-                    ? "inset 0 0 0 1px rgba(255,255,255,.12)"
-                    : undefined,
                 transform: on ? "translateY(-6px)" : "translateY(0)",
                 transition: "transform .35s cubic-bezier(.4,0,.2,1)",
               }}
