@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 
 // ─── Geometry ────────────────────────────────────────────────────────
 const R = 120;     // desktop circle radius
@@ -88,18 +88,20 @@ export function VennDiagram({
   onFillComplete,
 }: VennDiagramProps) {
   const fillCompletedRef = useRef(false);
-  const baseProgressRef = useRef<number | null>(null);
 
   // Record scroll progress the first time the Venn becomes visible so the
-  // entire converge → fill animation plays out from that point onward.
-  if (visible && baseProgressRef.current === null) {
-    baseProgressRef.current = progress;
+  // entire converge → fill animation plays out from that point onward. This is
+  // state rather than a ref: reading a ref during render is what it would take
+  // to use one here, and the value has to feed the geometry below.
+  const [baseProgress, setBaseProgress] = useState<number | null>(null);
+  if (visible && baseProgress === null) {
+    // Adjusting state during render: React re-runs this component immediately,
+    // before paint, so the geometry below sees the base on the same frame.
+    setBaseProgress(progress);
   }
 
   const effectiveProgress =
-    baseProgressRef.current !== null
-      ? Math.max(0, progress - baseProgressRef.current)
-      : 0;
+    baseProgress !== null ? Math.max(0, progress - baseProgress) : 0;
 
   const t = easeInOutCubic(
     clamp((effectiveProgress - CONVERGE_START) / (CONVERGE_END - CONVERGE_START), 0, 1),
